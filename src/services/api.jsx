@@ -30,9 +30,27 @@ api.interceptors.request.use(
 export default api;
 
 // ================== AUTHENTICATION ==================
-export const loginUser = async (username, password) => {
+
+export const getUserRoles = () => {
+  const storedUser = localStorage.getItem("user");
+  if (!storedUser) return [];
+
   try {
-    const response = await api.post("/auth/login", { username, password });
+    const { roles } = JSON.parse(storedUser);
+    return roles.map((role) => role.authority); // Extract role names
+  } catch (error) {
+    console.error("Error parsing user roles:", error);
+    return [];
+  }
+};
+
+export const hasRole = (role) => {
+  return getUserRoles().includes(role);
+};
+
+export const loginUser = async (employeeId, password) => {
+  try {
+    const response = await api.post("/auth/login", { employeeId, password });
     if (response.data.token) {
       localStorage.setItem("user", JSON.stringify(response.data));
     }
@@ -44,15 +62,26 @@ export const loginUser = async (username, password) => {
 
 export const logoutUser = () => localStorage.removeItem("user");
 
-// ================== Testing Things ==================
-// export const fetchDepartments = async () => {
-//   try {
-//     const response = await api.get("/enum/departments");
-//     return response.data;
-//   } catch (error) {
-//     throw error.response?.data || error.message;
-//   }
-// };
+//     ====================== Contracts ==================================
+
+export const getContracts = async () => {
+  const response = await api.get("/contracts");
+  return response.data;
+};
+
+export const createContract = async (contractData) => {
+  const response = await api.post("/contracts", contractData);
+  return response.data;
+};
+
+export const updateContract = async (id, contractData) => {
+  const response = await api.put(`${API_URL}/contracts/${id}`, contractData);
+  return response.data;
+};
+
+export const deleteContract = async (id) => {
+  await axios.delete(`${API_URL}/contracts/${id}`);
+};
 
 // ================== ASSET MANAGEMENT ==================
 export const getAllAssets = async () => {
@@ -64,13 +93,67 @@ export const getAllAssets = async () => {
   }
 };
 
-export const getAssetByAssetTag = async (assetTag) => {
+export const getAssetByAssetTag = async (query) => {
   try {
-    const response = await api.get(`/assets/asset-tag?assetTag=${assetTag}`);
-    return response.data;
+    const response = await api.get(`/assets/${query}`);
+    return response.data || null; // Return single object or null
   } catch (error) {
+    if (error.response && error.response.status === 404) {
+      return null; // Return null when not found
+    }
     console.error("Error fetching asset:", error);
     throw error;
+  }
+};
+
+export const updateTicketStatus = async (ticketId, status) => {
+  try {
+    const response = await api.put(
+      `/user-assets/tickets/${ticketId}/status?status=${status}`
+    );
+
+    if (response.status !== 200) {
+      // ✅ Axios uses `response.status`
+      throw new Error(`Failed to update ticket status: ${response.data}`);
+    }
+
+    return response.data; // ✅ Axios uses `response.data`
+  } catch (error) {
+    console.error(
+      "Error updating ticket status:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const getAllTickets = async (page = 0, size = 50, status = "OPEN") => {
+  try {
+    const response = await api.get(`/user-assets/admin/tickets`, {
+      params: status ? { page, size, status } : { page, size },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    throw error;
+  }
+};
+
+export const searchLocations = async (name) => {
+  if (!name || name.trim() === "") {
+    console.warn("Search name is empty. Skipping API call.");
+    return []; // Prevents sending an empty request
+  }
+
+  console.log("your request is ", name);
+  try {
+    const response = await api.get(`${API_URL}/locations/search`, {
+      params: { name },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching locations:", error);
+    return [];
   }
 };
 
@@ -199,12 +282,107 @@ export const addAsset = async (assetData) => {
   }
 };
 
+// Upload asset documents
+export const uploadAssetDocuments = async (assetTag, formData) => {
+  try {
+    const response = await api.post(
+      `/asset-documents/${assetTag}/upload-documents`,
+      formData,
+      {
+        headers: { "Content-Type": "multipart/form-data" }, // Required for file uploads
+      }
+    );
+    return response.data; // Return success message
+  } catch (error) {
+    console.error("Error uploading documents:", error);
+    throw new Error("Failed to upload documents");
+  }
+};
+
+export const getAssetDocuments = async (assetId) => {
+  try {
+    const response = await api.get(`/asset-documents/${assetId}/documents`);
+
+    const baseUrl = `${API_URL}/asset-documents/uploads/`; // ✅ Ensure correct base URL
+    const documentUrls = response.data.map((doc) => ({
+      documentUrl: baseUrl + doc.documentUrl, // ✅ Corrected - use doc.documentUrl
+      addedBy: doc.addedBy,
+      addedAt: doc.addedAt,
+    }));
+
+    return documentUrls;
+  } catch (error) {
+    console.error("Error fetching asset documents:", error);
+    return [];
+  }
+};
+
 export const updateAsset = async (assetId, assetData) => {
   try {
     const response = await api.put(`/assets/${assetId}`, assetData);
     return response.data;
   } catch (error) {
     throw error;
+  }
+};
+
+export const addMessageToTicket = async (ticketId, message) => {
+  try {
+    const response = await api.post(
+      `/user-assets/tickets/${ticketId}/messages`,
+      {
+        message, // No need for JSON.stringify()
+      }
+    );
+
+    return response.data; // Axios returns response data directly
+  } catch (error) {
+    console.error("Failed to add message:", error);
+    throw error;
+  }
+};
+
+export const createTicket = async (ticketData) => {
+  return await api.post(`${API_URL}/user-assets/tickets`, ticketData);
+};
+
+export const getCurrentUser = async () => {
+  const response = await api.get(`${API_URL}/user-assets/current-user`);
+  return response.data;
+};
+
+export const getUserAssets = async () => {
+  try {
+    const response = await api.get(`${API_URL}/user-assets/assets`);
+    return response.data; // ✅ Returns list of assigned assets
+  } catch (error) {
+    console.error("Error fetching user assets:", error);
+    return [];
+  }
+};
+
+// export const getTickets = async () => {
+//   try {
+//     const response = await api.get("/user-assets/tickets");
+
+//     return response.data; // Axios response stores data inside response.data
+//   } catch (error) {
+//     console.error("Error fetching tickets:", error);
+//     return [];
+//   }
+// };
+
+export const getTickets = async (status = "OPEN") => {
+  try {
+    const response = await api.get(
+      `${API_URL}/user-assets/tickets?status=${status}`
+    );
+
+    // Axios doesn't have `.ok`, just use response.data
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    return [];
   }
 };
 
@@ -359,30 +537,6 @@ export const updateAssetStatusToRepair = async (
   }
 };
 
-// export const checkInAsset = async (formData) => {
-//   try {
-//     const response = await api.put(
-//       `/assets/${formData.assetId}/status`,
-//       formData
-//     );
-
-//     // Show success message from backend response if available
-//     toast.success(response.data.message || "Asset checked in successfully!");
-
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error checking in asset:", error);
-
-//     // Extract error message from backend response
-//     const errorMessage =
-//       error.response?.data?.message ||
-//       "Failed to check in asset. Please try again.";
-
-//     toast.error(errorMessage); // Show error notification
-//     throw new Error(errorMessage);
-//   }
-// };
-
 // ================== USERS & EMPLOYEES ==================
 
 export const getEmployees = async () => {
@@ -406,18 +560,62 @@ export const fetchUserById = async (userId) => {
 export const searchEmployees = async (query) => {
   try {
     const params = new URLSearchParams();
+
     if (/^\d+$/.test(query)) {
+      console.log("Detected numeric input, assuming phoneNumber:", query);
       params.append("phoneNumber", query);
     } else if (query.includes("@")) {
+      console.log("Detected email input:", query);
       params.append("email", query);
+    } else if (
+      query.startsWith("mv") ||
+      query.startsWith("aw") ||
+      query.startsWith("jb")
+    ) {
+      console.log("Detected employeeId format:", query);
+      params.append("employeeId", query);
     } else {
+      console.log("Detected username format:", query);
       params.append("username", query);
     }
 
-    const response = await api.get(`/users/search?${params.toString()}`);
-    return response.data?.content || [];
+    const apiUrl = `/users/search?${params.toString()}`;
+    console.log("Generated API URL:", apiUrl); // ✅ Log API call
+
+    const response = await api.get(apiUrl);
+
+    console.log("API Response Data:", response.data); // ✅ Log API response
+
+    // ✅ Fix: Extract 'content' from paginated response
+    return response.data?.content ?? [];
   } catch (error) {
+    console.error(
+      "Error searching employees:",
+      error?.response?.data || error.message
+    );
     return [];
+  }
+};
+
+export const searchTickets = async (filters) => {
+  try {
+    const response = await api.get(`${API_URL}/user-assets/search`, {
+      params: filters,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    throw error;
+  }
+};
+
+export const getTicketById = async (ticketId) => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/${ticketId}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching ticket with ID ${ticketId}:`, error);
+    throw error;
   }
 };
 

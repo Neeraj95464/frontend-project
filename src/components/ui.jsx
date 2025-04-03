@@ -1,5 +1,41 @@
 import * as LabelPrimitive from "@radix-ui/react-label";
 import React from "react";
+import { useState } from "react";
+
+export const Dialog = ({ title, children, isOpen, onClose }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+        <h2 className="text-xl font-semibold mb-4">{title}</h2>
+        {children}
+        <button
+          onClick={onClose}
+          className="mt-4 w-full bg-red-600 text-white py-2 rounded-lg"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export const Modal = ({ children, onClose }) => {
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-2 text-xl text-gray-500"
+        >
+          X
+        </button>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 export const Button = ({
   children,
@@ -154,3 +190,27 @@ export const Select = ({ name, value, onChange, children, className = "" }) => {
     </select>
   );
 };
+
+// export const Table = ({ children, className }) => {
+//   return <table className={`min-w-full ${className}`}>{children}</table>;
+// };
+
+export const TableHeader = ({ children }) => {
+  return <thead className="bg-gray-100">{children}</thead>;
+};
+
+// export const TableRow = ({ children }) => {
+//   return <tr className="border-b">{children}</tr>;
+// };
+
+// export const TableHead = ({ children }) => {
+//   return <th className="px-4 py-2 text-left font-bold">{children}</th>;
+// };
+
+// export const TableBody = ({ children }) => {
+//   return <tbody>{children}</tbody>;
+// };
+
+// export const TableCell = ({ children }) => {
+//   return <td className="px-4 py-2">{children}</td>;
+// };

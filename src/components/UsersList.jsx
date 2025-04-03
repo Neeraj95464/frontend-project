@@ -37,7 +37,7 @@ const UsersList = () => {
 
   const handleSearch = async () => {
     const data = await searchEmployees(searchQuery);
-    setUsers(Array.isArray(data.content) ? data.content : []);
+    setUsers(Array.isArray(data) ? data : []);
   };
 
   const handleEdit = (userId) => navigate(`/edit-user/${userId}`);

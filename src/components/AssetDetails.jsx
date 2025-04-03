@@ -29,7 +29,9 @@ const AssetDetails = ({ asset, assetPhotos }) => {
     setShowReserveModal(true);
   };
 
-  // Close dropdown when clicking outside
+  // console.log("Asset Data:", asset);
+  // console.log("Asset Keys:", Object.keys(asset));
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (actionRef.current && !actionRef.current.contains(event.target)) {
@@ -151,7 +153,7 @@ const AssetDetails = ({ asset, assetPhotos }) => {
 
         <button
           type="button"
-          onClick={() => navigate(`/assets/edit/${asset.id}`)}
+          onClick={() => navigate(`/assets/edit/${asset.assetTag}`)}
           className="px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-all"
         >
           Edit Asset
@@ -275,7 +277,16 @@ const AssetDetails = ({ asset, assetPhotos }) => {
                       <td className="px-3 py-2 text-gray-700 text-xs sm:text-sm break-words">
                         {key === "assignedUserName" ? (
                           <button
-                            onClick={() => setSelectedUser(asset[key])}
+                            onClick={() => {
+                              if (asset[key]) {
+                                setSelectedUser(asset[key]);
+                              } else {
+                                console.warn(
+                                  "⚠️ No user assigned to this asset."
+                                );
+                                toast.warn("No user assigned to this asset.");
+                              }
+                            }}
                             className="text-blue-600 hover:underline"
                           >
                             {asset[key] || "Not Available"}
@@ -360,7 +371,7 @@ const AssetDetails = ({ asset, assetPhotos }) => {
         {/* User Details Modal */}
         {selectedUser && (
           <UserDetailsModal
-            username={selectedUser}
+            query={selectedUser} // ✅ Pass as `query`, not `username`
             isOpen={!!selectedUser}
             onClose={() => setSelectedUser(null)}
           />

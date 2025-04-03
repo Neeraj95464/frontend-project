@@ -1,28 +1,43 @@
-import { fetchUserByUsername } from "../services/api";
+import { searchEmployees } from "../services/api";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Import API function
-
-const UserDetailsModal = ({ username, isOpen, onClose }) => {
+const UserDetailsModal = ({ query, isOpen, onClose }) => {
   const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // console.log("Received username:", username); // Log username
-    if (!username) return;
+    console.log("Modal Open:", isOpen, "| Query:", query); // ✅ Debugging logs
 
-    setLoading(true);
-    setError(null);
+    if (!isOpen || !query?.trim()) {
+      console.log("Skipping API call: Modal closed or query is empty.");
+      setUserData(null);
+      return;
+    }
 
-    fetchUserByUsername(username)
-      .then((data) => setUserData(data))
-      .catch((err) => setError(err))
-      .finally(() => setLoading(false));
-  }, [username]);
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        console.log("Fetching data for query:", query);
+        const data = await searchEmployees(query);
+
+        console.log("API Response:", data);
+        setUserData(Array.isArray(data) && data.length > 0 ? data[0] : null);
+      } catch (err) {
+        console.error("Error fetching user data:", err);
+        setError("Failed to fetch user data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [query, isOpen]); // ✅ Depend only on `query` and `isOpen`
 
   if (!isOpen) return null;
 
@@ -34,7 +49,6 @@ const UserDetailsModal = ({ username, isOpen, onClose }) => {
         exit={{ opacity: 0, scale: 0.9 }}
         className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-2xl relative"
       >
-        {/* Close Button */}
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-500 hover:text-red-600 text-xl"
@@ -50,9 +64,8 @@ const UserDetailsModal = ({ username, isOpen, onClose }) => {
           <div className="text-center text-gray-500">Loading...</div>
         ) : error ? (
           <div className="text-center text-red-500">{error}</div>
-        ) : (
+        ) : userData ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* User Info Table */}
             <div className="w-full">
               <table className="w-full text-left border-collapse">
                 <tbody>
@@ -80,7 +93,6 @@ const UserDetailsModal = ({ username, isOpen, onClose }) => {
               </table>
             </div>
 
-            {/* Serial Numbers List */}
             {userData?.serialNumbers?.length > 0 && (
               <div className="w-full">
                 <h3 className="text-lg font-semibold text-gray-700 mb-2">
@@ -103,9 +115,10 @@ const UserDetailsModal = ({ username, isOpen, onClose }) => {
               </div>
             )}
           </div>
+        ) : (
+          <div className="text-center text-gray-500">No user found.</div>
         )}
 
-        {/* Close Button */}
         <div className="text-center mt-4">
           <button
             onClick={onClose}

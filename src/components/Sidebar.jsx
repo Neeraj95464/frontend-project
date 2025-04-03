@@ -74,6 +74,28 @@ const Sidebar = () => {
             Users
           </NavLink>
           <NavLink
+            to="/ticket"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-2 rounded-lg text-sm ${
+                isActive ? "bg-blue-600" : "hover:bg-gray-700"
+              }`
+            }
+          >
+            <FiUsers className="mr-3" />
+            Ticket
+          </NavLink>
+          <NavLink
+            to="/contracts"
+            className={({ isActive }) =>
+              `flex items-center px-4 py-2 rounded-lg text-sm ${
+                isActive ? "bg-blue-600" : "hover:bg-gray-700"
+              }`
+            }
+          >
+            <FiBox className="mr-3" />
+            Contracts
+          </NavLink>
+          <NavLink
             to="/reports"
             className={({ isActive }) =>
               `flex items-center px-4 py-2 rounded-lg text-sm ${

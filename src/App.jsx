@@ -20,6 +20,10 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import AdminTicketingPortal from "./components/AdminTicketingPortal";
+import ContractPage from "./components/ContractPage";
+import NormalUserAsset from "./components/NormalUserAsset";
+import TicketingPortal from "./components/TicketingPortal";
 
 // Add this inside your main component
 <ToastContainer position="top-right" autoClose={3000} />;
@@ -56,10 +60,15 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/assets" element={<AssetList />} />
+              <Route path="/user-assets" element={<NormalUserAsset />} />
               <Route path="/assets/:status" element={<AssetStatusPage />} />
               <Route path="/assets/edit/:id" element={<EditAsset />} />
               <Route path="/add-asset" element={<AddAsset />} />
+
+              <Route path="/contracts" element={<ContractPage />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/ticket" element={<TicketingPortal />} />
+              <Route path="/ticket/admin" element={<AdminTicketingPortal />} />
               <Route path="/users" element={<UsersList />} />
               <Route path="/asset/:id" element={<SingleAsset />} />
               <Route path="/asset/assign" element={<AssignAssetModal />} />
