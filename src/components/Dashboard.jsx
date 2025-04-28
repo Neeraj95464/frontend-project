@@ -1,11 +1,14 @@
+import { useAuth } from "../components/AuthContext";
 import { Button } from "../components/ui";
 import { getAssetCounts, getAllAssets } from "../services/api";
+import AssetCategoryChart from "./AssetCategoryChart";
 import AssetTable from "./AssetTable";
 import Modal from "./Modal";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const { user } = useAuth();
   const [assets, setAssets] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [counts, setCounts] = useState({
@@ -22,16 +25,16 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchAssetCounts();
-    fetchAssets();
-  }, []);
+    if (user && (user.role === "ADMIN" || user.role === "MANAGER")) {
+      fetchAssetCounts();
+      fetchAssets();
+    }
+  }, [user]);
 
   const fetchAssetCounts = async () => {
     try {
       const data = await getAssetCounts();
-      if (data) {
-        setCounts(data);
-      }
+      if (data) setCounts(data);
     } catch (error) {
       console.error("Error fetching asset counts:", error);
     }
@@ -44,7 +47,7 @@ const Dashboard = () => {
         setAssets(data);
       } else {
         setAssets([]);
-        console.warn("API returned unexpected data format for assets.");
+        console.warn("Unexpected asset data format.");
       }
     } catch (error) {
       console.error("Error fetching assets:", error);
@@ -111,8 +114,23 @@ const Dashboard = () => {
   );
   const loadMoreAssets = () => setCurrentPage((prev) => prev + 1);
 
+  // If role is USER
+  if (user?.role === "USER") {
+    return (
+      <div className="p-6 lg:ml-40 pt-16">
+        <h1 className="text-2xl font-bold text-blue-600">
+          Hi {user.username}, welcome to your dashboard!
+        </h1>
+        <p className="mt-4 text-gray-600">
+          You have limited access. Please contact admin for more options.
+        </p>
+      </div>
+    );
+  }
+
+  // Full dashboard for ADMIN and MANAGER
   return (
-    <div className=" lg:ml-40 pt-16 mr-8">
+    <div className="lg:ml-40 pt-16 mr-8">
       {/* Metrics Grid */}
       <div className="grid grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
         {metrics.map(({ label, value, color, status }, index) => (
@@ -127,6 +145,11 @@ const Dashboard = () => {
             <p className={`text-2xl sm:text-3xl font-bold ${color}`}>{value}</p>
           </div>
         ))}
+      </div>
+
+      <div className="p-4">
+        <h2 className="text-xl font-semibold mb-4">Asset Overview</h2>
+        <AssetCategoryChart />
       </div>
 
       {/* Asset Table */}

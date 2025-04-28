@@ -1,4 +1,5 @@
 import AssignAssetModal from "../components/AssignAssetModel";
+import ChildAssetForm from "../components/ChildAssetForm";
 import ReserveAssetModal from "../components/ReserveAssetModal";
 import UserDetailsModal from "../components/UserDetailsModal";
 import {
@@ -6,8 +7,10 @@ import {
   markAssetAsLost,
   resetAssetStatus,
   markAssetAsInRepair,
+  getAssetPhotos,
 } from "../services/api";
 import CheckInModal from "./CheckInModal";
+import { generatePolicyPdf } from "./generatePolicyPdf";
 // Import User Modal
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,12 +20,53 @@ const AssetDetails = ({ asset, assetPhotos }) => {
   const [showActions, setShowActions] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [checkInAsset, setCheckInAsset] = useState(null);
+  const [openChildAssetModal, setOpenChildAssetModal] = useState(null);
+  // const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null); // Track selected user for modal
   const actionRef = useRef(null);
   const [statusNote, setStatusNote] = useState("");
   const navigate = useNavigate();
   const [showReserveModal, setShowReserveModal] = useState(false);
   const [selectedAssetReserve, setSelectedAssetReserve] = useState(null);
+  const [childAssetParentTag, setChildAssetParentTag] = useState(null);
+
+  const policyTermsAndConditions = `
+Company Asset Usage Policy
+
+1. The asset must be used strictly for official purposes only.
+2. The user is responsible for the safety and proper handling of the asset.
+3. Any damage, theft, or loss must be reported immediately to the IT department.
+4. Unauthorized installations or modifications are not permitted.
+5. Assets must not be shared or lent to others without approval.
+
+Terms & Conditions
+
+- The company reserves the right to recall the asset at any time.
+- All data stored must comply with the company's data protection policy.
+- Upon termination/resignation, the asset must be returned in working condition.
+- Any violations may result in disciplinary action as per company policy.
+- By accepting this asset, the user agrees to abide by these terms and policies.
+`;
+
+  const inductionMessage = `
+Induction & Guidelines for Asset Usage
+
+Welcome to the IT Asset Program. Please follow the guidelines below to ensure responsible usage:
+
+1. Familiarize yourself with the software pre-installed on the asset.
+2. Never share your login credentials or company data.
+3. Keep the system updated and secure with antivirus tools provided.
+4. Do not attempt unauthorized repairs or servicing.
+5. Contact IT support for technical help or queries related to the asset.
+
+We hope this asset helps you be productive in your role. For any concerns or clarifications, please reach out to the IT team.
+
+- IT Helpdesk Team
+- Email: it-support@yourcompany.com
+- Ext: 1234
+
+Thank you for your cooperation and professionalism.
+`;
 
   const handleReserveStatusChange = (assetTag) => {
     setSelectedAssetReserve(assetTag);
@@ -31,6 +75,16 @@ const AssetDetails = ({ asset, assetPhotos }) => {
 
   // console.log("Asset Data:", asset);
   // console.log("Asset Keys:", Object.keys(asset));
+
+  const handleAddChildAsset = (assetTag) => {
+    console.log("AssetTag passed: ", assetTag);
+    setChildAssetParentTag(assetTag);
+    setOpenChildAssetModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenChildAssetModal(false);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -152,11 +206,38 @@ const AssetDetails = ({ asset, assetPhotos }) => {
         </button>
 
         <button
+          onClick={async () => {
+            try {
+              const assetPhotos = await getAssetPhotos(asset.assetTag); // 📸 Fetch image URLs
+
+              await generatePolicyPdf(
+                asset,
+                policyTermsAndConditions,
+                inductionMessage,
+                assetPhotos
+              ); // 🧾 Generate the PDF with images
+            } catch (error) {
+              console.error("Failed to generate PDF:", error);
+            }
+          }}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
+        >
+          Generate Policy PDF
+        </button>
+
+        <button
           type="button"
           onClick={() => navigate(`/assets/edit/${asset.assetTag}`)}
           className="px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-all"
         >
           Edit Asset
+        </button>
+
+        <button
+          className="px-6 py-3 bg-green-600 text-white font-semibold rounded-md hover:bg-green-700 transition-all"
+          onClick={() => handleAddChildAsset(asset.assetTag)} // Send assetTag when clicked
+        >
+          Add Child Asset
         </button>
 
         {/* Actions Dropdown */}
@@ -357,7 +438,6 @@ const AssetDetails = ({ asset, assetPhotos }) => {
             onClose={() => setSelectedAsset(null)}
           />
         )}
-
         {/* Check-In Modal */}
         {checkInAsset && (
           <CheckInModal
@@ -365,6 +445,12 @@ const AssetDetails = ({ asset, assetPhotos }) => {
             isOpen={!!checkInAsset}
             onClose={() => setCheckInAsset(null)}
             onCheckIn={handleCheckInSubmit}
+          />
+        )}
+        {openChildAssetModal && (
+          <ChildAssetForm
+            assetTag={childAssetParentTag}
+            onClose={() => setOpenChildAssetModal(false)}
           />
         )}
 

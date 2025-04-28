@@ -191,26 +191,37 @@ export const Select = ({ name, value, onChange, children, className = "" }) => {
   );
 };
 
-// export const Table = ({ children, className }) => {
-//   return <table className={`min-w-full ${className}`}>{children}</table>;
-// };
-
 export const TableHeader = ({ children }) => {
   return <thead className="bg-gray-100">{children}</thead>;
 };
 
-// export const TableRow = ({ children }) => {
-//   return <tr className="border-b">{children}</tr>;
-// };
+// DialogTrigger and DialogContent Components (Extend your dialog system)
 
-// export const TableHead = ({ children }) => {
-//   return <th className="px-4 py-2 text-left font-bold">{children}</th>;
-// };
+export const DialogTrigger = ({ title, trigger, children }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-// export const TableBody = ({ children }) => {
-//   return <tbody>{children}</tbody>;
-// };
+  const handleOpen = () => setIsOpen(true);
+  const handleClose = () => setIsOpen(false);
 
-// export const TableCell = ({ children }) => {
-//   return <td className="px-4 py-2">{children}</td>;
-// };
+  return (
+    <>
+      <span onClick={handleOpen} className="cursor-pointer">
+        {trigger}
+      </span>
+      <Dialog title={title} isOpen={isOpen} onClose={handleClose}>
+        {typeof children === "function"
+          ? children({ onClose: handleClose })
+          : children}
+      </Dialog>
+    </>
+  );
+};
+
+// Optional: You can also create DialogContent if you want to isolate children styling
+export const DialogContent = ({ children }) => {
+  return (
+    <div className="space-y-4 overflow-y-auto max-h-[400px] p-2">
+      {children}
+    </div>
+  );
+};

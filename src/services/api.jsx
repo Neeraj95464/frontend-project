@@ -1,8 +1,6 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-// Using toast for better alerts
-
 // Base API URL
 const API_URL = "http://localhost:8080/api";
 
@@ -37,7 +35,7 @@ export const getUserRoles = () => {
 
   try {
     const { roles } = JSON.parse(storedUser);
-    return roles.map((role) => role.authority); // Extract role names
+    return roles.map((role) => role.toUpperCase()); // Ensuring uppercase consistency
   } catch (error) {
     console.error("Error parsing user roles:", error);
     return [];
@@ -45,7 +43,9 @@ export const getUserRoles = () => {
 };
 
 export const hasRole = (role) => {
-  return getUserRoles().includes(role);
+  const roles = getUserRoles();
+  console.log("Current user roles:", roles);
+  return roles.includes(role.toUpperCase());
 };
 
 export const loginUser = async (employeeId, password) => {
@@ -54,6 +54,7 @@ export const loginUser = async (employeeId, password) => {
     if (response.data.token) {
       localStorage.setItem("user", JSON.stringify(response.data));
     }
+    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -83,6 +84,27 @@ export const deleteContract = async (id) => {
   await axios.delete(`${API_URL}/contracts/${id}`);
 };
 
+//  ===================  Vendors Management ===================================
+
+export const getVendors = async () => {
+  const response = await api.get("/vendors");
+  return response.data;
+};
+
+export const createVendor = async (vendor) => {
+  const response = await api.post("/vendors", vendor);
+  return response.data;
+};
+
+export const updateVendor = async (id, vendor) => {
+  const response = await api.put(`/vendors/${id}`, vendor);
+  return response.data;
+};
+
+export const deleteVendor = async (id) => {
+  await api.delete(`/vendors/${id}`);
+};
+
 // ================== ASSET MANAGEMENT ==================
 export const getAllAssets = async () => {
   try {
@@ -90,6 +112,18 @@ export const getAllAssets = async () => {
     return response.data;
   } catch (error) {
     return [];
+  }
+};
+
+// api.js
+// services/api.js
+export const getAssetsByCategory = async () => {
+  try {
+    const response = await api.get("/assets/by-category");
+    return response.data;
+  } catch (error) {
+    console.error("API error in getAssetsByCategory:", error);
+    throw new Error("Failed to fetch category data");
   }
 };
 
@@ -127,16 +161,24 @@ export const updateTicketStatus = async (ticketId, status) => {
   }
 };
 
-export const getAllTickets = async (page = 0, size = 50, status = "OPEN") => {
-  try {
-    const response = await api.get(`/user-assets/admin/tickets`, {
-      params: status ? { page, size, status } : { page, size },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching tickets:", error);
-    throw error;
-  }
+// export const updateTicketStatus = (id, status) => api.put(`/tickets/${id}/status`, { status });
+export const updateTicketAssignee = (ticketId, assigneeId) => {
+  return api.put(`user-assets/tickets/${ticketId}/assign/${assigneeId}`);
+};
+
+export const updateTicketLocation = (id, locationId) =>
+  api.put(`/tickets/${id}/location`, { locationId });
+export const updateTicketCCEmails = (id, ccEmails) =>
+  api.put(`/tickets/${id}/cc-emails`, { ccEmails });
+
+export const getAllTickets = ({ page = 0, size = 50, status }) => {
+  return api.get("/user-assets/admin/tickets", {
+    params: {
+      page,
+      size,
+      ...(status ? { status } : {}),
+    },
+  });
 };
 
 export const searchLocations = async (name) => {
@@ -246,6 +288,19 @@ export const uploadAssetPhoto = async (id, files) => {
     console.error("Error uploading photo:", error);
     toast.error("Failed to upload photo.");
     throw error;
+  }
+};
+
+export const createChildAsset = async (assetTag, childAsset) => {
+  try {
+    const response = await api.post(
+      `/child-assets/create/${assetTag}`,
+      childAsset
+    );
+    return response.data; // Return the created child asset
+  } catch (error) {
+    console.error("Error creating child asset:", error);
+    throw new Error("Failed to create child asset");
   }
 };
 
@@ -360,17 +415,6 @@ export const getUserAssets = async () => {
     return [];
   }
 };
-
-// export const getTickets = async () => {
-//   try {
-//     const response = await api.get("/user-assets/tickets");
-
-//     return response.data; // Axios response stores data inside response.data
-//   } catch (error) {
-//     console.error("Error fetching tickets:", error);
-//     return [];
-//   }
-// };
 
 export const getTickets = async (status = "OPEN") => {
   try {
@@ -609,14 +653,37 @@ export const searchTickets = async (filters) => {
   }
 };
 
-export const getTicketById = async (ticketId) => {
+export const getAssetValueByCategory = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/${ticketId}`);
+    const response = await api.get(`${API_URL}/assets/assets/cost-by-category`);
     return response.data;
   } catch (error) {
-    console.error(`Error fetching ticket with ID ${ticketId}:`, error);
+    console.error("Error fetching asset cost by category:", error);
     throw error;
   }
+};
+
+export const getTicketById = async (id) => {
+  const response = await api.get(`${API_URL}/user-assets/tickets/${id}`);
+  return response.data;
+};
+
+export const updateTicket = async (ticketId, data) => {
+  try {
+    const response = await axios.put(`/api/tickets/${ticketId}/update`, data);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update ticket:", error);
+    throw error;
+  }
+};
+
+export const updateTicketDetails = async (id, data) => {
+  return await fetch(`/api/tickets/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 };
 
 export const createEmployee = async (employeeData) => {
@@ -669,34 +736,6 @@ export const deleteUser = async (userId) => {
     return true;
   } catch (error) {
     throw error.response?.data?.message || "Error deleting user";
-  }
-};
-
-// ================== VENDOR MANAGEMENT ==================
-export const getVendors = async () => {
-  try {
-    const response = await api.get("/vendors");
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const createVendor = async (vendorData) => {
-  try {
-    const response = await api.post("/vendors", vendorData);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const updateVendor = async (vendorId, vendorData) => {
-  try {
-    const response = await api.put(`/vendors/${vendorId}`, vendorData);
-    return response.data;
-  } catch (error) {
-    throw error;
   }
 };
 

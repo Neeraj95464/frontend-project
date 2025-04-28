@@ -1,14 +1,16 @@
 import {
+  getVendors,
+  createVendor,
+  updateVendor,
+  deleteVendor,
+  // Make sure this is imported too
   getContracts,
   createContract,
   updateContract,
   deleteContract,
-  getVendors,
-  createVendor,
-  updateVendor,
 } from "../services/api";
+import ContractForm from "./ContractForm";
 import VendorForm from "./VendorForm";
-import ContractForm from "@/components/ContractForm";
 import {
   Button,
   Table,
@@ -16,12 +18,14 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Modal,
 } from "@/components/ui";
-import { Modal } from "@/components/ui";
 import { useEffect, useState } from "react";
 
 export default function ContractPage() {
   const [contracts, setContracts] = useState([]);
+  const [vendors, setVendors] = useState([]);
+
   const [formData, setFormData] = useState({
     contractName: "",
     customerName: "",
@@ -37,12 +41,6 @@ export default function ContractPage() {
     description: "",
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editId, setEditId] = useState(null); // For Contracts
-
-  // Vendor Modal State
-  const [isVendorModalOpen, setIsVendorModalOpen] = useState(false);
-  const [editVendorId, setEditVendorId] = useState(null); // Separate state for vendors
   const [vendorFormData, setVendorFormData] = useState({
     name: "",
     email: "",
@@ -56,13 +54,19 @@ export default function ContractPage() {
     description: "",
   });
 
-  // Enum options for select fields
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isVendorModalOpen, setIsVendorModalOpen] = useState(false);
+
+  const [editId, setEditId] = useState(null); // Contract
+  const [editVendorId, setEditVendorId] = useState(null); // Vendor
+
   const statusOptions = ["Active", "Expired", "Pending"];
   const contractTypeOptions = ["Maintenance", "Service", "Support"];
   const priorityOptions = ["High", "Medium", "Low"];
 
   useEffect(() => {
     fetchContracts();
+    fetchVendors();
   }, []);
 
   const fetchContracts = async () => {
@@ -71,6 +75,15 @@ export default function ContractPage() {
       setContracts(data);
     } catch (error) {
       console.error("Error fetching contracts", error);
+    }
+  };
+
+  const fetchVendors = async () => {
+    try {
+      const data = await getVendors();
+      setVendors(data);
+    } catch (error) {
+      console.error("Error fetching vendors", error);
     }
   };
 
@@ -97,20 +110,8 @@ export default function ContractPage() {
       } else {
         await createVendor(vendorFormData);
       }
-      setIsVendorModalOpen(false);
-      setEditVendorId(null);
-      setVendorFormData({
-        name: "",
-        email: "",
-        phone: "",
-        company: "",
-        address: "",
-        website: "",
-        contactPerson: "",
-        gstNumber: "",
-        industryType: "",
-        description: "",
-      });
+      fetchVendors();
+      handleVendorCancel();
     } catch (error) {
       console.error("Error saving vendor", error);
     }
@@ -159,10 +160,23 @@ export default function ContractPage() {
     }
   };
 
+  const handleVendorDelete = async (id) => {
+    if (confirm("Are you sure you want to delete this vendor?")) {
+      await deleteVendor(id);
+      fetchVendors();
+    }
+  };
+
   const handleEdit = (contract) => {
     setFormData(contract);
     setEditId(contract.id);
     setIsModalOpen(true);
+  };
+
+  const handleVendorEdit = (vendor) => {
+    setVendorFormData(vendor);
+    setEditVendorId(vendor.id);
+    setIsVendorModalOpen(true);
   };
 
   return (
@@ -173,7 +187,7 @@ export default function ContractPage() {
         <Button
           onClick={() => {
             setIsModalOpen(true);
-            setEditId(null); // Reset edit mode
+            setEditId(null);
           }}
           className="bg-blue-600 text-white px-6 py-3 rounded-md"
         >
@@ -183,7 +197,7 @@ export default function ContractPage() {
         <Button
           onClick={() => {
             setIsVendorModalOpen(true);
-            setEditVendorId(null); // Reset edit mode
+            setEditVendorId(null);
           }}
           className="bg-green-600 text-white px-6 py-3 rounded-md"
         >
@@ -192,14 +206,14 @@ export default function ContractPage() {
       </div>
 
       {/* Contract Table */}
-      <Table className="mt-4">
+      <Table className="mt-4 mb-12">
         <TableHead>
           <TableRow>
-            <TableCell className="font-semibold">ID</TableCell>
-            <TableCell className="font-semibold">Name</TableCell>
-            <TableCell className="font-semibold">Customer</TableCell>
-            <TableCell className="font-semibold">Email</TableCell>
-            <TableCell className="font-semibold">Actions</TableCell>
+            <TableCell>ID</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Customer</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -225,7 +239,45 @@ export default function ContractPage() {
         </TableBody>
       </Table>
 
-      {/* Modal for Adding/Editing Contracts */}
+      {/* Vendor Table */}
+      <h2 className="text-xl font-semibold mt-8 mb-4">Vendors</h2>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>ID</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Company</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {vendors.map((vendor) => (
+            <TableRow key={vendor.id}>
+              <TableCell>{vendor.id}</TableCell>
+              <TableCell>{vendor.name}</TableCell>
+              <TableCell>{vendor.company}</TableCell>
+              <TableCell>{vendor.email}</TableCell>
+              <TableCell>
+                <Button
+                  onClick={() => handleVendorEdit(vendor)}
+                  className="mr-2"
+                >
+                  Edit
+                </Button>
+                <Button
+                  onClick={() => handleVendorDelete(vendor.id)}
+                  variant="destructive"
+                >
+                  Delete
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      {/* Modal for Contracts */}
       {isModalOpen && (
         <Modal onClose={handleCancel}>
           <h2 className="text-xl font-bold mb-4">
@@ -244,7 +296,7 @@ export default function ContractPage() {
         </Modal>
       )}
 
-      {/* Modal for Adding/Editing Vendors */}
+      {/* Modal for Vendors */}
       {isVendorModalOpen && (
         <Modal onClose={handleVendorCancel}>
           <h2 className="text-xl font-bold mb-4">

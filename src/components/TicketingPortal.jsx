@@ -5,19 +5,20 @@ import {
   hasRole,
   updateTicketStatus,
 } from "../services/api";
+import TicketActionModal from "./TicketActionModal";
 import TicketModal from "./TicketFormModal";
+import { Button, Card } from "./ui";
 import { useState, useEffect } from "react";
 import { FiMenu, FiSearch, FiUser, FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
-// Adjust path as needed
 
 export default function TicketingPortal() {
   const [tickets, setTickets] = useState([]);
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("OPEN");
-
+  const [selectedTicketId, setSelectedTicketId] = useState(null);
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
@@ -31,44 +32,20 @@ export default function TicketingPortal() {
     setSelectedUsername(username);
     setIsModalOpen(true);
   };
+
+  const closeUserModal = () => {
+    setIsModalOpen(false);
+  };
+
   const handleStatusChange = (e) => {
     const status = e.target.value;
     setSelectedStatus(status);
     fetchTickets(status);
   };
 
-  const closeUserModal = () => {
-    setIsModalOpen(false);
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
   };
-  useEffect(() => {
-    if (!searchInput) {
-      setFilteredTickets(tickets);
-    }
-  }, [tickets]);
-
-  useEffect(() => {
-    fetchTickets();
-    setUserRole(hasRole("ROLE_ADMIN") ? "admin" : "user"); // Get role from storage
-    console.log(userRole);
-  }, []);
-
-  const Button = ({ children, className = "", ...props }) => (
-    <button
-      className={`px-4 py-2 rounded-lg shadow-md bg-blue-600 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-400 ${className}`}
-      {...props}
-    >
-      {children}
-    </button>
-  );
-
-  const Card = ({ children, className = "", onClick }) => (
-    <div
-      className={`bg-white rounded-xl shadow-lg border p-6 ${className} cursor-pointer`}
-      onClick={onClick}
-    >
-      {children}
-    </div>
-  );
 
   const fetchTickets = async (status = "OPEN") => {
     try {
@@ -86,8 +63,6 @@ export default function TicketingPortal() {
     try {
       await addMessageToTicket(selectedTicket.id, newMessage);
       setNewMessage("");
-
-      // Refresh messages in selected ticket
       setSelectedTicket((prev) => ({
         ...prev,
         messages: [
@@ -98,10 +73,6 @@ export default function TicketingPortal() {
     } catch (error) {
       console.error("Error adding message: ", error);
     }
-  };
-
-  const handleInputChange = (e) => {
-    setSearchInput(e.target.value);
   };
 
   const handleStatusUpdate = async (ticketId, newStatus) => {
@@ -115,7 +86,6 @@ export default function TicketingPortal() {
       );
     } catch (error) {
       console.error("Failed to update status", error);
-      // Revert status if API call fails
       setTickets((prevTickets) =>
         prevTickets.map((ticket) =>
           ticket.id === ticketId ? { ...ticket, status: oldStatus } : ticket
@@ -127,10 +97,8 @@ export default function TicketingPortal() {
   const handleSearch = (e) => {
     const query = e.target.value.toLowerCase();
     setSearchInput(query);
-    console.log("Search Query:", query);
 
     if (query.trim() === "") {
-      console.log("Resetting tickets...");
       setFilteredTickets(tickets);
     } else {
       const filtered = tickets.filter(
@@ -139,23 +107,21 @@ export default function TicketingPortal() {
           ticket.description.toLowerCase().includes(query) ||
           ticket.id.toString().includes(query)
       );
-
-      console.log("Filtered Tickets:", filtered);
       setFilteredTickets(filtered);
     }
   };
 
-  const handleEdit = (assetTag) => {
-    navigate(`/asset/${assetTag}`);
-  };
-
-  //   handleEmployeeClick
+  useEffect(() => {
+    fetchTickets();
+    const role = hasRole("ADMIN") ? "admin" : "user";
+    setUserRole(role);
+  }, []);
 
   return (
-    <div className=" lg:ml-40 pt-16 mr-8">
+    <div className="lg:ml-40 pt-16 mr-8">
       {/* Left Section - Ticket List */}
       <div
-        className={`w-full lg:w-2/3 p-6 transition-all ${
+        className={`w-full lg:w-2/3 p-1 transition-all ${
           selectedTicket ? "lg:w-1/2" : "lg:w-2/3"
         }`}
       >
@@ -172,7 +138,7 @@ export default function TicketingPortal() {
           My Assets
         </Button>
 
-        {userRole === "admin" && (
+        {userRole === "ADMIN" && (
           <button
             className="px-4 py-2 rounded-lg shadow-md bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-blue-400 mb-4"
             onClick={() => navigate("/ticket/admin")}
@@ -180,34 +146,6 @@ export default function TicketingPortal() {
             Admin Tickets
           </button>
         )}
-        <form
-          onSubmit={handleSearch}
-          className="hidden sm:flex items-center bg-gray-700 text-gray-300 rounded-lg overflow-hidden border border-gray-600"
-        >
-          <FiSearch className="mx-2 text-gray-400" size={18} />
-          <input
-            type="text"
-            placeholder="Search Tickets..."
-            className="w-full p-2 border rounded mb-4"
-            value={searchInput}
-            onChange={handleSearch} // ✅ No need for form submission
-          />
-        </form>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">
-            Filter by Status:
-          </label>
-          <select
-            value={selectedStatus}
-            onChange={handleStatusChange}
-            className="w-full p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
-          >
-            <option value="OPEN">Open</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="RESOLVED">Resolved</option>
-            <option value="CLOSED">Closed</option>
-          </select>
-        </div>
 
         <TicketModal
           isOpen={isDialogOpen}
@@ -215,224 +153,258 @@ export default function TicketingPortal() {
             setIsDialogOpen(false);
             fetchTickets();
           }}
+          className="z-50"
         />
 
-        {/* Ticket List */}
         <Card>
-          <h2 className="text-xl font-semibold mb-4">Your Tickets</h2>
-          <div className="space-y-4">
-            {filteredTickets.length === 0 ? (
-              <p className="text-gray-500">No tickets available.</p>
-            ) : (
-              filteredTickets.map((ticket) => (
-                <Card
-                  key={ticket.id}
-                  onClick={() => setSelectedTicket(ticket)}
-                  className="p-4 bg-white shadow-md border rounded-lg hover:shadow-lg transition"
-                >
-                  {/* Ticket Title */}
-                  <h3 className="text-lg font-semibold mb-2 text-gray-900">
-                    {ticket.title}
-                  </h3>
+          <div className="grid grid-cols-3 gap-3">
+            <h2 className="text-xl font-semibold mb-4">Your Tickets</h2>
 
-                  {/* Ticket Description */}
-                  <p className="text-gray-700 mb-3">{ticket.description}</p>
+            <div className="mb-4">
+              {/* <label className="block text-sm font-medium text-gray-700">
+                Filter by Status:
+              </label> */}
+              <select
+                value={selectedStatus}
+                onChange={handleStatusChange}
+                className="w-full p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
+              >
+                <option value="OPEN">Open</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="RESOLVED">Resolved</option>
+                <option value="CLOSED">Closed</option>
+              </select>
+            </div>
 
-                  {/* Ticket Details - Two-Column Layout */}
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-gray-600">
-                    <p>
-                      <strong>Category:</strong> {ticket.category}
-                    </p>
-                    <p>
-                      <strong>Ticket ID:</strong> {ticket.id}
-                    </p>
-
-                    <p>
-                      <strong>Status:</strong>{" "}
-                      {userRole === "user" ? (
-                        <span
-                          className={`px-2 py-1 rounded-md text-white ${
-                            ticket.status === "OPEN"
-                              ? "bg-green-500"
-                              : ticket.status === "IN_PROGRESS"
-                              ? "bg-yellow-500"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          {ticket.status}
-                        </span>
-                      ) : (
-                        <select
-                          value={ticket.status}
-                          onChange={(e) =>
-                            handleStatusUpdate(ticket.id, e.target.value)
-                          }
-                          className={`px-2 py-1 rounded-md text-white ${
-                            ticket.status === "OPEN"
-                              ? "bg-green-500"
-                              : ticket.status === "IN_PROGRESS"
-                              ? "bg-yellow-500"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          <option value="OPEN" className="text-black bg-white">
-                            OPEN
-                          </option>
-                          <option
-                            value="IN_PROGRESS"
-                            className="text-black bg-white"
-                          >
-                            IN PROGRESS
-                          </option>
-                          <option
-                            value="RESOLVED"
-                            className="text-black bg-white"
-                          >
-                            RESOLVED
-                          </option>
-                          <option
-                            value="CLOSED"
-                            className="text-black bg-white"
-                          >
-                            CLOSED
-                          </option>
-                        </select>
-                      )}
-                    </p>
-
-                    <p>
-                      <strong>Asset Tag:</strong>{" "}
-                      {userRole === "user" ? (
-                        ticket.assetTag || (
-                          <span className="text-gray-400">Unassigned</span>
-                        )
-                      ) : (
-                        <button
-                          className="text-blue-500 hover:underline"
-                          onClick={() => handleEdit(ticket.assetTag)}
-                        >
-                          {ticket.assetTag || "Unassigned"}
-                        </button>
-                      )}
-                    </p>
-                    <p>
-                      <strong>Location ID:</strong> {ticket.location || "N/A"}
-                    </p>
-                    <p>
-                      <strong>User :</strong>{" "}
-                      {userRole === "user" ? (
-                        ticket.employee || (
-                          <span className="text-gray-400">Unassigned</span>
-                        )
-                      ) : (
-                        <button
-                          onClick={() => {
-                            if (ticket.employee) {
-                              setSelectedUser(ticket.employee);
-                            } else {
-                              console.warn(
-                                "⚠️ No user assigned to this asset."
-                              );
-                              toast.warn("No user assigned to this asset.");
-                            }
-                          }}
-                          className="text-blue-600 hover:underline"
-                        >
-                          {ticket.employee || "Not Available"}
-                        </button>
-                      )}
-                    </p>
-                    <p>
-                      <strong>Assignee :</strong>{" "}
-                      {userRole === "user" ? (
-                        ticket.assignee || (
-                          <span className="text-gray-400">Unassigned</span>
-                        )
-                      ) : (
-                        <button
-                          onClick={() => {
-                            if (ticket.assignee) {
-                              setSelectedUser(ticket.assignee);
-                            } else {
-                              console.warn(
-                                "⚠️ No user assigned to this asset."
-                              );
-                              toast.warn("No user assigned to this asset.");
-                            }
-                          }}
-                          className="text-blue-600 hover:underline"
-                        >
-                          {ticket.assignee || "Not Available"}
-                        </button>
-                      )}
-                    </p>
-                    <p>
-                      <strong>Created At:</strong>{" "}
-                      {new Date(ticket.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-
-                  {/* Ticket Messages Count */}
-                  {ticket.messages?.length > 0 && (
-                    <p className="mt-3 text-xs text-gray-500">
-                      {ticket.messages.length} message(s) in conversation
-                    </p>
-                  )}
-                </Card>
-              ))
-            )}
+            <form className="hidden sm:flex items-center bg-gray-700 text-gray-300 rounded-lg overflow-hidden border border-gray-600">
+              <input
+                type="text"
+                placeholder="Search Tickets..."
+                className="w-full p-3 border rounded mb-1"
+                value={searchInput}
+                onChange={handleSearch}
+              />
+            </form>
           </div>
+
+          {filteredTickets.length === 0 ? (
+            <p className="text-gray-500">No tickets available.</p>
+          ) : (
+            <div className="h-[500px] overflow-y-auto overflow-x-auto border rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="sticky top-0 bg-white">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      ID
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Title
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Status
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Category
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Location
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Assignee
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Employee
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Asset Tag
+                    </th>
+                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                      Created At
+                    </th>
+                    {userRole !== "user" && (
+                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
+                        Actions
+                      </th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {filteredTickets.map((ticket) => (
+                    <tr
+                      key={ticket.id}
+                      className="hover:bg-gray-50 transition cursor-pointer"
+                      onClick={() => setSelectedTicket(ticket)}
+                    >
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {ticket.id}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {ticket.title}
+                      </td>
+                      <td className="px-4 py-2 text-sm">
+                        <span
+                          className={`px-2 py-1 rounded text-white text-xs ${
+                            ticket.status === "OPEN"
+                              ? "bg-green-500"
+                              : ticket.status === "IN_PROGRESS"
+                              ? "bg-yellow-500"
+                              : ticket.status === "RESOLVED"
+                              ? "bg-blue-500"
+                              : "bg-red-500"
+                          }`}
+                        >
+                          {ticket.status.replace("_", " ")}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {ticket.category}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-700">
+                        {ticket.locationName}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-blue-600">
+                        {userRole !== "user" ? (
+                          <button
+                            type="button"
+                            className="hover:underline cursor-pointer text-blue-600"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedUser(ticket.assignee);
+                            }}
+                          >
+                            {ticket.assignee || "Unassigned"}
+                          </button>
+                        ) : (
+                          <span className="text-gray-800">
+                            {ticket.assignee || "Unassigned"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-blue-600">
+                        {userRole !== "user" ? (
+                          <button
+                            type="button"
+                            className="hover:underline cursor-pointer text-blue-600"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedUser(ticket.employee);
+                            }}
+                          >
+                            {ticket.employee || "Unassigned"}
+                          </button>
+                        ) : (
+                          <span className="text-gray-800">
+                            {ticket.employee || "Unassigned"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-sm">
+                        {userRole !== "user" ? (
+                          <button
+                            type="button"
+                            className="text-blue-600 hover:underline cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              navigate(`/asset/${ticket.assetTag}`);
+                            }}
+                          >
+                            {ticket.assetTag || "No Asset"}
+                          </button>
+                        ) : (
+                          <span className="text-gray-800">
+                            {ticket.assetTag || "No Asset"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-gray-600">
+                        {new Date(ticket.createdAt).toLocaleDateString()}
+                      </td>
+                      {userRole !== "user" && (
+                        <td className="px-4 py-2 text-sm space-x-2">
+                          <button
+                            type="button"
+                            className="text-indigo-600 hover:underline"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedTicketId(ticket.id);
+                              setIsTicketModalOpen(true);
+                            }}
+                          >
+                            Actions
+                          </button>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </Card>
       </div>
 
       {/* Right Section - Message Panel */}
       {selectedTicket && (
-        <div className="w-full lg:w-1/3 p-6 bg-gray-100 shadow-lg transition-all fixed right-0 top-0 h-full overflow-y-auto">
-          <h2 className="text-xl font-semibold mb-4">
-            Messages for {selectedTicket.title}
-          </h2>
+        <div className="fixed top-[64px] right-0 w-full lg:w-1/3 h-[calc(100%-64px)] bg-white border-l shadow-2xl p-4 overflow-y-auto z-40 transition-all">
+          {/* Header with title */}
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 truncate">
+              {selectedTicket.title}
+            </h2>
+            <p className="text-xs text-gray-500">
+              {selectedTicket.description}
+            </p>
+          </div>
 
-          <div className="space-y-2">
+          {/* Messages */}
+          <div className="flex flex-col gap-2 mb-4 overflow-y-auto max-h-[300px] pr-1">
             {selectedTicket.messages.length === 0 ? (
-              <p className="text-gray-500">No messages yet.</p>
+              <p className="text-center text-gray-400 text-xs">
+                No messages yet.
+              </p>
             ) : (
-              selectedTicket.messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className="border p-2 rounded-lg bg-white shadow-md"
-                >
-                  <p>
-                    <strong>{msg.sender}:</strong> {msg.message}
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    {new Date(msg.sentAt).toLocaleString()}
-                  </p>
+              selectedTicket.messages.map((msg, idx) => (
+                <div key={idx} className="bg-gray-100 p-2 rounded-md">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-blue-600 text-xs font-semibold truncate">
+                      {msg.sender}
+                    </span>
+                    <span className="text-[10px] text-gray-400">
+                      {new Date(msg.sentAt).toLocaleString()}
+                    </span>
+                  </div>
+                  <p className="text-gray-700 text-xs">{msg.message}</p>
                 </div>
               ))
             )}
           </div>
 
-          {/* Add New Message */}
-          <div className="mt-4">
-            <input
-              type="text"
+          {/* New Message */}
+          <div className="mt-auto">
+            <textarea
+              className="w-full p-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-400 resize-none text-xs"
+              rows="3"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              className="w-full p-2 border rounded"
-              placeholder="Type a message..."
+              placeholder="Write your message..."
             />
-            <Button onClick={handleAddMessage} className="mt-2 w-full">
-              Send Message
-            </Button>
+            <div className="flex items-center gap-2 mt-2">
+              {/* Send Button (80%) */}
+              <button
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md transition-all"
+                onClick={handleAddMessage}
+              >
+                Send
+              </button>
+              {/* Close Button (20%) */}
+              <button
+                className="w-10 h-10 flex items-center justify-center bg-gray-200 hover:bg-gray-300 text-gray-600 text-lg rounded-md transition-all"
+                onClick={() => setSelectedTicket(null)}
+              >
+                &times;
+              </button>
+            </div>
           </div>
-
-          {/* Close Button */}
-          <Button
-            onClick={() => setSelectedTicket(null)}
-            className="mt-4 bg-red-600 w-full"
-          >
-            Close
-          </Button>
         </div>
       )}
 
@@ -441,6 +413,13 @@ export default function TicketingPortal() {
           query={selectedUser} // ✅ Pass as `query`, not `username`
           isOpen={!!selectedUser}
           onClose={() => setSelectedUser(null)}
+        />
+      )}
+      {isTicketModalOpen && (
+        <TicketActionModal
+          ticketId={selectedTicketId}
+          open={isTicketModalOpen}
+          onClose={() => setIsTicketModalOpen(false)}
         />
       )}
     </div>
