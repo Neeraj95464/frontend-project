@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Base API URL
-const API_URL = "http://localhost:8080/api";
+const API_URL = "http://localhost:7355/api";
 
 // Create Axios instance
 const api = axios.create({
