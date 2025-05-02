@@ -23,6 +23,7 @@ import NormalUserAsset from "./components/NormalUserAsset";
 import NotFound from "./components/NotFound";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/Profile";
+import Register from "./components/Register";
 import SearchResults from "./components/SearchResult";
 import Sidebar from "./components/Sidebar";
 import SingleAsset from "./components/SingleAsset";
@@ -55,7 +56,7 @@ const App = () => {
             <Routes>
               {/* Public Route */}
               <Route path="/login" element={<Login />} />
-
+              <Route path="/register" element={<Register />} />
               {/* Protected Routes */}
               <Route
                 path="/"
@@ -86,6 +87,7 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
+
               <Route
                 path="/add-asset"
                 element={

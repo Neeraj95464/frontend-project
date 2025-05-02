@@ -2,8 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Base API URL
-const API_URL =
-  "https://therapeutic-playing-slots-vietnam.trycloudflare.com/api";
+const API_URL = "http://103.211.37.123:7355/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -41,6 +40,11 @@ export const getUserRoles = () => {
     console.error("Error parsing user roles:", error);
     return [];
   }
+};
+
+export const registerUser = async (userData) => {
+  const response = await api.post("/auth/register", userData);
+  return response.data;
 };
 
 export const hasRole = (role) => {

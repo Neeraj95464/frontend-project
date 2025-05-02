@@ -274,29 +274,6 @@ const AssetForm = () => {
             className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
           />
         </div>
-
-        {/* Location */}
-        {/* <div className="mb-4">
-          <label className="block font-medium text-gray-700">Location</label>
-          <select
-            name="location"
-            value={formData.location}
-            onChange={handleChange}
-            required
-            className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="" disabled>
-              Select Location
-            </option>
-            {locations.map((location) => (
-              <option key={location.id} value={location.id}>
-                {location.name}
-              </option>
-            ))}
-          </select>
-        </div> */}
-
-        {/* Site */}
         <div className="mb-4">
           <label className="block font-medium text-gray-700">Site</label>
           <select
