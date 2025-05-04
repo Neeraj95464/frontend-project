@@ -178,6 +178,7 @@ export default function AdminTicketingPortal() {
                 <option value="IN_PROGRESS">In Progress</option>
                 <option value="RESOLVED">Resolved</option>
                 <option value="CLOSED">Closed</option>
+                <option value="UNASSIGNED">Unassigned</option>
               </select>
             </div>
 
