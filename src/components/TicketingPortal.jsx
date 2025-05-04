@@ -50,7 +50,6 @@ export default function TicketingPortal() {
   const fetchTickets = async (status = "OPEN") => {
     try {
       const data = await getTickets(status);
-      console.log("your ticket data is ", data);
       setTickets(data);
       setFilteredTickets(data);
     } catch (error) {

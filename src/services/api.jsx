@@ -51,7 +51,7 @@ export const registerUser = async (userData) => {
 
 export const hasRole = (role) => {
   const roles = getUserRoles();
-  console.log("Current user roles:", roles);
+  // console.log("Current user roles:", roles);
   return roles.includes(role.toUpperCase());
 };
 
@@ -194,7 +194,6 @@ export const searchLocations = async (name) => {
     return []; // Prevents sending an empty request
   }
 
-  console.log("your request is ", name);
   try {
     const response = await api.get(`${API_URL}/locations/search`, {
       params: { name },

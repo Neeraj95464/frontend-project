@@ -32,6 +32,64 @@ const TicketModal = ({ isOpen, onClose }) => {
   const [matchedLocations, setMatchedLocations] = useState([]);
   const [locationError, setLocationError] = useState("");
 
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const userData = await getCurrentUser();
+  //       console.log("user data is ", userData);
+  //       setEmployee(userData.employeeId);
+  //       setEmployeeName(userData.username);
+  //       setSearchQuery(userData.username);
+  //       setUserRole(userData.role);
+  //       setlocationName(userData.locationName);
+  //       await fetchUserAssets(userData.employeeId);
+  //     } catch (error) {
+  //       console.error("Error fetching user data: ", error);
+  //       setAssets([]);
+  //     }
+  //   };
+  //   fetchUserData();
+  // }, []);
+
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       const userData = await getCurrentUser();
+  //       setEmployee(userData.employeeId);
+  //       setEmployeeName(userData.username);
+  //       setSearchQuery(userData.username);
+  //       setUserRole(userData.role);
+
+  //       // Set location based on employee data
+  //       if (userData.locationName) {
+  //         setlocationName(userData.locationName);
+  //         setSearchLocationQuery(userData.locationName);
+
+  //         try {
+  //           const locations = await searchLocations(userData.locationName);
+  //           if (locations.length > 0) {
+  //             setLocation(locations[0].id);
+  //             setMatchedLocations([]);
+  //             setLocationError("");
+  //           } else {
+  //             setLocationError("No locations found.");
+  //           }
+  //         } catch {
+  //           setLocationError("Error searching locations.");
+  //           setMatchedLocations([]);
+  //         }
+  //       }
+
+  //       await fetchUserAssets(userData.employeeId);
+  //     } catch (error) {
+  //       console.error("Error fetching user data: ", error);
+  //       setAssets([]);
+  //     }
+  //   };
+
+  //   fetchUserData();
+  // }, []);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -40,12 +98,34 @@ const TicketModal = ({ isOpen, onClose }) => {
         setEmployeeName(userData.username);
         setSearchQuery(userData.username);
         setUserRole(userData.role);
+
+        // Set location based on employee data
+        if (userData.location && userData.location.name) {
+          setlocationName(userData.location.name);
+          setSearchLocationQuery(userData.location.name);
+
+          try {
+            const locations = await searchLocations(userData.location.name);
+            if (locations.length > 0) {
+              setLocation(locations[0].id);
+              setMatchedLocations([]);
+              setLocationError("");
+            } else {
+              setLocationError("No locations found.");
+            }
+          } catch {
+            setLocationError("Error searching locations.");
+            setMatchedLocations([]);
+          }
+        }
+
         await fetchUserAssets(userData.employeeId);
       } catch (error) {
         console.error("Error fetching user data: ", error);
         setAssets([]);
       }
     };
+
     fetchUserData();
   }, []);
 
