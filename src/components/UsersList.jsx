@@ -83,7 +83,7 @@ const UsersList = () => {
               {/* ✅ Sticky Table Header */}
               <TableHead>
                 <TableRowHeader>
-                  <TableHeaderCell>ID</TableHeaderCell>
+                  <TableHeaderCell>EMP ID</TableHeaderCell>
                   <TableHeaderCell>Username</TableHeaderCell>
                   <TableHeaderCell>Email</TableHeaderCell>
                   <TableHeaderCell>Role</TableHeaderCell>
@@ -102,7 +102,7 @@ const UsersList = () => {
                 {Array.isArray(users) && users.length > 0 ? (
                   users.map((user) => (
                     <TableRow key={user.id}>
-                      <TableCell>{user.id}</TableCell>
+                      <TableCell>{user.employeeId}</TableCell>
                       <TableCell>{user.username}</TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.role}</TableCell>
