@@ -349,7 +349,7 @@ export default function TicketingPortal() {
         <div className="fixed top-[64px] right-0 w-full lg:w-1/3 h-[calc(100%-64px)] bg-white border-l shadow-2xl p-4 overflow-y-auto z-40 transition-all">
           {/* Header with title */}
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-800 truncate">
+            <h2 className="text-lg font-semibold text-gray-800 ">
               {selectedTicket.title}
             </h2>
             <p className="text-xs text-gray-500">

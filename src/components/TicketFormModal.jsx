@@ -31,64 +31,7 @@ const TicketModal = ({ isOpen, onClose }) => {
   const [searchLocationQuery, setSearchLocationQuery] = useState("");
   const [matchedLocations, setMatchedLocations] = useState([]);
   const [locationError, setLocationError] = useState("");
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const userData = await getCurrentUser();
-  //       console.log("user data is ", userData);
-  //       setEmployee(userData.employeeId);
-  //       setEmployeeName(userData.username);
-  //       setSearchQuery(userData.username);
-  //       setUserRole(userData.role);
-  //       setlocationName(userData.locationName);
-  //       await fetchUserAssets(userData.employeeId);
-  //     } catch (error) {
-  //       console.error("Error fetching user data: ", error);
-  //       setAssets([]);
-  //     }
-  //   };
-  //   fetchUserData();
-  // }, []);
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const userData = await getCurrentUser();
-  //       setEmployee(userData.employeeId);
-  //       setEmployeeName(userData.username);
-  //       setSearchQuery(userData.username);
-  //       setUserRole(userData.role);
-
-  //       // Set location based on employee data
-  //       if (userData.locationName) {
-  //         setlocationName(userData.locationName);
-  //         setSearchLocationQuery(userData.locationName);
-
-  //         try {
-  //           const locations = await searchLocations(userData.locationName);
-  //           if (locations.length > 0) {
-  //             setLocation(locations[0].id);
-  //             setMatchedLocations([]);
-  //             setLocationError("");
-  //           } else {
-  //             setLocationError("No locations found.");
-  //           }
-  //         } catch {
-  //           setLocationError("Error searching locations.");
-  //           setMatchedLocations([]);
-  //         }
-  //       }
-
-  //       await fetchUserAssets(userData.employeeId);
-  //     } catch (error) {
-  //       console.error("Error fetching user data: ", error);
-  //       setAssets([]);
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, []);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -254,11 +197,34 @@ const TicketModal = ({ isOpen, onClose }) => {
     setSelectedAsset(e.target.value);
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   console.log("Submitting ticket with location ID:", location); // Debugging log
+
+  //   try {
+  //     await createTicket({
+  //       title,
+  //       description,
+  //       category,
+  //       employee,
+  //       assetTag: selectedAsset,
+  //       location, // Make sure location is an ID
+  //     });
+
+  //     alert("Ticket created successfully!");
+  //     onClose();
+  //   } catch (error) {
+  //     console.error("Error creating ticket: ", error);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Submitting ticket with location ID:", location); // Debugging log
+    if (loading) return; // prevent double submission
 
+    setLoading(true); // block button
     try {
       await createTicket({
         title,
@@ -266,13 +232,15 @@ const TicketModal = ({ isOpen, onClose }) => {
         category,
         employee,
         assetTag: selectedAsset,
-        location, // Make sure location is an ID
+        location,
       });
 
       alert("Ticket created successfully!");
       onClose();
     } catch (error) {
       console.error("Error creating ticket: ", error);
+    } finally {
+      setLoading(false); // re-enable button after API call
     }
   };
 
@@ -432,11 +400,21 @@ const TicketModal = ({ isOpen, onClose }) => {
               Close
             </button>
 
-            <button
+            {/* <button
               type="submit"
               className="bg-blue-600 text-white px-4 py-2 rounded w-full"
             >
               Submit Ticket
+            </button> */}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`${
+                loading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600"
+              } text-white px-4 py-2 rounded w-full`}
+            >
+              {loading ? "Submitting..." : "Submit Ticket"}
             </button>
           </div>
         </form>

@@ -187,7 +187,7 @@ const App = () => {
               <Route
                 path="/user-assets"
                 element={
-                  <PrivateRoute allowedRoles={["USER"]}>
+                  <PrivateRoute allowedRoles={["USER", "ADMIN", "MANAGER"]}>
                     <NormalUserAsset />
                   </PrivateRoute>
                 }
