@@ -33,6 +33,31 @@ const TicketModal = ({ isOpen, onClose }) => {
   const [locationError, setLocationError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const categories = [
+    "HARDWARE",
+    "SOFTWARE",
+    "NETWORK",
+    "OTHER",
+    "CCTV",
+    "MAINTENANCE",
+    "FOCUS",
+    "ADMIN",
+    "LOGISTICS",
+    "DESKTOP",
+    "DMS",
+    "EMAIL",
+    "INTERCOM",
+    "PROJECTOR",
+    "NEW_PROJECT",
+    "SERVER",
+    "SFDC",
+    "STORES",
+    "IPAD_TAB",
+    "UPS",
+    "WEB_APPLICATION",
+    "XENTRY",
+  ];
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -197,28 +222,6 @@ const TicketModal = ({ isOpen, onClose }) => {
     setSelectedAsset(e.target.value);
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   console.log("Submitting ticket with location ID:", location); // Debugging log
-
-  //   try {
-  //     await createTicket({
-  //       title,
-  //       description,
-  //       category,
-  //       employee,
-  //       assetTag: selectedAsset,
-  //       location, // Make sure location is an ID
-  //     });
-
-  //     alert("Ticket created successfully!");
-  //     onClose();
-  //   } catch (error) {
-  //     console.error("Error creating ticket: ", error);
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -277,7 +280,7 @@ const TicketModal = ({ isOpen, onClose }) => {
           />
 
           <label className="block mb-2">Category:</label>
-          <select
+          {/* <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full p-2 border rounded mb-4"
@@ -285,7 +288,20 @@ const TicketModal = ({ isOpen, onClose }) => {
             <option value="HARDWARE">Hardware</option>
             <option value="NETWORK">Network</option>
             <option value="SOFTWARE">Software</option>
+            <option value="PRINTER">Printer</option>
             <option value="OTHER">Other</option>
+          </select> */}
+
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full p-2 border rounded mb-4"
+          >
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat.charAt(0) + cat.slice(1).toLowerCase()}
+              </option>
+            ))}
           </select>
 
           <label className="block mb-2">Employee:</label>
