@@ -22,14 +22,26 @@ const AssetForm = () => {
   });
 
   const assetTypes = [
-    "LAPTOP",
+    "CCTV",
+    "COMPUTER EQUIPMENT",
     "DESKTOP",
+    "EQUIPMENT",
+    "FIREWALL",
+    "INTANGIBLE ASSETS",
+    "IPAD",
+    "KIOSK",
+    "LAPTOP",
     "MOBILE",
-    "PRINTER",
-    "SERVER",
-    "NETWORK_DEVICE",
+    "NETWORK DEVICES",
+    "PRINTERS",
+    "PROJECTOR",
     "SOFTWARE",
-    "OTHERS",
+    "TAB",
+    "TOUGHBOOK-ODIS",
+    "UPS",
+    "UPS BATTERIES",
+    "VEHICLES",
+    "XENTRY DIAGNOSTIC DEVICE",
   ];
 
   const departments = [
@@ -44,7 +56,6 @@ const AssetForm = () => {
     "MIS",
     "MAINTENANCE",
   ];
-  // const assetStatuses = ["AVAILABLE", "RESERVED", "ASSIGNED", "DISPOSED"];
 
   const [locations, setLocations] = useState([]);
   const [sites, setSites] = useState([]);
