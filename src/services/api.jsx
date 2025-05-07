@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://aqua-gratuit-aa-knight.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://aqua-gratuit-aa-knight.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -404,6 +404,7 @@ export const addMessageToTicket = async (ticketId, message) => {
 };
 
 export const createTicket = async (ticketData) => {
+  console.log("submiting data is ", ticketData);
   return await api.post(`${API_URL}/user-assets/tickets`, ticketData);
 };
 
@@ -738,10 +739,16 @@ export const updateEmployee = async (employeeId, employeeData) => {
 };
 export const deleteUser = async (userId) => {
   try {
-    await axios.delete(`${API_URL}/users/${userId}`);
-    return true;
+    const response = await api.delete(`${API_URL}/users/${userId}`);
+    if (response.status === 204 || response.status === 200) {
+      return true; // success (204 No Content or 200 OK)
+    } else {
+      throw new Error("Unexpected response status");
+    }
   } catch (error) {
-    throw error.response?.data?.message || "Error deleting user";
+    const message =
+      error.response?.data?.message || error.message || "Error deleting user";
+    throw new Error(message);
   }
 };
 

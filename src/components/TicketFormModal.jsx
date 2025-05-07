@@ -32,6 +32,7 @@ const TicketModal = ({ isOpen, onClose }) => {
   const [matchedLocations, setMatchedLocations] = useState([]);
   const [locationError, setLocationError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [ticketDepartment, setticketDepartment] = useState("IT"); // Default to IT
 
   const categories = [
     "HARDWARE",
@@ -236,6 +237,7 @@ const TicketModal = ({ isOpen, onClose }) => {
         employee,
         assetTag: selectedAsset,
         location,
+        ticketDepartment,
       });
 
       alert("Ticket created successfully!");
@@ -259,8 +261,34 @@ const TicketModal = ({ isOpen, onClose }) => {
         >
           ✖
         </button>
+        <label className="block mb-2">Ticket For:</label>
+        <div className="flex items-center gap-4 mb-4">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="ticketDepartment"
+              value="IT"
+              checked={ticketDepartment === "IT"}
+              onChange={(e) => setticketDepartment(e.target.value)}
+              className="mr-2"
+            />
+            IT
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              name="ticketDepartment"
+              value="HR"
+              checked={ticketDepartment === "HR"}
+              onChange={(e) => setticketDepartment(e.target.value)}
+              className="mr-2"
+            />
+            HR
+          </label>
+        </div>
 
-        <h2 className="text-xl font-bold mb-4">Create New Ticket</h2>
+        {/* <h2 className="text-xl font-bold mb-4">Create New Ticket</h2> */}
+
         <form onSubmit={handleSubmit}>
           <label className="block mb-2">Title:</label>
           <input
@@ -280,18 +308,6 @@ const TicketModal = ({ isOpen, onClose }) => {
           />
 
           <label className="block mb-2">Category:</label>
-          {/* <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            className="w-full p-2 border rounded mb-4"
-          >
-            <option value="HARDWARE">Hardware</option>
-            <option value="NETWORK">Network</option>
-            <option value="SOFTWARE">Software</option>
-            <option value="PRINTER">Printer</option>
-            <option value="OTHER">Other</option>
-          </select> */}
-
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}

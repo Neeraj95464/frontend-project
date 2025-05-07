@@ -356,6 +356,18 @@ export default function TicketingPortal() {
             <p className="text-xs text-gray-500">
               {selectedTicket.description}
             </p>
+
+            <button
+              type="button"
+              className="text-indigo-600 hover:underline"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedTicketId(selectedTicket.id);
+                setIsTicketModalOpen(true);
+              }}
+            >
+              Actions
+            </button>
           </div>
 
           {/* Messages */}
