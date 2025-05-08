@@ -32,10 +32,15 @@ const Sidebar = () => {
       </button>
 
       {/* Sidebar */}
-      <aside
+      {/* <aside
         className={`fixed top-0 left-0 h-full bg-gray-800 text-white z-40 transform ${
           isOpen ? "translate-x-0 " : "-translate-x-full"
         } transition-transform lg:translate-x-0 w-46`}
+      > */}
+      <aside
+        className={`fixed top-0 left-0 h-full bg-gray-800 text-white z-40 transform ${
+          isOpen ? "translate-x-0 " : "-translate-x-full"
+        } transition-transform lg:translate-x-0 w-46 flex flex-col justify-between`}
       >
         {/* Header */}
         <div className="h-16 flex items-center justify-center bg-blue-600 shadow-md">
@@ -43,19 +48,8 @@ const Sidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-          {/* <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `flex items-center px-4 py-2 rounded-lg text-sm ${
-                isActive ? "bg-blue-600" : "hover:bg-gray-700"
-              }`
-            }
-          >
-            <FiHome className="mr-3" />
-            Dashboard
-          </NavLink> */}
-
+        {/* <nav className="flex-1 p-4 space-y-2 overflow-y-auto"> */}
+        <nav className="flex-grow p-4 space-y-2 overflow-y-auto">
           {/* For USER role */}
           {user?.role === "USER" && (
             <NavLink
@@ -167,6 +161,18 @@ const Sidebar = () => {
         </nav>
 
         {/* Footer Info */}
+        {/* <div className="p-4 border-t border-gray-700 text-xs text-gray-300">
+          <p>
+            Logged in as: <span className="font-medium">{user?.username}</span>
+          </p>
+          <p>
+            Role:{" "}
+            <span className="uppercase text-blue-400 font-semibold">
+              {user?.role}
+            </span>
+          </p>
+        </div> */}
+
         <div className="p-4 border-t border-gray-700 text-xs text-gray-300">
           <p>
             Logged in as: <span className="font-medium">{user?.username}</span>
@@ -176,6 +182,9 @@ const Sidebar = () => {
             <span className="uppercase text-blue-400 font-semibold">
               {user?.role}
             </span>
+          </p>
+          <p className="mt-2 text-center text-gray-400">
+            Copyright {new Date().getFullYear()} <br></br>© Safetag Enterprises
           </p>
         </div>
       </aside>
