@@ -608,36 +608,65 @@ export const fetchUserById = async (userId) => {
   }
 };
 
+// export const searchEmployees = async (query) => {
+//   try {
+//     const params = new URLSearchParams();
+
+//     if (/^\d+$/.test(query)) {
+//       console.log("Detected numeric input, assuming phoneNumber:", query);
+//       params.append("phoneNumber", query);
+//     } else if (query.includes("@")) {
+//       console.log("Detected email input:", query);
+//       params.append("email", query);
+//     } else if (
+//       query.startsWith("mv") ||
+//       query.startsWith("aw") ||
+//       query.startsWith("jb")
+//     ) {
+//       console.log("Detected employeeId format:", query);
+//       params.append("employeeId", query);
+//     } else {
+//       console.log("Detected username format:", query);
+//       params.append("username", query);
+//     }
+
+//     const apiUrl = `/users/search?${params.toString()}`;
+//     console.log("Generated API URL:", apiUrl); // ✅ Log API call
+
+//     const response = await api.get(apiUrl);
+
+//     // ✅ Fix: Extract 'content' from paginated response
+//     return response.data?.content ?? [];
+//   } catch (error) {
+//     console.error(
+//       "Error searching employees:",
+//       error?.response?.data || error.message
+//     );
+//     return [];
+//   }
+// };
+
 export const searchEmployees = async (query) => {
   try {
     const params = new URLSearchParams();
+    const lowerQuery = query.toLowerCase();
 
     if (/^\d+$/.test(query)) {
-      console.log("Detected numeric input, assuming phoneNumber:", query);
       params.append("phoneNumber", query);
     } else if (query.includes("@")) {
-      console.log("Detected email input:", query);
       params.append("email", query);
     } else if (
-      query.startsWith("mv") ||
-      query.startsWith("aw") ||
-      query.startsWith("jb")
+      lowerQuery.startsWith("mv") ||
+      lowerQuery.startsWith("aw") ||
+      lowerQuery.startsWith("jb")
     ) {
-      console.log("Detected employeeId format:", query);
       params.append("employeeId", query);
     } else {
-      console.log("Detected username format:", query);
       params.append("username", query);
     }
 
     const apiUrl = `/users/search?${params.toString()}`;
-    console.log("Generated API URL:", apiUrl); // ✅ Log API call
-
     const response = await api.get(apiUrl);
-
-    console.log("API Response Data:", response.data); // ✅ Log API response
-
-    // ✅ Fix: Extract 'content' from paginated response
     return response.data?.content ?? [];
   } catch (error) {
     console.error(

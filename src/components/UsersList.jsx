@@ -86,7 +86,7 @@ const UsersList = () => {
                   <TableHeaderCell>EMP ID</TableHeaderCell>
                   <TableHeaderCell>Username</TableHeaderCell>
                   <TableHeaderCell>Email</TableHeaderCell>
-                  <TableHeaderCell>Role</TableHeaderCell>
+                  <TableHeaderCell>Number</TableHeaderCell>
                   <TableHeaderCell>Department</TableHeaderCell>
                   <TableHeaderCell>Phone</TableHeaderCell>
                   <TableHeaderCell>Note</TableHeaderCell>
@@ -105,7 +105,7 @@ const UsersList = () => {
                       <TableCell>{user.employeeId}</TableCell>
                       <TableCell>{user.username}</TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.role}</TableCell>
+                      <TableCell>{user.phoneNumber}</TableCell>
                       <TableCell>{user.department}</TableCell>
                       <TableCell>{user.phoneNumber}</TableCell>
                       <TableCell>{user.note || "N/A"}</TableCell>
