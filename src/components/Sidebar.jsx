@@ -183,9 +183,9 @@ const Sidebar = () => {
               {user?.role}
             </span>
           </p>
-          <p className="mt-2 text-center text-gray-400">
+          {/* <p className="mt-2 text-center text-gray-400">
             Copyright {new Date().getFullYear()} <br></br>© Safetag Enterprises
-          </p>
+          </p> */}
         </div>
       </aside>
 

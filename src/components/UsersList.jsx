@@ -88,7 +88,7 @@ const UsersList = () => {
                   <TableHeaderCell>Email</TableHeaderCell>
                   <TableHeaderCell>Number</TableHeaderCell>
                   <TableHeaderCell>Department</TableHeaderCell>
-                  <TableHeaderCell>Phone</TableHeaderCell>
+                  <TableHeaderCell>Role</TableHeaderCell>
                   <TableHeaderCell>Note</TableHeaderCell>
                   <TableHeaderCell>Location</TableHeaderCell>
                   <TableHeaderCell>Site</TableHeaderCell>
@@ -107,7 +107,7 @@ const UsersList = () => {
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.phoneNumber}</TableCell>
                       <TableCell>{user.department}</TableCell>
-                      <TableCell>{user.phoneNumber}</TableCell>
+                      <TableCell>{user.role}</TableCell>
                       <TableCell>{user.note || "N/A"}</TableCell>
                       <TableCell>{user.location?.name || "N/A"}</TableCell>
                       <TableCell>{user.site?.name || "N/A"}</TableCell>
