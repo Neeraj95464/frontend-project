@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://aqua-gratuit-aa-knight.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://aqua-gratuit-aa-knight.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -45,7 +45,9 @@ export const getUserRoles = () => {
 };
 
 export const registerUser = async (userData) => {
+  console.log("your sending data is ", userData);
   const response = await api.post("/auth/register", userData);
+  console.log("your response is ", response.data);
   return response.data;
 };
 
@@ -178,7 +180,7 @@ export const updateTicketLocation = (id, locationId) =>
 export const updateTicketCCEmails = (id, ccEmails) =>
   api.put(`/tickets/${id}/cc-emails`, { ccEmails });
 
-export const getAllTickets = ({ page = 0, size = 50, status }) => {
+export const getAllTickets = ({ page = 0, size = 10, status }) => {
   return api.get("/user-assets/admin/tickets", {
     params: {
       page,
@@ -423,17 +425,30 @@ export const getUserAssets = async () => {
   }
 };
 
-export const getTickets = async (status = "OPEN") => {
-  try {
-    const response = await api.get(
-      `${API_URL}/user-assets/tickets?status=${status}`
-    );
+// export const getTickets = async (status = "OPEN") => {
+//   try {
+//     const response = await api.get(
+//       `${API_URL}/user-assets/tickets?status=${status}`
+//     );
 
-    // Axios doesn't have `.ok`, just use response.data
+//     // Axios doesn't have `.ok`, just use response.data
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching tickets:", error);
+//     return [];
+//   }
+// };
+
+export const getTickets = async ({ status = "OPEN", page = 0, size = 10 }) => {
+  try {
+    const response = await api.get(`${API_URL}/user-assets/tickets`, {
+      params: { status, page, size },
+    });
+    console.log("your ticket data are ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching tickets:", error);
-    return [];
+    throw error;
   }
 };
 
@@ -658,7 +673,8 @@ export const searchEmployees = async (query) => {
     } else if (
       lowerQuery.startsWith("mv") ||
       lowerQuery.startsWith("aw") ||
-      lowerQuery.startsWith("jb")
+      lowerQuery.startsWith("jb") ||
+      lowerQuery.startsWith("mk")
     ) {
       params.append("employeeId", query);
     } else {
@@ -679,13 +695,14 @@ export const searchEmployees = async (query) => {
 
 export const searchTickets = async (filters) => {
   try {
+    // Ensure you're sending the correct parameters in the request
     const response = await api.get(`${API_URL}/user-assets/search`, {
-      params: filters,
+      params: filters, // Filters will be sent as query parameters
     });
-    return response.data;
+    return response.data; // Return the paginated response data
   } catch (error) {
     console.error("Error fetching tickets:", error);
-    throw error;
+    throw error; // You can optionally handle this error elsewhere
   }
 };
 
@@ -782,6 +799,7 @@ export const deleteUser = async (userId) => {
 };
 
 // ================== LOCATION & DEPARTMENT MANAGEMENT ==================
+
 export const getSites = async () => {
   try {
     const response = await api.get("/sites");
@@ -807,4 +825,8 @@ export const getDepartments = async () => {
   } catch (error) {
     throw error;
   }
+};
+
+export const getAssignees = () => {
+  return api.get("user-assets/assignees"); // Update path based on your backend route
 };
