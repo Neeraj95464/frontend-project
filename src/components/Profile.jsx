@@ -1,68 +1,9 @@
-// import { useAuth } from "../components/AuthContext";
-// import React, { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-
-// const Profile = () => {
-//   const [user, setUser] = useState(null);
-//   const navigate = useNavigate();
-//   const { logout } = useAuth();
-
-//   useEffect(() => {
-//     const storedUser = JSON.parse(localStorage.getItem("user"));
-//     if (!storedUser) {
-//       navigate("/login");
-//     } else {
-//       setUser(storedUser);
-//     }
-//   }, [navigate]);
-
-//   const handleLogout = () => {
-//     logout();
-//     navigate("/login", { replace: true });
-//   };
-
-//   if (!user) return null;
-
-//   return (
-//     <div className="min-h-screen bg-gray-100 flex items-center justify-center py-10 px-4">
-//       <div className="bg-white shadow-xl rounded-lg p-8 max-w-md w-full">
-//         <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
-//           User Profile
-//         </h2>
-
-//         <div className="space-y-4">
-//           <div>
-//             <span className="font-semibold text-gray-600">Username:</span>
-//             <p className="text-lg">{user.username}</p>
-//           </div>
-
-//           <div>
-//             <span className="font-semibold text-gray-600">Role:</span>
-//             <p className="text-lg">{user.role}</p>
-//           </div>
-
-//           <div>
-//             <span className="font-semibold text-gray-600">Token:</span>
-//             <p className="text-sm break-words text-gray-500">{user.token}</p>
-//           </div>
-//         </div>
-
-//         <button
-//           onClick={handleLogout}
-//           className="mt-6 w-full bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition"
-//         >
-//           Logout
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Profile;
-
 import { useAuth } from "../components/AuthContext";
+import ChangePasswordModal from "../components/ChangePasswordModal";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+// Adjust the import path as needed
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -70,6 +11,7 @@ const Profile = () => {
   const [expTime, setExpTime] = useState("");
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const [showChangePassword, setShowChangePassword] = useState(false);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -132,13 +74,30 @@ const Profile = () => {
           </div>
         </div>
 
-        <button
-          onClick={handleLogout}
-          className="mt-8 w-full bg-red-600 text-white py-2 rounded-xl font-bold hover:bg-red-700 transition-all duration-200"
-        >
-          🚪 Logout
-        </button>
+        <div className="mt-8 space-y-3">
+          <button
+            onClick={() => setShowChangePassword(true)}
+            className="w-full bg-blue-600 text-white py-2 rounded-xl font-bold hover:bg-blue-700 transition-all duration-200"
+          >
+            🔒 Change Password
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="w-full bg-red-600 text-white py-2 rounded-xl font-bold hover:bg-red-700 transition-all duration-200"
+          >
+            🚪 Logout
+          </button>
+        </div>
       </div>
+
+      {/* Modal Integration */}
+      {showChangePassword && (
+        <ChangePasswordModal
+          isOpen={showChangePassword}
+          onClose={() => setShowChangePassword(false)}
+        />
+      )}
     </div>
   );
 };

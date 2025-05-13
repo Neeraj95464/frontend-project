@@ -1,5 +1,4 @@
 // import { getEmployees, searchEmployees, deleteUser } from "../services/api";
-// // Import API functions
 // import {
 //   TableContainer,
 //   Table,
@@ -14,14 +13,14 @@
 //   Button,
 //   Input,
 // } from "@/components/ui";
-// import { Pencil, Trash } from "lucide-react";
+// import { Pencil, Trash, ChevronLeft, ChevronRight } from "lucide-react";
 // import { useEffect, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 
 // const UsersList = () => {
 //   const [users, setUsers] = useState([]);
 //   const [page, setPage] = useState(0);
-//   const [hasMore, setHasMore] = useState(true);
+//   const [totalPages, setTotalPages] = useState(1);
 //   const [searchQuery, setSearchQuery] = useState("");
 //   const navigate = useNavigate();
 
@@ -30,76 +29,127 @@
 //   }, [page]);
 
 //   const loadUsers = async (pageNumber) => {
-//     const data = await getEmployees(pageNumber);
-//     setUsers(Array.isArray(data.content) ? data.content : []);
-//     setHasMore(!data.last);
+//     try {
+//       const data = await getEmployees(pageNumber);
+//       setUsers(data?.content || []);
+//       setTotalPages(data?.totalPages || 1);
+//     } catch (error) {
+//       console.error("Error loading users:", error);
+//     }
 //   };
 
 //   const handleSearch = async () => {
-//     const data = await searchEmployees(searchQuery);
-//     setUsers(Array.isArray(data) ? data : []);
+//     try {
+//       const data = await searchEmployees(searchQuery);
+//       setUsers(data || []);
+//       setTotalPages(1); // Disable paging during search
+//     } catch (error) {
+//       console.error("Search error:", error);
+//     }
 //   };
 
 //   const handleEdit = (userId) => navigate(`/edit-user/${userId}`);
-
 //   const handleDelete = async (userId) => {
 //     if (!window.confirm("Are you sure you want to delete this user?")) return;
-
 //     if (await deleteUser(userId)) {
-//       setUsers(users.filter((user) => user.id !== userId));
+//       setUsers((prev) => prev.filter((user) => user.id !== userId));
 //     }
 //   };
 
 //   const handleAddEmployee = () => navigate(`/create-user`);
-
 //   const handleSerialClick = (serialNumber) =>
 //     navigate(`/asset/${serialNumber}`);
 
+//   const handlePrevPage = () => {
+//     if (page > 0) setPage(page - 1);
+//   };
+
+//   const handleNextPage = () => {
+//     if (page < totalPages - 1) setPage(page + 1);
+//   };
+
 //   return (
-//     <div className="lg:ml-40 pt-16 mr-8">
+//     <div className="lg:ml-40 pt-16 pr-8">
 //       <Card>
-//         <CardContent>
-//           <div className="flex justify-between items-center mb-4">
-//             <h2 className="text-2xl font-bold">User List</h2>
-//             <div className="flex space-x-4 items-center">
+//         <CardContent className="text-sm">
+//           {/* Header with title + controls */}
+//           <div className="flex justify-between items-center mb-6">
+//             <div className="flex items-center gap-2">
+//               <Button
+//                 onClick={handlePrevPage}
+//                 disabled={page === 0}
+//                 className="p-1 text-gray-600 bg-white border rounded hover:bg-gray-100"
+//               >
+//                 <ChevronLeft size={18} />
+//               </Button>
+
+//               <h2 className="text-xl font-semibold">User List</h2>
+
+//               <Button
+//                 onClick={handleNextPage}
+//                 disabled={page >= totalPages - 1}
+//                 className="p-1 text-gray-600 bg-white border rounded hover:bg-gray-100"
+//               >
+//                 <ChevronRight size={18} />
+//               </Button>
+
+//               <span className="ml-2 text-xs text-gray-500">
+//                 Page {page + 1} of {totalPages}
+//               </span>
+//             </div>
+
+//             <div className="flex items-center gap-2">
 //               <Input
 //                 type="text"
 //                 placeholder="Search Employee..."
 //                 value={searchQuery}
 //                 onChange={(e) => setSearchQuery(e.target.value)}
-//                 className="w-64"
+//                 className="w-52 text-xs"
 //               />
-//               <Button onClick={handleSearch} className="bg-green-600">
+//               <Button
+//                 onClick={handleSearch}
+//                 className="bg-green-600 text-xs px-3"
+//               >
 //                 Search
 //               </Button>
-//               <Button className="bg-blue-600" onClick={handleAddEmployee}>
+//               <Button
+//                 onClick={handleAddEmployee}
+//                 className="bg-blue-600 text-xs px-3"
+//               >
 //                 Add Employee
 //               </Button>
 //             </div>
 //           </div>
 
-//           <TableContainer>
+//           {/* Table */}
+//           <TableContainer className="max-h-[500px] overflow-y-auto border rounded">
 //             <Table>
-//               {/* ✅ Sticky Table Header */}
-//               <TableHead>
+//               <TableHead className="sticky top-0 z-10 bg-gray-100">
 //                 <TableRowHeader>
-//                   <TableHeaderCell>EMP ID</TableHeaderCell>
-//                   <TableHeaderCell>Username</TableHeaderCell>
-//                   <TableHeaderCell>Email</TableHeaderCell>
-//                   <TableHeaderCell>Number</TableHeaderCell>
-//                   <TableHeaderCell>Department</TableHeaderCell>
-//                   <TableHeaderCell>Role</TableHeaderCell>
-//                   <TableHeaderCell>Note</TableHeaderCell>
-//                   <TableHeaderCell>Location</TableHeaderCell>
-//                   <TableHeaderCell>Site</TableHeaderCell>
-//                   <TableHeaderCell>Assigned Assets</TableHeaderCell>
-//                   <TableHeaderCell>Actions</TableHeaderCell>
+//                   {[
+//                     "EMP ID",
+//                     "Username",
+//                     "Email",
+//                     "Phone",
+//                     "Dept.",
+//                     "Role",
+//                     "Note",
+//                     "Location",
+//                     "Site",
+//                     "Assets",
+//                     "Actions",
+//                   ].map((label, idx) => (
+//                     <TableHeaderCell
+//                       key={idx}
+//                       className="text-xs whitespace-nowrap"
+//                     >
+//                       {label}
+//                     </TableHeaderCell>
+//                   ))}
 //                 </TableRowHeader>
 //               </TableHead>
-
-//               {/* ✅ Scrollable Table Body */}
 //               <TableBody>
-//                 {Array.isArray(users) && users.length > 0 ? (
+//                 {users.length > 0 ? (
 //                   users.map((user) => (
 //                     <TableRow key={user.id}>
 //                       <TableCell>{user.employeeId}</TableCell>
@@ -111,17 +161,16 @@
 //                       <TableCell>{user.note || "N/A"}</TableCell>
 //                       <TableCell>{user.location?.name || "N/A"}</TableCell>
 //                       <TableCell>{user.site?.name || "N/A"}</TableCell>
-//                       <TableCell>
-//                         {Array.isArray(user.serialNumbers) &&
-//                         user.serialNumbers.length > 0
+//                       <TableCell className="max-w-[180px] break-words">
+//                         {user.serialNumbers?.length > 0
 //                           ? user.serialNumbers
-//                               .map((asset, index) => (
+//                               .map((asset, idx) => (
 //                                 <span
-//                                   key={index}
-//                                   className="text-blue-600 cursor-pointer hover:underline"
+//                                   key={idx}
 //                                   onClick={() =>
 //                                     handleSerialClick(asset.serialNumber)
 //                                   }
+//                                   className="text-blue-600 cursor-pointer hover:underline"
 //                                 >
 //                                   {asset.serialNumber}
 //                                 </span>
@@ -129,18 +178,18 @@
 //                               .reduce((prev, curr) => [prev, ", ", curr])
 //                           : "None"}
 //                       </TableCell>
-//                       <TableCell className="flex space-x-2">
+//                       <TableCell className="flex gap-2">
 //                         <button
 //                           onClick={() => handleEdit(user.id)}
 //                           className="text-blue-500 hover:text-blue-700"
 //                         >
-//                           <Pencil size={18} />
+//                           <Pencil size={16} />
 //                         </button>
 //                         <button
 //                           onClick={() => handleDelete(user.id)}
 //                           className="text-red-500 hover:text-red-700"
 //                         >
-//                           <Trash size={18} />
+//                           <Trash size={16} />
 //                         </button>
 //                       </TableCell>
 //                     </TableRow>
@@ -149,7 +198,7 @@
 //                   <TableRow>
 //                     <TableCell
 //                       colSpan={11}
-//                       className="text-center text-gray-500"
+//                       className="text-center py-6 text-gray-500"
 //                     >
 //                       No users found
 //                     </TableCell>
@@ -158,24 +207,6 @@
 //               </TableBody>
 //             </Table>
 //           </TableContainer>
-
-//           {/* Pagination Controls */}
-//           <div className="mt-6 flex justify-between">
-//             <Button
-//               onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
-//               disabled={page === 0}
-//               className="bg-gray-500 hover:bg-gray-600 disabled:opacity-50"
-//             >
-//               Previous
-//             </Button>
-//             <Button
-//               onClick={() => setPage((prev) => (hasMore ? prev + 1 : prev))}
-//               disabled={!hasMore}
-//               className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
-//             >
-//               Next
-//             </Button>
-//           </div>
 //         </CardContent>
 //       </Card>
 //     </div>
@@ -206,29 +237,64 @@ import { useNavigate } from "react-router-dom";
 const UsersList = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [size, setSize] = useState(10); // Default size from backend
+  const [paginationInfo, setPaginationInfo] = useState({
+    totalElements: 0,
+    totalPages: 0,
+    last: false,
+  });
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadUsers(page);
+    fetchUsers(page);
   }, [page]);
 
-  const loadUsers = async (pageNumber) => {
+  // const fetchUsers = async (pageNumber) => {
+  //   try {
+  //     const data = await getEmployees(pageNumber);
+  //     setUsers(data?.content || []);
+  //     setPaginationInfo({
+  //       totalPages: data?.totalPages || 1,
+  //       last: data?.last,
+  //     });
+  //   } catch (error) {
+  //     console.error("Error loading users:", error);
+  //   }
+  // };
+
+  const fetchUsers = async (customPage = page) => {
     try {
-      const data = await getEmployees(pageNumber);
-      setUsers(data?.content || []);
-      setHasMore(!data?.last);
+      const res = await getEmployees(customPage); // Or use getEmployees({ page: customPage, size }) if your API supports it
+
+      const {
+        content = [],
+        page: pageNumber,
+        size: pageSize,
+        totalElements,
+        totalPages,
+        last,
+      } = res || {};
+
+      setUsers(content);
+      setPaginationInfo({ totalElements, totalPages, last });
+      setPage(pageNumber); // Sync page from backend
+      setSize(pageSize);
     } catch (error) {
       console.error("Error loading users:", error);
     }
   };
 
   const handleSearch = async () => {
+    if (searchQuery.trim() === "") {
+      fetchUsers(0);
+      setPage(0);
+      return;
+    }
     try {
       const data = await searchEmployees(searchQuery);
       setUsers(data || []);
-      setHasMore(false); // When searching, disable pagination
+      setPaginationInfo({ totalPages: 1, last: true }); // disable paging
     } catch (error) {
       console.error("Search error:", error);
     }
@@ -251,7 +317,45 @@ const UsersList = () => {
       <Card>
         <CardContent className="text-sm">
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">User List</h2>
+            {/* Left: Heading and Pagination Controls */}
+            <div className="flex items-center gap-3">
+              <h2 className="text-xl font-semibold">User List</h2>
+            </div>
+            {/* flex items-center justify-center   */}
+            <div className="mb-4 gap-2 flex items-center">
+              <button
+                onClick={() => {
+                  const newPage = Math.max(page - 1, 0);
+                  setPage(newPage);
+                  fetchUsers(newPage); // Call your function after updating page
+                }}
+                disabled={page === 0}
+                className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+              >
+                &lt;
+              </button>
+
+              <span className="text-sm text-gray-700">
+                <strong>{page + 1}</strong> of{" "}
+                <strong>{paginationInfo.totalPages}</strong> Total:{" "}
+                <strong>{paginationInfo.totalElements}</strong>
+              </span>
+
+              <button
+                onClick={() => {
+                  const newPage =
+                    page + 1 < paginationInfo.totalPages ? page + 1 : page;
+                  setPage(newPage);
+                  fetchUsers(newPage); // Call your function after updating page
+                }}
+                disabled={paginationInfo.last}
+                className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
+              >
+                &gt;
+              </button>
+            </div>
+
+            {/* Right: Search & Add */}
             <div className="flex space-x-2">
               <Input
                 type="text"
@@ -355,24 +459,6 @@ const UsersList = () => {
               </TableBody>
             </Table>
           </TableContainer>
-
-          {/* Pagination Controls */}
-          <div className="mt-6 flex justify-between">
-            <Button
-              onClick={() => setPage((prev) => Math.max(prev - 1, 0))}
-              disabled={page === 0}
-              className="bg-gray-500 hover:bg-gray-600 disabled:opacity-50 text-xs"
-            >
-              Previous
-            </Button>
-            <Button
-              onClick={() => hasMore && setPage((prev) => prev + 1)}
-              disabled={!hasMore}
-              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-xs"
-            >
-              Next
-            </Button>
-          </div>
         </CardContent>
       </Card>
     </div>

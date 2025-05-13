@@ -66,33 +66,6 @@ export default function TicketingPortal() {
     }
   };
 
-  // const fetchTickets = async (status = "OPEN", customPage = page) => {
-  //   try {
-  //     const res = await getTickets({
-  //       status,
-  //       page: customPage,
-  //       size,
-  //       // Assuming you have this from auth context
-  //     });
-
-  //     const {
-  //       content = [],
-  //       pageNumber,
-  //       pageSize,
-  //       totalElements,
-  //       totalPages,
-  //       last,
-  //     } = res;
-
-  //     setFilteredTickets(content);
-  //     setPaginationInfo({ totalElements, totalPages, last });
-  //     setPage(pageNumber); // Sync page
-  //     setSize(pageSize);
-  //   } catch (error) {
-  //     console.error("Error fetching tickets:", error);
-  //   }
-  // };
-
   const handleAddMessage = async () => {
     if (!newMessage.trim()) return;
 

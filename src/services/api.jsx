@@ -63,7 +63,6 @@ export const loginUser = async (employeeId, password) => {
     if (response.data.token) {
       localStorage.setItem("user", JSON.stringify(response.data));
     }
-    console.log(response.data);
     return response.data;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -425,26 +424,11 @@ export const getUserAssets = async () => {
   }
 };
 
-// export const getTickets = async (status = "OPEN") => {
-//   try {
-//     const response = await api.get(
-//       `${API_URL}/user-assets/tickets?status=${status}`
-//     );
-
-//     // Axios doesn't have `.ok`, just use response.data
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching tickets:", error);
-//     return [];
-//   }
-// };
-
 export const getTickets = async ({ status = "OPEN", page = 0, size = 10 }) => {
   try {
     const response = await api.get(`${API_URL}/user-assets/tickets`, {
       params: { status, page, size },
     });
-    console.log("your ticket data are ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching tickets:", error);
@@ -605,13 +589,26 @@ export const updateAssetStatusToRepair = async (
 
 // ================== USERS & EMPLOYEES ==================
 
-export const getEmployees = async () => {
+export const getEmployees = async (page = 0, size = 10) => {
   try {
-    const response = await api.get("/users");
-    console.log("your employee response is ", response.data);
+    const response = await api.get(`/users`, {
+      params: { page, size },
+    });
+
     return response.data;
   } catch (error) {
     throw error;
+  }
+};
+export const changePassword = async (oldPassword, newPassword) => {
+  try {
+    const response = await api.put("/users/change-password", {
+      oldPassword,
+      newPassword,
+    });
+    return response.data.message; // Only return the message
+  } catch (error) {
+    throw new Error(error.response?.data?.message || "Password change failed.");
   }
 };
 
