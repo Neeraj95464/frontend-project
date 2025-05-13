@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
 // const API_URL = "http://localhost:7355/api";
-const API_URL = "https://latex-pens-draft-rpg.trycloudflare.com/";
+const API_URL = "https://latex-pens-draft-rpg.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
