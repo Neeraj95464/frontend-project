@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
 // const API_URL = "http://localhost:7355/api";
-const API_URL = "https://aqua-gratuit-aa-knight.trycloudflare.com/api";
+const API_URL = "https://latex-pens-draft-rpg.trycloudflare.com/";
 
 // Create Axios instance
 const api = axios.create({
@@ -608,6 +608,7 @@ export const updateAssetStatusToRepair = async (
 export const getEmployees = async () => {
   try {
     const response = await api.get("/users");
+    console.log("your employee response is ", response.data);
     return response.data;
   } catch (error) {
     throw error;
