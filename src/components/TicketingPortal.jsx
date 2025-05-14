@@ -37,6 +37,7 @@ export default function TicketingPortal() {
     last: false,
   });
   const [loading, setLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   const handleStatusChange = (e) => {
     const status = e.target.value;
@@ -66,9 +67,28 @@ export default function TicketingPortal() {
     }
   };
 
+  // const handleAddMessage = async () => {
+  //   if (!newMessage.trim()) return;
+
+  //   try {
+  //     await addMessageToTicket(selectedTicket.id, newMessage);
+  //     setNewMessage("");
+  //     setSelectedTicket((prev) => ({
+  //       ...prev,
+  //       messages: [
+  //         ...prev.messages,
+  //         { sender: "You", message: newMessage, sentAt: new Date() },
+  //       ],
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error adding message: ", error);
+  //   }
+  // };
+
   const handleAddMessage = async () => {
     if (!newMessage.trim()) return;
 
+    setIsSending(true);
     try {
       await addMessageToTicket(selectedTicket.id, newMessage);
       setNewMessage("");
@@ -81,6 +101,8 @@ export default function TicketingPortal() {
       }));
     } catch (error) {
       console.error("Error adding message: ", error);
+    } finally {
+      setIsSending(false); // Re-enable the button
     }
   };
 
@@ -628,12 +650,20 @@ export default function TicketingPortal() {
               placeholder="Write your message..."
             />
             <div className="flex items-center gap-2 mt-2">
-              <button
+              {/* <button
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all"
                 onClick={handleAddMessage}
               >
                 Send
-              </button>
+              </button> */}
+
+              <Button
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleAddMessage}
+                disabled={isSending}
+              >
+                {isSending ? "Sending..." : "Send"}
+              </Button>
             </div>
           </div>
         </div>

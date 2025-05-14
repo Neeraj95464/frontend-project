@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://latex-pens-draft-rpg.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://latex-pens-draft-rpg.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -169,7 +169,22 @@ export const updateTicketStatus = async (ticketId, status) => {
   }
 };
 
-// export const updateTicketStatus = (id, status) => api.put(`/tickets/${id}/status`, { status });
+export const updateTicketCcEmail = async (ticketId, email, add) => {
+  try {
+    const response = await api.put(
+      `${API_URL}/user-assets/${ticketId}/cc-email`,
+      {
+        email,
+        add,
+      }
+    );
+    return response.data; // List of updated CC emails
+  } catch (error) {
+    console.error("Failed to update CC email:", error);
+    throw error.response?.data?.message || "Failed to update CC email.";
+  }
+};
+
 export const updateTicketAssignee = (ticketId, assigneeId) => {
   return api.put(`user-assets/tickets/${ticketId}/assign/${assigneeId}`);
 };
