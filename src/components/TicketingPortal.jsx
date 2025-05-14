@@ -11,7 +11,6 @@ import TicketModal from "./TicketFormModal";
 import { Button, Card } from "./ui";
 import { MoreVertical } from "lucide-react";
 import { useState, useEffect } from "react";
-import { FiMenu, FiSearch, FiUser, FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 
 export default function TicketingPortal() {
@@ -30,7 +29,7 @@ export default function TicketingPortal() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(0);
-  const [size, setSize] = useState(10); // Default size from backend
+  const [size, setSize] = useState(20); // Default size from backend
   const [paginationInfo, setPaginationInfo] = useState({
     totalElements: 0,
     totalPages: 0,
@@ -66,24 +65,6 @@ export default function TicketingPortal() {
       console.error("Error fetching tickets:", error);
     }
   };
-
-  // const handleAddMessage = async () => {
-  //   if (!newMessage.trim()) return;
-
-  //   try {
-  //     await addMessageToTicket(selectedTicket.id, newMessage);
-  //     setNewMessage("");
-  //     setSelectedTicket((prev) => ({
-  //       ...prev,
-  //       messages: [
-  //         ...prev.messages,
-  //         { sender: "You", message: newMessage, sentAt: new Date() },
-  //       ],
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error adding message: ", error);
-  //   }
-  // };
 
   const handleAddMessage = async () => {
     if (!newMessage.trim()) return;
@@ -170,13 +151,8 @@ export default function TicketingPortal() {
   }, []);
 
   return (
-    <div className="lg:ml-40 pt-16  mr-8">
-      {/* Left Section - Ticket List */}
-      <div
-      // className={`w-full lg:w-2/3 p-1 transition-all ${
-      //   selectedTicket ? "lg:w-1/2" : "lg:w-2/3"
-      // }`}
-      >
+    <div className="lg:ml-40 pt-16">
+      <div>
         <TicketModal
           isOpen={isDialogOpen}
           onClose={() => {
@@ -185,36 +161,32 @@ export default function TicketingPortal() {
           }}
           className="z-50"
         />
-
         <Card>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 items-center mb-4">
-            {/* <h2 className="text-xl font-semibold mb-4">Your Tickets</h2> */}
-
+          {/* Top action buttons container */}
+          <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center mb-4 overflow-x-auto">
             <Button
               onClick={() => setIsDialogOpen(true)}
-              className="mb-4 bg-green-600"
+              className="bg-green-600 whitespace-nowrap"
             >
               + Create Ticket
             </Button>
             <Button
-              className="mb-4 bg-green-600 hover:bg-green-700"
               onClick={() => navigate("/user-assets")}
+              className="bg-green-600 hover:bg-green-700 whitespace-nowrap"
             >
               My Assets
             </Button>
 
             {userRole === "ADMIN" && (
               <button
-                className="px-4 py-2 rounded-lg shadow-md bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-blue-400 mb-4"
+                className="px-4 py-2 rounded-lg shadow-md bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-blue-400 whitespace-nowrap"
                 onClick={() => navigate("/ticket/admin")}
               >
                 Admin Tickets
               </button>
             )}
-            <div className="mb-4">
-              {/* <label className="block text-sm font-medium text-gray-700">
-                Filter by Status:
-              </label> */}
+
+            <div className="min-w-[150px]">
               <select
                 value={selectedStatus}
                 onChange={handleStatusChange}
@@ -228,62 +200,56 @@ export default function TicketingPortal() {
               </select>
             </div>
 
-            <div className="mb-4">
-              <form
-                onSubmit={handleSearchSubmit}
-                className="w-full flex items-center gap-2 rounded-md px-3 py-2 border border-gray-300 bg-white shadow-sm focus-within:ring-2 focus-within:ring-green-500"
+            <form
+              onSubmit={handleSearchSubmit}
+              className="flex items-center gap-2 px-3 py-2 border rounded-md shadow-sm bg-white focus-within:ring-2 focus-within:ring-green-500"
+            >
+              <svg
+                className="w-5 h-5 text-gray-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-5 h-5 text-gray-400"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                  />
-                </svg>
-
-                <input
-                  type="text"
-                  placeholder="Search Tickets..."
-                  className="bg-transparent focus:outline-none text-sm text-gray-800 w-full placeholder-gray-500"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  aria-label="Search Tickets"
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
                 />
-              </form>
-            </div>
-            {/* flex items-center justify-center   */}
-            <div className="mb-4 gap-2 flex items-center">
+              </svg>
+              <input
+                type="text"
+                placeholder="Search Tickets..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                className="bg-transparent focus:outline-none text-sm text-gray-800 w-full placeholder-gray-500"
+              />
+            </form>
+
+            {/* Pagination Controls */}
+            <div className="flex items-center gap-2">
               <button
                 onClick={() => {
                   const newPage = Math.max(page - 1, 0);
                   setPage(newPage);
-                  fetchTickets(selectedStatus, newPage); // Call your function after updating page
+                  fetchTickets(selectedStatus, newPage);
                 }}
                 disabled={page === 0}
                 className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
               >
                 &lt;
               </button>
-
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-gray-700 whitespace-nowrap">
                 <strong>{page + 1}</strong> of{" "}
                 <strong>{paginationInfo.totalPages}</strong> Total:{" "}
                 <strong>{paginationInfo.totalElements}</strong>
               </span>
-
               <button
                 onClick={() => {
                   const newPage =
                     page + 1 < paginationInfo.totalPages ? page + 1 : page;
                   setPage(newPage);
-                  fetchTickets(selectedStatus, newPage); // Call your function after updating page
+                  fetchTickets(selectedStatus, newPage);
                 }}
                 disabled={paginationInfo.last}
                 className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
@@ -293,161 +259,14 @@ export default function TicketingPortal() {
             </div>
           </div>
 
+          {/* Table Container */}
           {filteredTickets.length === 0 ? (
             <p className="text-gray-500">No tickets available.</p>
           ) : (
-            <div className="h-[500px] overflow-y-auto overflow-x-auto border rounded-lg">
-              {/* <table className="min-w-full divide-y divide-gray-200">
-                <thead className="sticky top-0 bg-white">
-                  <tr>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      ID
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Title
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Status
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Category
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Location
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Assignee
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Employee
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Asset Tag
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Created At
-                    </th>
-                    {userRole !== "user" && (
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                        Actions
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {filteredTickets.map((ticket) => (
-                    <tr
-                      key={ticket.id}
-                      className="hover:bg-gray-50 transition cursor-pointer"
-                      onClick={() => setSelectedTicket(ticket)}
-                    >
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {ticket.id}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {ticket.title}
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        <span
-                          className={`px-2 py-1 rounded text-white text-xs ${
-                            ticket.status === "OPEN"
-                              ? "bg-green-500"
-                              : ticket.status === "IN_PROGRESS"
-                              ? "bg-yellow-500"
-                              : ticket.status === "RESOLVED"
-                              ? "bg-blue-500"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          {ticket.status.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {ticket.category}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {ticket.locationName}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-blue-600">
-                        {userRole !== "user" ? (
-                          <button
-                            type="button"
-                            className="hover:underline cursor-pointer text-blue-600"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedUser(ticket.assignee);
-                            }}
-                          >
-                            {ticket.assignee || "Unassigned"}
-                          </button>
-                        ) : (
-                          <span className="text-gray-800">
-                            {ticket.assignee || "Unassigned"}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-blue-600">
-                        {userRole !== "user" ? (
-                          <button
-                            type="button"
-                            className="hover:underline cursor-pointer text-blue-600"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedUser(ticket.employee);
-                            }}
-                          >
-                            {ticket.employee || "Unassigned"}
-                          </button>
-                        ) : (
-                          <span className="text-gray-800">
-                            {ticket.employee || "Unassigned"}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        {userRole !== "user" ? (
-                          <button
-                            type="button"
-                            className="text-blue-600 hover:underline cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/asset/${ticket.assetTag}`);
-                            }}
-                          >
-                            {ticket.assetTag || "No Asset"}
-                          </button>
-                        ) : (
-                          <span className="text-gray-800">
-                            {ticket.assetTag || "No Asset"}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-600">
-                        {new Date(ticket.createdAt).toLocaleDateString()}
-                      </td>
-                      {userRole !== "user" && (
-                        <td className="px-4 py-2 text-sm space-x-2">
-                          <button
-                            type="button"
-                            className="text-indigo-600 hover:underline"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedTicketId(ticket.id);
-                              setIsTicketModalOpen(true);
-                            }}
-                          >
-                            Actions
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table> */}
-
-              <div className="overflow-x-auto border rounded-lg shadow-sm">
-                <table className="min-w-full text-sm text-left text-gray-700">
-                  <thead className="sticky top-0 bg-gray-100 text-xs font-semibold uppercase text-gray-600">
+            <div className="overflow-x-auto border rounded-lg shadow-sm">
+              <div className="min-w-[1600px]">
+                <table className="w-full text-sm text-left text-gray-700">
+                  <thead className="sticky top-0 bg-gray-100 text-xs font-semibold uppercase text-gray-600 z-10">
                     <tr>
                       {[
                         "ID",
@@ -459,6 +278,10 @@ export default function TicketingPortal() {
                         "Employee",
                         "Asset Tag",
                         "Created At",
+                        "Responsed At",
+                        "Due Date",
+                        "Updated At",
+                        "Closed At",
                         ...(userRole !== "user" ? ["Actions"] : []),
                       ].map((header, i) => (
                         <th key={i} className="px-3 py-2 whitespace-nowrap">
@@ -475,7 +298,7 @@ export default function TicketingPortal() {
                         onClick={() => setSelectedTicket(ticket)}
                       >
                         <td className="px-3 py-2">{ticket.id}</td>
-                        <td className="px-3 py-2 max-w-[150px] truncate">
+                        <td className="px-3 py-2 min-w-[200px] max-w-[300px] truncate">
                           {ticket.title}
                         </td>
                         <td className="px-3 py-2">
@@ -550,8 +373,20 @@ export default function TicketingPortal() {
                             </span>
                           )}
                         </td>
-                        <td className="px-3 py-2 text-gray-600">
-                          {new Date(ticket.createdAt).toLocaleDateString()}
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.createdAt}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.firstRespondedAt}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.dueDate}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.lastUpdated}
+                        </td>
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.closedAt}
                         </td>
                         {userRole !== "user" && (
                           <td className="px-3 py-2">

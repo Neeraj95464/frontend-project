@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://latex-pens-draft-rpg.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://latex-pens-draft-rpg.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -444,6 +444,7 @@ export const getTickets = async ({ status = "OPEN", page = 0, size = 10 }) => {
     const response = await api.get(`${API_URL}/user-assets/tickets`, {
       params: { status, page, size },
     });
+    console.log("your ticket data are ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching tickets:", error);
