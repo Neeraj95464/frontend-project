@@ -428,7 +428,7 @@ export default function TicketingPortal() {
 
             <div className="flex items-center gap-2">
               {/* Action Icon */}
-              <button
+              {/* {userRole !== "user" ? (<button
                 className="p-2 rounded-full hover:bg-gray-100 transition"
                 title="Ticket actions"
                 onClick={(e) => {
@@ -438,7 +438,22 @@ export default function TicketingPortal() {
                 }}
               >
                 <MoreVertical className="w-4 h-4 text-gray-600" />
-              </button>
+              </button>)} */}
+
+              {userRole !== "user" && (
+                <button
+                  className="p-2 rounded-full hover:bg-gray-100 transition"
+                  title="Ticket actions"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedTicketId(selectedTicket.id);
+                    setIsTicketModalOpen(true);
+                  }}
+                >
+                  <MoreVertical className="w-4 h-4 text-gray-600" />
+                </button>
+              )}
+
               {/* Close Button */}
               <button
                 className="text-lg text-gray-500 hover:text-gray-700 transition"
