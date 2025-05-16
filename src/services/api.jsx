@@ -618,7 +618,7 @@ export const getEmployees = async (page = 0, size = 10) => {
 };
 export const changePassword = async (oldPassword, newPassword) => {
   try {
-    const response = await api.put("/users/change-password", {
+    const response = await api.put("/auth/change-password", {
       oldPassword,
       newPassword,
     });
