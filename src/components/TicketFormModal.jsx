@@ -58,7 +58,7 @@ const TicketModal = ({ isOpen, onClose }) => {
     "XENTRY",
   ];
 
-  const hrCategories = ["PAYROLL", "PAYSLIP", "POLICY", "HIRING"];
+  const hrCategories = ["HIRING", "PAYROLL", "POLICY", "PAYSLIP"];
 
   useEffect(() => {
     const fetchUserData = async () => {
