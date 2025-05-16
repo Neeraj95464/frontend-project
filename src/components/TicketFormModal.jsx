@@ -18,8 +18,7 @@ const TicketModal = ({ isOpen, onClose }) => {
   const [location, setLocation] = useState("");
   const [locationName, setlocationName] = useState("");
   const [asset, setAsset] = useState("");
-  const [selectedAsset, setSelectedAsset] = useState(""); // Tracks the actual asset selected
-
+  const [selectedAsset, setSelectedAsset] = useState("");
   const [assets, setAssets] = useState([]);
   const [userRole, setUserRole] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,7 +33,7 @@ const TicketModal = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [ticketDepartment, setticketDepartment] = useState("IT"); // Default to IT
 
-  const categories = [
+  const itCategories = [
     "HARDWARE",
     "SOFTWARE",
     "NETWORK",
@@ -58,6 +57,8 @@ const TicketModal = ({ isOpen, onClose }) => {
     "WEB_APPLICATION",
     "XENTRY",
   ];
+
+  const hrCategories = ["PAYROLL", "PAYSLIP", "POLICY", "HIRING"];
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -210,10 +211,17 @@ const TicketModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const selectAsset = (selectedAsset) => {
-    setAsset(selectedAsset.assetTag);
-    setSelectedAsset(selectedAsset.assetTag);
-    setAssetSearchQuery(`${selectedAsset.name} (${selectedAsset.assetTag})`);
+  // const selectAsset = (selectedAsset) => {
+  //   setAsset(selectedAsset.assetTag);
+  //   setSelectedAsset(selectedAsset.assetTag);
+  //   setAssetSearchQuery(`${selectedAsset.name} (${selectedAsset.assetTag})`);
+  //   setMatchedAssets([]);
+  //   setAssetError("");
+  // };
+
+  const selectAsset = (asset) => {
+    setSelectedAsset(asset.assetTag); // updates <select> value
+    setAssetSearchQuery(`${asset.name} (${asset.assetTag})`);
     setMatchedAssets([]);
     setAssetError("");
   };
@@ -313,11 +321,14 @@ const TicketModal = ({ isOpen, onClose }) => {
             onChange={(e) => setCategory(e.target.value)}
             className="w-full p-2 border rounded mb-4"
           >
-            {categories.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat.charAt(0) + cat.slice(1).toLowerCase()}
-              </option>
-            ))}
+            {/* {categories.map((cat) => ( */}
+            {(ticketDepartment === "HR" ? hrCategories : itCategories).map(
+              (cat) => (
+                <option key={cat} value={cat}>
+                  {cat.charAt(0) + cat.slice(1).toLowerCase()}
+                </option>
+              )
+            )}
           </select>
 
           <label className="block mb-2">Employee:</label>
@@ -353,9 +364,10 @@ const TicketModal = ({ isOpen, onClose }) => {
               )}
             </>
           )}
-
-          <label className="block mb-2">Asset:</label>
-          {userRole === "ADMIN" && (
+          {ticketDepartment === "IT" && (
+            <label className="block mb-2">Asset:</label>
+          )}
+          {/* {userRole === "ADMIN" && (
             <>
               <input
                 type="text"
@@ -381,9 +393,51 @@ const TicketModal = ({ isOpen, onClose }) => {
                 </ul>
               )}
             </>
-          )}
+          )} */}
 
-          <select
+          {/* {userRole === "ADMIN" && ticketDepartment === "IT" && (
+            <>
+              <label className="block mb-2">Asset:</label>
+              <input
+                type="text"
+                value={assetSearchQuery}
+                onChange={handleAssetSearchChange}
+                placeholder="Search Asset..."
+                className="w-full p-2 border rounded mb-2"
+              />
+              {assetError && (
+                <p className="text-red-500 text-sm">{assetError}</p>
+              )}
+              {matchedAssets.length > 0 && (
+                <ul className="border rounded bg-white shadow max-h-40 overflow-auto">
+                  {matchedAssets.map((a) => (
+                    <li
+                      key={a.assetTag}
+                      onClick={() => selectAsset(a)}
+                      className="p-2 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {a.name} ({a.assetTag})
+                    </li>
+                  ))}
+                </ul>
+              )}
+
+              <select
+                value={selectedAsset}
+                onChange={handleDropdownChange}
+                className="w-full p-2 border rounded mb-4"
+              >
+                <option value="">Select an asset</option>
+                {assets.map((a) => (
+                  <option key={a.id} value={a.assetTag}>
+                    {a.name} ({a.assetTag})
+                  </option>
+                ))}
+              </select>
+            </>
+          )} */}
+
+          {/* <select
             value={selectedAsset}
             onChange={handleDropdownChange}
             className="w-full p-2 border rounded mb-4"
@@ -394,8 +448,26 @@ const TicketModal = ({ isOpen, onClose }) => {
                 {a.name} ({a.assetTag})
               </option>
             ))}
-          </select>
-
+          </select> */}
+          {ticketDepartment === "IT" && (
+            <select
+              value={selectedAsset}
+              onChange={handleDropdownChange}
+              className={`w-full p-2 border rounded mb-4 ${
+                ticketDepartment !== "IT"
+                  ? "bg-gray-100 cursor-not-allowed"
+                  : ""
+              }`}
+              disabled={ticketDepartment !== "IT"} // Disable if department is not IT
+            >
+              <option value="">Select an asset</option>
+              {assets.map((a) => (
+                <option key={a.id} value={a.assetTag}>
+                  {a.name} ({a.assetTag})
+                </option>
+              ))}
+            </select>
+          )}
           <label className="block mb-2">Location:</label>
           <input
             type="text"
