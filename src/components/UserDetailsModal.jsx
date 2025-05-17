@@ -71,7 +71,7 @@ const UserDetailsModal = ({ query, isOpen, onClose }) => {
                 <tbody>
                   {[
                     { label: "Username", value: userData?.username },
-                    { label: "Employee ID", value: userData?.id },
+                    { label: "Employee ID", value: userData?.employeeId },
                     { label: "Role", value: userData?.role },
                     { label: "Phone Number", value: userData?.phoneNumber },
                     { label: "Email", value: userData?.email },

@@ -844,3 +844,26 @@ export const getDepartments = async () => {
 export const getAssignees = () => {
   return api.get("user-assets/assignees"); // Update path based on your backend route
 };
+
+// ============== Ticket Charts ==========================================
+
+export const fetchTicketStatusCounts = () =>
+  api.get(`/user-assets/tickets/stats/status`);
+
+export const fetchTicketsPerDay = () =>
+  api.get(`/user-assets/tickets/stats/created-per-day`);
+
+export const fetchTicketCategoryCounts = () =>
+  api.get(`/user-assets/tickets/stats/category`);
+
+export const fetchAssigneeTicketCounts = () =>
+  api.get(`/user-assets/tickets/stats/assignee`);
+
+export const fetchResolutionStats = () =>
+  api.get(`/user-assets/tickets/stats/resolution-time`);
+
+export const fetchTopTicketReporters = () =>
+  api.get(`/user-assets/tickets/stats/top-reporters`);
+
+export const fetchStatusOverTime = () =>
+  api.get(`/user-assets/tickets/stats/status-over-time`);

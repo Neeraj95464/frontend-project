@@ -4,6 +4,7 @@ import { getAssetCounts, getAllAssets } from "../services/api";
 import AssetCategoryChart from "./AssetCategoryChart";
 import AssetTable from "./AssetTable";
 import Modal from "./Modal";
+import TicketDashboardChart from "./TicketDashboardChart";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -145,6 +146,11 @@ const Dashboard = () => {
             <p className={`text-2xl sm:text-3xl font-bold ${color}`}>{value}</p>
           </div>
         ))}
+      </div>
+
+      <div className="p-4">
+        <h2 className="text-xl font-semibold mb-4">Ticket Overview</h2>
+        <TicketDashboardChart />
       </div>
 
       <div className="p-4">
