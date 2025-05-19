@@ -80,6 +80,17 @@ const Sidebar = () => {
                 Dashboard
               </NavLink>
               <NavLink
+                to="/ticket/admin"
+                className={({ isActive }) =>
+                  `flex items-center px-4 py-2 rounded-lg text-sm ${
+                    isActive ? "bg-blue-600" : "hover:bg-gray-700"
+                  }`
+                }
+              >
+                <FiUsers className="mr-3" />
+                Admin Tickets
+              </NavLink>
+              <NavLink
                 to="/assets"
                 className={({ isActive }) =>
                   `flex items-center px-4 py-2 rounded-lg text-sm ${
@@ -90,28 +101,7 @@ const Sidebar = () => {
                 <FiBox className="mr-3" />
                 Assets
               </NavLink>
-              <NavLink
-                to="/users"
-                className={({ isActive }) =>
-                  `flex items-center px-4 py-2 rounded-lg text-sm ${
-                    isActive ? "bg-blue-600" : "hover:bg-gray-700"
-                  }`
-                }
-              >
-                <FiUsers className="mr-3" />
-                Users
-              </NavLink>
-              <NavLink
-                to="/ticket/admin"
-                className={({ isActive }) =>
-                  `flex items-center px-4 py-2 rounded-lg text-sm ${
-                    isActive ? "bg-blue-600" : "hover:bg-gray-700"
-                  }`
-                }
-              >
-                <FiUsers className="mr-3" />
-                Ticket Admin
-              </NavLink>
+
               <NavLink
                 to="/contracts"
                 className={({ isActive }) =>
@@ -144,6 +134,17 @@ const Sidebar = () => {
               >
                 <FiBarChart2 className="mr-3" />
                 Reports
+              </NavLink>
+              <NavLink
+                to="/users"
+                className={({ isActive }) =>
+                  `flex items-center px-4 py-2 rounded-lg text-sm ${
+                    isActive ? "bg-blue-600" : "hover:bg-gray-700"
+                  }`
+                }
+              >
+                <FiUsers className="mr-3" />
+                Users
               </NavLink>
               <NavLink
                 to="/settings"
