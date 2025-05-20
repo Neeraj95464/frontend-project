@@ -58,6 +58,31 @@ const TicketModal = ({ isOpen, onClose }) => {
     "XENTRY",
   ];
 
+  const categoryRemarks = {
+    HARDWARE: "Example: Laptop panel, printer body, monitor issue",
+    SOFTWARE: "Example: Application crash, license expired",
+    NETWORK: "Example: Internet down, LAN not working",
+    OTHER: "Example: Unspecified issue requiring manual investigation",
+    CCTV: "Example: Camera offline, DVR not recording",
+    MAINTENANCE: "Example: Routine system checks, hardware servicing",
+    FOCUS: "Example: System lag during SAP usage",
+    ADMIN: "Example: Admin rights needed for software install",
+    LOGISTICS: "Example: Asset transfer or location update issue",
+    DESKTOP: "Example: Boot issue, performance lag",
+    DMS: "Example: Document upload not working",
+    EMAIL: "Example: Unable to send/receive emails",
+    INTERCOM: "Example: Extension not reachable",
+    PROJECTOR: "Example: No display, lens alignment",
+    NEW_PROJECT: "Example: Requirement for new setup or hardware",
+    SERVER: "Example: Server down, disk space full",
+    SFDC: "Example: Access issue or module not loading",
+    STORES: "Example: Asset stock mismatch",
+    IPAD_TAB: "Example: Screen cracked, charging issue",
+    UPS: "Example: Battery backup failure",
+    WEB_APPLICATION: "Example: App not loading, internal error",
+    XENTRY: "Example: Login failed, functionality not working",
+  };
+
   const hrCategories = ["HIRING", "PAYROLL", "POLICY", "PAYSLIP"];
 
   useEffect(() => {
@@ -269,9 +294,9 @@ const TicketModal = ({ isOpen, onClose }) => {
         >
           ✖
         </button>
-        <label className="block mb-2">Ticket For:</label>
+        {/* <label className="block mb-2">Ticket For:</label> */}
         <div className="flex items-center gap-4 mb-4">
-          <label className="flex items-center">
+          {/* <label className="flex items-center">
             <input
               type="radio"
               name="ticketDepartment"
@@ -281,8 +306,8 @@ const TicketModal = ({ isOpen, onClose }) => {
               className="mr-2"
             />
             IT
-          </label>
-          <label className="flex items-center">
+          </label> */}
+          {/* <label className="flex items-center">
             <input
               type="radio"
               name="ticketDepartment"
@@ -292,22 +317,22 @@ const TicketModal = ({ isOpen, onClose }) => {
               className="mr-2"
             />
             HR
-          </label>
+          </label> */}
         </div>
 
         {/* <h2 className="text-xl font-bold mb-4">Create New Ticket</h2> */}
 
         <form onSubmit={handleSubmit}>
-          <label className="block mb-2">Title:</label>
+          {/* <label className="block mb-2">Title:</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full p-2 border rounded mb-4"
             required
-          />
+          /> */}
 
-          <label className="block mb-2">Description:</label>
+          <label className="block mb-2">Describe the Issue:</label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -331,7 +356,12 @@ const TicketModal = ({ isOpen, onClose }) => {
             )}
           </select>
 
-          <label className="block mb-2">Employee:</label>
+          {ticketDepartment === "IT" && categoryRemarks[category] && (
+            <p className="text-sm text-blue-600 italic mt-1">
+              {categoryRemarks[category]}
+            </p>
+          )}
+          {/* <label className="block mb-2">Employee:</label>
           {userRole === "USER" ? (
             <input
               type="text"
@@ -363,10 +393,10 @@ const TicketModal = ({ isOpen, onClose }) => {
                 </ul>
               )}
             </>
-          )}
-          {ticketDepartment === "IT" && (
+          )} */}
+          {/* {ticketDepartment === "IT" && (
             <label className="block mb-2">Asset:</label>
-          )}
+          )} */}
           {/* {userRole === "ADMIN" && (
             <>
               <input
@@ -449,7 +479,7 @@ const TicketModal = ({ isOpen, onClose }) => {
               </option>
             ))}
           </select> */}
-          {ticketDepartment === "IT" && (
+          {/* {ticketDepartment === "IT" && (
             <select
               value={selectedAsset}
               onChange={handleDropdownChange}
@@ -467,7 +497,7 @@ const TicketModal = ({ isOpen, onClose }) => {
                 </option>
               ))}
             </select>
-          )}
+          )} */}
           <label className="block mb-2">Location:</label>
           <input
             type="text"
