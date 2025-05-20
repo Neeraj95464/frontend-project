@@ -32,7 +32,7 @@ export default function AdminTicketingPortal() {
   const [page, setPage] = useState(0);
   const [isSending, setIsSending] = useState(false);
 
-  const [size, setSize] = useState(10); // Default size from backend
+  const [size, setSize] = useState(20); // Default size from backend
   const [paginationInfo, setPaginationInfo] = useState({
     totalElements: 0,
     totalPages: 0,
@@ -468,7 +468,7 @@ export default function AdminTicketingPortal() {
                     <tr>
                       {[
                         "ID",
-                        "Title",
+                        "Description",
                         "Status",
                         "Category",
                         "Location",
@@ -493,7 +493,7 @@ export default function AdminTicketingPortal() {
                       >
                         <td className="px-3 py-2">{ticket.id}</td>
                         <td className="px-3 py-2 max-w-[150px] truncate">
-                          {ticket.title}
+                          {ticket.description}
                         </td>
                         <td className="px-3 py-2">
                           <span
