@@ -70,7 +70,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-4">
+    // <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 p-4">
       <div className="bg-white p-4 rounded-xl shadow-md">
         <h2 className="text-lg font-semibold mb-2">Ticket Status Counts</h2>
         <ResponsiveContainer width="100%" height={300}>
@@ -98,7 +99,14 @@ const Dashboard = () => {
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={createdPerDay}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
+            {/* <XAxis dataKey="date" /> */}
+            <XAxis
+              dataKey="date"
+              angle={-30}
+              textAnchor="end"
+              interval={0}
+              height={60}
+            />
             <YAxis />
             <Tooltip />
             <Legend />
@@ -115,9 +123,24 @@ const Dashboard = () => {
       <div className="bg-white p-4 rounded-xl shadow-md">
         <h2 className="text-lg font-semibold mb-2">Ticket Categories</h2>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={categoryData}>
+          {/* <BarChart data={categoryData}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="value" fill="#00C49F" />
+          </BarChart> */}
+
+          <BarChart data={categoryData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis
+              dataKey="name"
+              angle={-30}
+              textAnchor="end"
+              interval={0}
+              height={60}
+            />
             <YAxis />
             <Tooltip />
             <Legend />
@@ -131,7 +154,14 @@ const Dashboard = () => {
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={assigneeData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            {/* <XAxis dataKey="name" /> */}
+            <XAxis
+              dataKey="name"
+              angle={-30}
+              textAnchor="end"
+              interval={0}
+              height={60}
+            />
             <YAxis />
             <Tooltip />
             <Legend />
@@ -156,7 +186,14 @@ const Dashboard = () => {
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={reportersData}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            {/* <XAxis dataKey="name" /> */}
+            <XAxis
+              dataKey="name"
+              angle={-30}
+              textAnchor="end"
+              interval={0}
+              height={60}
+            />
             <YAxis />
             <Tooltip />
             <Legend />
@@ -165,12 +202,20 @@ const Dashboard = () => {
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow-md md:col-span-2 xl:col-span-3">
+      {/* <div className="bg-white p-4 rounded-xl shadow-md md:col-span-2 xl:col-span-3"> */}
+      <div className="... md:col-span-2 xl:col-span-2">
         <h2 className="text-lg font-semibold mb-2">Ticket Status Over Time</h2>
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={statusOverTime}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" />
+            {/* <XAxis dataKey="date" /> */}
+            <XAxis
+              dataKey="date"
+              angle={-30}
+              textAnchor="end"
+              interval={0}
+              height={60}
+            />
             <YAxis />
             <Tooltip />
             <Legend />
