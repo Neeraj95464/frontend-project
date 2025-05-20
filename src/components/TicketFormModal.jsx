@@ -353,7 +353,7 @@ const TicketModal = ({ isOpen, onClose }) => {
             {(ticketDepartment === "HR" ? hrCategories : itCategories).map(
               (cat) => (
                 <option key={cat} value={cat}>
-                  {cat.charAt(0) + cat.slice(1).toLowerCase()}
+                  {cat.charAt(0) + cat.slice(1)}
                 </option>
               )
             )}
