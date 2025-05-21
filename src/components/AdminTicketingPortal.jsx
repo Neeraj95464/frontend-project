@@ -8,6 +8,7 @@ import {
 import TicketActionModal from "./TicketActionModal";
 import TicketModal from "./TicketFormModal";
 import { Button, Card } from "./ui";
+import { format, formatDistanceToNow, parseISO, isBefore } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { useState, useEffect } from "react";
 // Icon from lucide-react
@@ -202,7 +203,8 @@ export default function AdminTicketingPortal() {
         />
 
         <Card>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 items-center mb-4">
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 items-center mb-4"> */}
+          <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center mb-4 overflow-x-auto">
             {/* <h2 className="text-xl font-semibold mb-4">Your Tickets</h2> */}
 
             <Button
@@ -476,6 +478,10 @@ export default function AdminTicketingPortal() {
                         "Employee",
                         "Asset Tag",
                         "Created At",
+                        "Responsed At",
+                        "Due Date",
+                        "Updated At",
+                        "Closed At",
                         ...(userRole !== "user" ? ["Actions"] : []),
                       ].map((header, i) => (
                         <th key={i} className="px-3 py-2 whitespace-nowrap">
@@ -567,9 +573,107 @@ export default function AdminTicketingPortal() {
                             </span>
                           )}
                         </td>
-                        <td className="px-3 py-2 text-gray-600">
+                        {/* <td className="px-3 py-2 text-gray-600">
                           {new Date(ticket.createdAt).toLocaleDateString()}
+                        </td> */}
+
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {format(parseISO(ticket.createdAt), "d/M/yyyy")} (
+                          {formatDistanceToNow(parseISO(ticket.createdAt), {
+                            addSuffix: true,
+                          })}
+                          )
                         </td>
+
+                        {/* <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.firstRespondedAt}
+                        </td> */}
+
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.firstRespondedAt ? (
+                            <>
+                              {format(
+                                parseISO(ticket.firstRespondedAt.split(".")[0]),
+                                "d/M/yyyy"
+                              )}{" "}
+                              (
+                              {formatDistanceToNow(
+                                parseISO(ticket.firstRespondedAt.split(".")[0]),
+                                {
+                                  addSuffix: true,
+                                }
+                              )}
+                              )
+                            </>
+                          ) : (
+                            <span className="text-gray-400 italic">N/A</span>
+                          )}
+                        </td>
+
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.dueDate ? (
+                            <>
+                              {format(
+                                parseISO(ticket.dueDate.split(".")[0]),
+                                "d/M/yyyy"
+                              )}{" "}
+                              (
+                              <span
+                                className={
+                                  isBefore(parseISO(ticket.dueDate), new Date())
+                                    ? "text-red-600 font-medium"
+                                    : "text-green-600"
+                                }
+                              >
+                                {formatDistanceToNow(
+                                  parseISO(ticket.dueDate.split(".")[0]),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                                {isBefore(
+                                  parseISO(ticket.dueDate),
+                                  new Date()
+                                ) && " – due date crossed"}
+                              </span>
+                              )
+                            </>
+                          ) : (
+                            <span className="text-gray-400 italic">
+                              No due date
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.lastUpdated ? (
+                            <>
+                              {format(
+                                parseISO(ticket.lastUpdated.split(".")[0]),
+                                "d/M/yyyy"
+                              )}{" "}
+                              (
+                              <span className="text-blue-600">
+                                {formatDistanceToNow(
+                                  parseISO(ticket.lastUpdated.split(".")[0]),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </span>
+                              )
+                            </>
+                          ) : (
+                            <span className="text-gray-400 italic">
+                              No updates
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.closedAt}
+                        </td>
+
                         {userRole !== "user" && (
                           <td className="px-3 py-2">
                             <button
