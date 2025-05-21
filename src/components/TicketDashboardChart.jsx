@@ -7,10 +7,9 @@ import {
   fetchTopTicketReporters,
   fetchStatusOverTime,
   getAssigneeResolutionStats,
+  getAssignees,
 } from "../services/api";
-import React, { useState, useEffect } from "react";
-// path to your api.js
-import { toast } from "react-toastify";
+import React, { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -36,7 +35,7 @@ const COLORS = [
   "#5DADE2",
 ];
 
-const Dashboard = () => {
+const TicketDashboardChart = () => {
   const [statusData, setStatusData] = useState([]);
   const [createdPerDay, setCreatedPerDay] = useState([]);
   const [categoryData, setCategoryData] = useState([]);
@@ -44,16 +43,7 @@ const Dashboard = () => {
   const [resolutionStats, setResolutionStats] = useState(null);
   const [reportersData, setReportersData] = useState([]);
   const [statusOverTime, setStatusOverTime] = useState([]);
-  // Inside your component (near other useState hooks)
-  const [selectedAssignee, setSelectedAssignee] = useState("");
-  const [assigneeResolutionStats, setAssigneeResolutionStats] = useState(null);
-
-  const assigneeIdMap = {
-    "Neeraj Kumar": "MV4748",
-    "John Doe": "EMP002",
-    "Jane Smith": "EMP003",
-    // Add all expected names and IDs here
-  };
+  const [assignees, setAssignees] = useState([]);
 
   useEffect(() => {
     fetchTicketStatusCounts().then((res) =>
@@ -65,38 +55,22 @@ const Dashboard = () => {
     fetchTicketCategoryCounts().then((res) =>
       setCategoryData(mapObjectToArray(res.data))
     );
-    // fetchAssigneeTicketCounts().then((res) =>
-    //   setAssigneeData(mapObjectToArray(res.data))
-    // );
-
-    fetchAssigneeTicketCounts().then((res) => {
-      const mapped = Object.entries(res.data).map(([name, count]) => ({
-        name,
-        employeeId: assigneeIdMap[name] || "", // fallback if not found
-        value: count,
-      }));
-      setAssigneeData(mapped);
-    });
-
+    fetchAssigneeTicketCounts().then((res) =>
+      setAssigneeData(mapObjectToArray(res.data))
+    );
     fetchResolutionStats().then((res) => setResolutionStats(res.data));
     fetchTopTicketReporters().then((res) =>
       setReportersData(mapObjectToArray(res.data))
     );
     fetchStatusOverTime().then((res) => setStatusOverTime(res.data));
+
+    getAssignees().then((res) => setAssignees(res.data));
   }, []);
 
-  useEffect(() => {
-    if (selectedAssignee) {
-      getAssigneeResolutionStats(selectedAssignee)
-        .then((res) => setAssigneeResolutionStats(res))
-        .catch((err) => {
-          toast.error("Failed to fetch assignee resolution stats");
-          console.error(err);
-        });
-    } else {
-      setAssigneeResolutionStats(null);
-    }
-  }, [selectedAssignee]);
+  const fetchResolutionStatsByAssignee = async (employeeId) => {
+    const data = await getAssigneeResolutionStats(employeeId || "");
+    setResolutionStats(data);
+  };
 
   const mapObjectToArray = (obj, keyName = "name", valueName = "value") => {
     return Object.entries(obj).map(([key, value]) => ({
@@ -207,63 +181,65 @@ const Dashboard = () => {
       </div>
 
       {/* <div className="bg-white p-4 rounded-xl shadow-md">
-        <h2 className="text-lg font-semibold mb-2">Resolution Time Stats</h2>
-        {resolutionStats && (
-          <ul className="text-base">
-            <li>Average: {resolutionStats.avgResolutionTime} hours</li>
-            <li>Minimum: {resolutionStats.minResolutionTime} hours</li>
-            <li>Maximum: {resolutionStats.maxResolutionTime} hours</li>
-          </ul>
-        )}
-      </div> */}
-
-      <div className="bg-white p-4 rounded-xl shadow-md">
-        <h2 className="text-lg font-semibold mb-2">
-          Resolution Time Stats (by Assignee)
-        </h2>
-
         <select
-          className="w-full p-2 border border-gray-300 rounded mb-4"
-          value={selectedAssignee}
+          className="mb-4 p-2 border rounded"
           onChange={(e) => {
-            const selectedEmpId = e.target.value;
-            setSelectedAssignee(selectedEmpId);
-
-            // Call resolution stats for selected employee
-            if (selectedEmpId) {
-              getAssigneeResolutionStats(selectedEmpId)
-                .then((res) => setResolutionStats(res.data))
-                .catch((err) => console.error(err));
+            const selected = e.target.value;
+            if (selected === "") {
+              fetchResolutionStats().then((res) =>
+                setResolutionStats(res.data)
+              );
+            } else {
+              fetch(`/api/tickets/stats/resolution/assignee/${selected}`)
+                .then((res) => res.json())
+                .then((data) => setResolutionStats(data));
             }
           }}
         >
-          <option value="">Select Assignee</option>
+          <option value="">All Assignees</option>
           {assigneeData.map((assignee) => (
-            <option key={assignee.employeeId} value={assignee.employeeId}>
+            <option key={assignee.name} value={assignee.name}>
               {assignee.name}
             </option>
           ))}
         </select>
 
-        {assigneeResolutionStats ? (
+        <h2 className="text-lg font-semibold mb-2">Resolution Time Stats</h2>
+        {resolutionStats && (
+          <ul className="text-base">
+            <li>Average: {resolutionStats.avgResolutionTimeInDays} days</li>
+            <li>Minimum: {resolutionStats.minResolutionTimeInDays} days</li>
+            <li>Maximum: {resolutionStats.maxResolutionTimeInDays} days</li>
+          </ul>
+        )}
+      </div> */}
+      <div className="bg-white p-4 rounded-xl shadow-md">
+        <h2 className="text-lg font-semibold mb-2">Resolution Time Stats</h2>
+
+        <select
+          className="mb-4 p-2 border rounded"
+          onChange={(e) => fetchResolutionStatsByAssignee(e.target.value)}
+        >
+          <option value="">All Assignees</option>
+          {assignees.map((assignee) => (
+            <option key={assignee.employeeId} value={assignee.employeeId}>
+              {assignee.username}
+            </option>
+          ))}
+        </select>
+
+        {resolutionStats && (
           <ul className="text-base">
             <li>
-              Average:{" "}
-              {assigneeResolutionStats.avgResolutionTimeInDays.toFixed(2)} days
+              Average: {resolutionStats.avgResolutionTimeInDays.toFixed(2)} days
             </li>
             <li>
-              Minimum:{" "}
-              {assigneeResolutionStats.minResolutionTimeInDays.toFixed(2)} days
+              Minimum: {resolutionStats.minResolutionTimeInDays.toFixed(2)} days
             </li>
             <li>
-              Maximum:{" "}
-              {assigneeResolutionStats.maxResolutionTimeInDays.toFixed(2)} days
+              Maximum: {resolutionStats.maxResolutionTimeInDays.toFixed(2)} days
             </li>
           </ul>
-        ) : (
-          <p className="text-gray-500">
-            Select an assignee to view resolution stats
-          </p>
         )}
       </div>
 
@@ -316,4 +292,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default TicketDashboardChart;

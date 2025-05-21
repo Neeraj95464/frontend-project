@@ -1,10 +1,11 @@
 import axios from "axios";
 import { toast } from "react-toastify";
+import { ResponsiveContainer } from "recharts";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -45,9 +46,8 @@ export const getUserRoles = () => {
 };
 
 export const registerUser = async (userData) => {
-  console.log("your sending data is ", userData);
   const response = await api.post("/auth/register", userData);
-  console.log("your response is ", response.data);
+
   return response.data;
 };
 
@@ -150,7 +150,6 @@ export const getAssetByAssetTag = async (query) => {
 
 // api.js
 export const updateTicketDueDate = (ticketId, dueDate) => {
-  console.log("came here");
   return api.put(`/user-assets/${ticketId}/due-date`, { dueDate });
 };
 
@@ -426,7 +425,6 @@ export const addMessageToTicket = async (ticketId, message) => {
 };
 
 export const createTicket = async (ticketData) => {
-  console.log("submiting data is ", ticketData);
   return await api.post(`${API_URL}/user-assets/tickets`, ticketData);
 };
 
@@ -694,7 +692,8 @@ export const searchEmployees = async (query) => {
       lowerQuery.startsWith("mv") ||
       lowerQuery.startsWith("aw") ||
       lowerQuery.startsWith("jb") ||
-      lowerQuery.startsWith("mk")
+      lowerQuery.startsWith("mk") ||
+      lowerQuery.startsWith("ar")
     ) {
       params.append("employeeId", query);
     } else {

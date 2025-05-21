@@ -21,11 +21,74 @@ const EditUser = () => {
   const { userId } = useParams();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [departments] = useState(["IT", "HR", "Finance", "Operations"]); // Static departments
+  // const [departments] = useState(["IT", "HR", "Finance", "Operations"]); // Static departments
   const [sites, setSites] = useState([]);
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const departments = [
+    { value: "ACCESSORIES", label: "Accessories" },
+    { value: "ACCOUNTS", label: "Accounts" },
+    { value: "ACCOUNTS_AND_FINANCE", label: "Accounts & Finance" },
+    { value: "AFTER_SALES", label: "After Sales" },
+    { value: "AUDIT", label: "Audit" },
+    { value: "BODY_AND_PAINT", label: "Body & Paint" },
+    { value: "CDE", label: "CDE" },
+    { value: "CRE", label: "CRE" },
+    { value: "CRE_PRE", label: "CRE/PRE" },
+    { value: "CSC", label: "CSC" },
+    { value: "CUSTOMER_RELATION", label: "Customer Relation" },
+    {
+      value: "CUSTOMER_RELATIONSHIP_EXECUTIVE",
+      label: "Customer Relationship Executive",
+    },
+    { value: "DATA_ANALYST", label: "Data Analyst" },
+    { value: "DEALER_DEVELOPMENT", label: "Dealer Development" },
+    { value: "DEPARTMENT", label: "Department" },
+    { value: "DIGITAL_MARKETING", label: "Digital Marketing" },
+    { value: "DISPATCH", label: "Dispatch" },
+    { value: "EDP", label: "EDP" },
+    { value: "ENGINE_LINE", label: "Engine Line" },
+    { value: "EXE_CRM", label: "Exe-CRM" },
+    { value: "FINANCE_AND_ACCOUNTS", label: "Finance & Accounts" },
+    { value: "HOMOLOGATION", label: "Homologation" },
+    { value: "HR", label: "HR" },
+    { value: "HUMAN_RESOURCE", label: "Human Resource" },
+    { value: "IT", label: "Information Technology" },
+    { value: "INSURANCE", label: "Insurance" },
+    { value: "JC", label: "JC" },
+    { value: "LOGISTIC_AND_EXCISE", label: "Logistic & Excise" },
+    { value: "M_ALIED_SERVICES", label: "M Alied Services" },
+    { value: "MAINTANANCE", label: "Maintanance" },
+    { value: "MANAGEMENT", label: "Management" },
+    { value: "MANUFACTURING", label: "Manufacturing" },
+    { value: "MARKETING", label: "Marketing" },
+    { value: "MIS", label: "MIS" },
+    { value: "NA", label: "NA" },
+    { value: "OPERATIONS_VD_AND_PROJECTS", label: "Operations(VD) & Projects" },
+    { value: "PDE", label: "PDE" },
+    { value: "PDE_MANAGER", label: "PDE Manager" },
+    { value: "PDI_VPC", label: "PDI/VPC" },
+    { value: "POC", label: "POC" },
+    { value: "PPC_STORE_AND_DISPATCH", label: "PPC /Store & Dispatch" },
+    { value: "PRE", label: "PRE" },
+    { value: "PRE_CRE_SALES", label: "PRE/CRE Sales" },
+    { value: "PRM", label: "PRM" },
+    { value: "PROCESS_ASSOCIATE", label: "Process Associate" },
+    { value: "PRODUCTION", label: "Production" },
+    { value: "QUALITY", label: "Quality" },
+    { value: "SALES", label: "Sales" },
+    { value: "SERVICE", label: "Service" },
+    { value: "SPARE_PARTS", label: "Spare Parts" },
+    { value: "SPARES_PARTS", label: "Spares Parts" },
+    { value: "SPECIAL_TOOLS", label: "Special Tools" },
+    { value: "STORE_AND_DISPATCH", label: "Store & Dispatch" },
+    { value: "SUPPY_CHAIN_MANAGEMENT", label: "Suppy Chain Management" },
+    { value: "TRAINING", label: "Training" },
+    { value: "WARRANTY", label: "Warranty" },
+    { value: "WORKSHOP_MANAGER", label: "Workshop Manager" },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
@@ -131,18 +194,22 @@ const EditUser = () => {
             </div>
             <div>
               <Label>Department</Label>
-              <Select
+              <select
                 name="department"
-                value={user.department}
+                value={form.department}
                 onChange={handleChange}
                 required
+                className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
               >
+                <option value="" disabled>
+                  Select Department
+                </option>
                 {departments.map((dept) => (
-                  <option key={dept} value={dept}>
-                    {dept}
+                  <option key={dept.value} value={dept.value}>
+                    {dept.label}
                   </option>
                 ))}
-              </Select>
+              </select>
             </div>
             <div>
               <Label>Phone Number</Label>

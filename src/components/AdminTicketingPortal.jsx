@@ -671,8 +671,33 @@ export default function AdminTicketingPortal() {
                         </td>
 
                         <td className="px-3 py-2 whitespace-nowrap">
-                          {ticket.closedAt}
+                          {ticket.closedAt ? (
+                            <>
+                              {format(
+                                parseISO(ticket.closedAt.split(".")[0]),
+                                "d/M/yyyy"
+                              )}{" "}
+                              (
+                              <span className="text-green-600">
+                                {formatDistanceToNow(
+                                  parseISO(ticket.closedAt.split(".")[0]),
+                                  {
+                                    addSuffix: true,
+                                  }
+                                )}
+                              </span>
+                              )
+                            </>
+                          ) : (
+                            <span className="text-gray-400 italic">
+                              Not Closed
+                            </span>
+                          )}
                         </td>
+
+                        {/* <td className="px-3 py-2 whitespace-nowrap">
+                          {ticket.closedAt}
+                        </td> */}
 
                         {userRole !== "user" && (
                           <td className="px-3 py-2">

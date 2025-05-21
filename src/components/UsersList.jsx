@@ -308,7 +308,7 @@ const UsersList = () => {
     }
   };
 
-  const handleAddEmployee = () => navigate(`/create-user`);
+  const handleAddEmployee = () => navigate(`/register`);
   const handleSerialClick = (serialNumber) =>
     navigate(`/asset/${serialNumber}`);
 
