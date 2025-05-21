@@ -37,6 +37,7 @@ const TicketModal = ({ isOpen, onClose }) => {
     "HARDWARE",
     "SOFTWARE",
     "NETWORK",
+    "PRINTER",
     "UPS",
     "CCTV",
     "FOCUS",
@@ -44,6 +45,7 @@ const TicketModal = ({ isOpen, onClose }) => {
     "DMS",
     "WORKSHOP_DIAGNOSTIC_TOOLS",
     "OTHER",
+
     // "MAINTENANCE",
 
     // "ADMIN",

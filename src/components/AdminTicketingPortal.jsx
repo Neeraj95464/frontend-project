@@ -476,7 +476,7 @@ export default function AdminTicketingPortal() {
                         "Location",
                         "Assignee",
                         "Employee",
-                        "Asset Tag",
+                        // "Asset Tag",
                         "Created At",
                         "Responsed At",
                         "Due Date",
@@ -556,7 +556,7 @@ export default function AdminTicketingPortal() {
                             </span>
                           )}
                         </td>
-                        <td className="px-3 py-2">
+                        {/* <td className="px-3 py-2">
                           {userRole !== "user" ? (
                             <button
                               onClick={(e) => {
@@ -572,7 +572,7 @@ export default function AdminTicketingPortal() {
                               {ticket.assetTag || "No Asset"}
                             </span>
                           )}
-                        </td>
+                        </td> */}
                         {/* <td className="px-3 py-2 text-gray-600">
                           {new Date(ticket.createdAt).toLocaleDateString()}
                         </td> */}

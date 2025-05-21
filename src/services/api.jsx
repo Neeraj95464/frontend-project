@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -146,6 +146,12 @@ export const getAssetByAssetTag = async (query) => {
     console.error("Error fetching asset:", error);
     throw error;
   }
+};
+
+// api.js
+export const updateTicketDueDate = (ticketId, dueDate) => {
+  console.log("came here");
+  return api.put(`/user-assets/${ticketId}/due-date`, { dueDate });
 };
 
 export const updateTicketStatus = async (ticketId, status) => {
@@ -861,6 +867,13 @@ export const fetchAssigneeTicketCounts = () =>
 
 export const fetchResolutionStats = () =>
   api.get(`/user-assets/tickets/stats/resolution-time`);
+
+export const getAssigneeResolutionStats = async (employeeId) => {
+  const response = await api.get(
+    `/user-assets/tickets/stats/resolution/assignee/${employeeId}`
+  );
+  return response.data;
+};
 
 export const fetchTopTicketReporters = () =>
   api.get(`/user-assets/tickets/stats/top-reporters`);

@@ -6,8 +6,11 @@ import {
   fetchResolutionStats,
   fetchTopTicketReporters,
   fetchStatusOverTime,
+  getAssigneeResolutionStats,
 } from "../services/api";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+// path to your api.js
+import { toast } from "react-toastify";
 import {
   BarChart,
   Bar,
@@ -41,6 +44,16 @@ const Dashboard = () => {
   const [resolutionStats, setResolutionStats] = useState(null);
   const [reportersData, setReportersData] = useState([]);
   const [statusOverTime, setStatusOverTime] = useState([]);
+  // Inside your component (near other useState hooks)
+  const [selectedAssignee, setSelectedAssignee] = useState("");
+  const [assigneeResolutionStats, setAssigneeResolutionStats] = useState(null);
+
+  const assigneeIdMap = {
+    "Neeraj Kumar": "MV4748",
+    "John Doe": "EMP002",
+    "Jane Smith": "EMP003",
+    // Add all expected names and IDs here
+  };
 
   useEffect(() => {
     fetchTicketStatusCounts().then((res) =>
@@ -52,15 +65,38 @@ const Dashboard = () => {
     fetchTicketCategoryCounts().then((res) =>
       setCategoryData(mapObjectToArray(res.data))
     );
-    fetchAssigneeTicketCounts().then((res) =>
-      setAssigneeData(mapObjectToArray(res.data))
-    );
+    // fetchAssigneeTicketCounts().then((res) =>
+    //   setAssigneeData(mapObjectToArray(res.data))
+    // );
+
+    fetchAssigneeTicketCounts().then((res) => {
+      const mapped = Object.entries(res.data).map(([name, count]) => ({
+        name,
+        employeeId: assigneeIdMap[name] || "", // fallback if not found
+        value: count,
+      }));
+      setAssigneeData(mapped);
+    });
+
     fetchResolutionStats().then((res) => setResolutionStats(res.data));
     fetchTopTicketReporters().then((res) =>
       setReportersData(mapObjectToArray(res.data))
     );
     fetchStatusOverTime().then((res) => setStatusOverTime(res.data));
   }, []);
+
+  useEffect(() => {
+    if (selectedAssignee) {
+      getAssigneeResolutionStats(selectedAssignee)
+        .then((res) => setAssigneeResolutionStats(res))
+        .catch((err) => {
+          toast.error("Failed to fetch assignee resolution stats");
+          console.error(err);
+        });
+    } else {
+      setAssigneeResolutionStats(null);
+    }
+  }, [selectedAssignee]);
 
   const mapObjectToArray = (obj, keyName = "name", valueName = "value") => {
     return Object.entries(obj).map(([key, value]) => ({
@@ -170,7 +206,7 @@ const Dashboard = () => {
         </ResponsiveContainer>
       </div>
 
-      <div className="bg-white p-4 rounded-xl shadow-md">
+      {/* <div className="bg-white p-4 rounded-xl shadow-md">
         <h2 className="text-lg font-semibold mb-2">Resolution Time Stats</h2>
         {resolutionStats && (
           <ul className="text-base">
@@ -179,6 +215,74 @@ const Dashboard = () => {
             <li>Maximum: {resolutionStats.maxResolutionTime} hours</li>
           </ul>
         )}
+      </div> */}
+
+      <div className="bg-white p-4 rounded-xl shadow-md">
+        <h2 className="text-lg font-semibold mb-2">
+          Resolution Time Stats (by Assignee)
+        </h2>
+
+        <select
+          className="w-full p-2 border border-gray-300 rounded mb-4"
+          value={selectedAssignee}
+          onChange={(e) => {
+            const selectedEmpId = e.target.value;
+            setSelectedAssignee(selectedEmpId);
+
+            // Call resolution stats for selected employee
+            if (selectedEmpId) {
+              getAssigneeResolutionStats(selectedEmpId)
+                .then((res) => setResolutionStats(res.data))
+                .catch((err) => console.error(err));
+            }
+          }}
+        >
+          <option value="">Select Assignee</option>
+          {assigneeData.map((assignee) => (
+            <option key={assignee.employeeId} value={assignee.employeeId}>
+              {assignee.name}
+            </option>
+          ))}
+        </select>
+
+        {resolutionStats ? (
+          <ul className="text-base">
+            <li>
+              Average: {resolutionStats.avgResolutionTimeInDays.toFixed(2)} days
+            </li>
+            <li>
+              Minimum: {resolutionStats.minResolutionTimeInDays.toFixed(2)} days
+            </li>
+            <li>
+              Maximum: {resolutionStats.maxResolutionTimeInDays.toFixed(2)} days
+            </li>
+          </ul>
+        ) : (
+          <p className="text-gray-500">
+            Select an assignee to view resolution stats
+          </p>
+        )}
+
+        {/* {assigneeResolutionStats ? (
+          <ul className="text-base">
+            <li>
+              Average:{" "}
+              {assigneeResolutionStats.avgResolutionTimeInDays.toFixed(2)} days
+            </li>
+            <li>
+              Minimum:{" "}
+              {assigneeResolutionStats.minResolutionTimeInDays.toFixed(2)} days
+            </li>
+            <li>
+              Maximum:{" "}
+              {assigneeResolutionStats.maxResolutionTimeInDays.toFixed(2)} days
+            </li>
+          </ul>
+        ) : (
+          <p className="text-gray-500">
+            Select an assignee to view resolution stats
+          </p>
+        )} */}
       </div>
 
       <div className="bg-white p-4 rounded-xl shadow-md">
