@@ -74,11 +74,18 @@ const Header = ({ onMenuClick }) => {
         )}
 
         {user ? (
+          // <Link
+          //   to="/profile"
+          //   className="bg-yellow-500 px-3 py-2 rounded-lg hover:bg-yellow-600 transition text-sm font-medium"
+          // >
+          //   {user.username} ({user.role})
+          // </Link>
+
           <Link
             to="/profile"
             className="bg-yellow-500 px-3 py-2 rounded-lg hover:bg-yellow-600 transition text-sm font-medium"
           >
-            {user.username} ({user.role})
+            {user.username.toUpperCase()} ({user.role.toUpperCase()})
           </Link>
         ) : (
           <Link
