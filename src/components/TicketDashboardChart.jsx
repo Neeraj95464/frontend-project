@@ -245,25 +245,7 @@ const Dashboard = () => {
           ))}
         </select>
 
-        {resolutionStats ? (
-          <ul className="text-base">
-            <li>
-              Average: {resolutionStats.avgResolutionTimeInDays.toFixed(2)} days
-            </li>
-            <li>
-              Minimum: {resolutionStats.minResolutionTimeInDays.toFixed(2)} days
-            </li>
-            <li>
-              Maximum: {resolutionStats.maxResolutionTimeInDays.toFixed(2)} days
-            </li>
-          </ul>
-        ) : (
-          <p className="text-gray-500">
-            Select an assignee to view resolution stats
-          </p>
-        )}
-
-        {/* {assigneeResolutionStats ? (
+        {assigneeResolutionStats ? (
           <ul className="text-base">
             <li>
               Average:{" "}
@@ -282,7 +264,7 @@ const Dashboard = () => {
           <p className="text-gray-500">
             Select an assignee to view resolution stats
           </p>
-        )} */}
+        )}
       </div>
 
       <div className="bg-white p-4 rounded-xl shadow-md">
