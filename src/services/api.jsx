@@ -4,8 +4,8 @@ import { ResponsiveContainer } from "recharts";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -440,6 +440,24 @@ export const getUserAssets = async () => {
   } catch (error) {
     console.error("Error fetching user assets:", error);
     return [];
+  }
+};
+
+export const changeTicketEmployeeIfSame = async (ticketId, newEmployeeId) => {
+  try {
+    const response = await api.put(
+      `/user-assets/${ticketId}/change-employee-if-same`,
+      null,
+      {
+        params: {
+          newEmployeeId,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to change employee:", error);
+    throw error;
   }
 };
 

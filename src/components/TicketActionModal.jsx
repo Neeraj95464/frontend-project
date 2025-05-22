@@ -6,8 +6,13 @@ import {
   updateTicketCcEmail,
   getAssignees,
   updateTicketDueDate,
+  changeTicketEmployeeIfSame,
+  getEmployees,
+  searchEmployees,
 } from "../services/api";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+// ✅ Add this line
 import { FiX } from "react-icons/fi";
 import { toast } from "react-toastify";
 
@@ -21,12 +26,36 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
   const [assignees, setAssignees] = useState([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [dueDate, setDueDate] = useState("");
+  const [employees, setEmployees] = useState([]);
+  const [newEmployeeId, setNewEmployeeId] = useState("");
+  const { register, handleSubmit, reset, setValue, watch } = useForm();
+  const employeeOptions = employees.map((emp) => ({
+    value: emp.id,
+    label: emp.name,
+  }));
+  const [searchQuery, setSearchQuery] = useState("");
+  const [matchedEmployees, setMatchedEmployees] = useState([]);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   const [locations, setLocations] = useState([
     { id: 1, name: "Office 1" },
     { id: 2, name: "Office 2" },
     { id: 3, name: "Remote" },
   ]);
+
+  // useEffect(() => {
+  //   getEmployees()
+  //     .then((res) => {
+  //       const formatted = res.data.map((user) => ({
+  //         id: user.employeeId,
+  //         name: user.username,
+  //       }));
+  //       setEmployees(formatted); // for changing employee too
+  //     })
+  //     .catch((err) => {
+  //       console.error("Failed to fetch assignees", err);
+  //     });
+  // }, []);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -61,6 +90,44 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
       });
   }, []);
 
+  const handleSearchChange = async (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (!query) {
+      setMatchedEmployees([]);
+      setSelectedEmployee(null);
+      return;
+    }
+
+    try {
+      const employees = await searchEmployees(query);
+      setMatchedEmployees(employees);
+    } catch {
+      setMatchedEmployees([]);
+    }
+  };
+
+  const handleChangeEmployeeClick = async () => {
+    if (!selectedEmployee || !ticketId) return;
+    setIsUpdating(true);
+    try {
+      await handleChangeEmployee(ticketId, selectedEmployee.employeeId);
+      toast.success("Employee updated successfully");
+    } catch (error) {
+      toast.error("Failed to change employee");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleSelectEmployee = (employee) => {
+    setSelectedEmployee(employee);
+    setSearchQuery(`${employee.username} (${employee.id})`);
+    setValue("assigneeId", employee.employeeId); // or creatorId, based on context
+    setMatchedEmployees([]);
+  };
+
   const handleDueDateChange = async (value) => {
     const fullDateTime = `${value}T00:00:00`; // appending default time
     setDueDate(value); // for input display
@@ -73,6 +140,20 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
       console.error("Error updating due date:", error);
     } finally {
       setIsUpdating(false);
+    }
+  };
+
+  const handleChangeEmployee = async (ticketId, newEmployeeId) => {
+    try {
+      const updatedTicket = await changeTicketEmployeeIfSame(
+        ticketId,
+        newEmployeeId
+      );
+      console.log("Employee updated successfully", updatedTicket);
+      return updatedTicket;
+    } catch (error) {
+      console.error("Error updating employee:", error);
+      throw error;
     }
   };
 
@@ -210,23 +291,68 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
             </select>
           </div>
 
-          <div>
-            {/* <label className="block text-sm font-medium text-gray-700">
-              Location
+          <div className="mt-6">
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Change Employee
             </label>
-            <select
-              disabled={isUpdating}
-              value={location}
-              onChange={(e) => handleLocationChange(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm disabled:opacity-50"
-            >
-              <option value="">Select location</option>
-              {locations.map((loc) => (
-                <option key={loc.id} value={loc.id}>
-                  {loc.name}
-                </option>
-              ))}
-            </select> */}
+
+            <div className="flex items-center">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchChange}
+                placeholder="Search employee..."
+                className="border p-2 w-full rounded"
+              />
+            </div>
+
+            {/* Matching Employees Dropdown */}
+            {matchedEmployees.length > 0 && (
+              <div className="mt-2 p-2 border border-gray-300 rounded bg-white shadow-md">
+                <p className="text-sm text-green-600 font-semibold">
+                  Matching Employees:
+                </p>
+                <ul className="list-none">
+                  {matchedEmployees.map((employee) => (
+                    <li
+                      key={employee.id}
+                      onClick={() => handleSelectEmployee(employee)}
+                      className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                    >
+                      {employee.employeeId} - {employee.username}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Display Selected Employee */}
+            {/* {selectedEmployee && (
+              <p className="text-sm text-blue-600 mt-2">
+                Selected: {selectedEmployee.id} - {selectedEmployee.username}
+              </p>
+            )} */}
+            {selectedEmployee && (
+              <>
+                <p className="text-sm text-blue-600 mt-2">
+                  Selected: {selectedEmployee.employeeId} -{" "}
+                  {selectedEmployee.username}
+                </p>
+                <button
+                  onClick={() => handleChangeEmployeeClick()}
+                  disabled={isUpdating}
+                  className="mt-2 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-60"
+                >
+                  Change Employee
+                </button>
+              </>
+            )}
+
+            {/* Hidden input for selected user ID */}
+            <input
+              type="hidden"
+              {...register("assigneeId", { required: true })}
+            />
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
