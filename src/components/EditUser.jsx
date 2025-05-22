@@ -196,7 +196,7 @@ const EditUser = () => {
               <Label>Department</Label>
               <select
                 name="department"
-                value={form.department}
+                value={user.department} // ✅ Use user instead of form
                 onChange={handleChange}
                 required
                 className="w-full p-3 border rounded-md focus:ring-2 focus:ring-blue-500"
