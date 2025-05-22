@@ -154,7 +154,9 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-2xl animate-fadeIn">
+      {/* <div className="bg-white p-6 rounded-2xl shadow-2xl w-full max-w-2xl animate-fadeIn"> */}
+
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 animate-fadeIn">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-800">Manage Ticket</h2>
           <button
@@ -167,12 +169,8 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
 
         <div className="mb-4 space-y-1">
           <h3 className="text-lg font-semibold text-gray-700">
-            {ticket.title}
+            Ticket ID = {ticket.id}
           </h3>
-          <p className="text-sm text-gray-600">{ticket.description}</p>
-          <p className="text-xs text-gray-500 italic">
-            Category: {ticket.category}
-          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -213,7 +211,7 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            {/* <label className="block text-sm font-medium text-gray-700">
               Location
             </label>
             <select
@@ -228,7 +226,7 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
                   {loc.name}
                 </option>
               ))}
-            </select>
+            </select> */}
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
