@@ -291,7 +291,9 @@ const TicketModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[90vh] overflow-y-auto relative">
+      {/* <div className="bg-white p-6 rounded-lg shadow-lg w-1/3 max-h-[90vh] overflow-y-auto relative"> */}
+
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 animate-fadeIn">
         {/* Close Button */}
         <button
           className="absolute top-4 right-4 text-gray-600 hover:text-gray-900"
@@ -328,14 +330,14 @@ const TicketModal = ({ isOpen, onClose }) => {
         {/* <h2 className="text-xl font-bold mb-4">Create New Ticket</h2> */}
 
         <form onSubmit={handleSubmit}>
-          {/* <label className="block mb-2">Title:</label>
+          <label className="block mb-2">Subject:</label>
           <input
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="w-full p-2 border rounded mb-4"
             required
-          /> */}
+          />
 
           <label className="block mb-2">Describe the Issue:</label>
           <textarea

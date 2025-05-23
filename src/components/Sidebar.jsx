@@ -50,21 +50,6 @@ const Sidebar = () => {
         {/* Navigation */}
         {/* <nav className="flex-1 p-4 space-y-2 overflow-y-auto"> */}
         <nav className="flex-grow p-4 space-y-2 overflow-y-auto">
-          {/* For USER role */}
-          {user?.role === "USER" && (
-            <NavLink
-              to="/ticket"
-              className={({ isActive }) =>
-                `flex items-center px-4 py-2 rounded-lg text-sm ${
-                  isActive ? "bg-blue-600" : "hover:bg-gray-700"
-                }`
-              }
-            >
-              <FiUsers className="mr-3" />
-              My Tickets
-            </NavLink>
-          )}
-
           {/* For ADMIN and MANAGER roles */}
           {["ADMIN", "MANAGER"].includes(user?.role) && (
             <>
@@ -79,8 +64,11 @@ const Sidebar = () => {
                 <FiHome className="mr-3" />
                 Dashboard
               </NavLink>
+
+              {/* For USER role */}
+              {/* {user?.role === "USER" && ( */}
               <NavLink
-                to="/ticket/admin"
+                to="/ticket"
                 className={({ isActive }) =>
                   `flex items-center px-4 py-2 rounded-lg text-sm ${
                     isActive ? "bg-blue-600" : "hover:bg-gray-700"
@@ -88,8 +76,10 @@ const Sidebar = () => {
                 }
               >
                 <FiUsers className="mr-3" />
-                Admin Tickets
+                My Tickets
               </NavLink>
+              {/* )} */}
+
               <NavLink
                 to="/assets"
                 className={({ isActive }) =>
@@ -134,6 +124,17 @@ const Sidebar = () => {
               >
                 <FiBarChart2 className="mr-3" />
                 Reports
+              </NavLink>
+              <NavLink
+                to="/ticket/admin"
+                className={({ isActive }) =>
+                  `flex items-center px-4 py-2 rounded-lg text-sm ${
+                    isActive ? "bg-blue-600" : "hover:bg-gray-700"
+                  }`
+                }
+              >
+                <FiUsers className="mr-3" />
+                Admin Tickets
               </NavLink>
               <NavLink
                 to="/users"

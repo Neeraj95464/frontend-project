@@ -26,36 +26,11 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
   const [assignees, setAssignees] = useState([]);
   const [isUpdating, setIsUpdating] = useState(false);
   const [dueDate, setDueDate] = useState("");
-  const [employees, setEmployees] = useState([]);
-  const [newEmployeeId, setNewEmployeeId] = useState("");
-  const { register, handleSubmit, reset, setValue, watch } = useForm();
-  const employeeOptions = employees.map((emp) => ({
-    value: emp.id,
-    label: emp.name,
-  }));
+  const { register, setValue } = useForm();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [matchedEmployees, setMatchedEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
-
-  const [locations, setLocations] = useState([
-    { id: 1, name: "Office 1" },
-    { id: 2, name: "Office 2" },
-    { id: 3, name: "Remote" },
-  ]);
-
-  // useEffect(() => {
-  //   getEmployees()
-  //     .then((res) => {
-  //       const formatted = res.data.map((user) => ({
-  //         id: user.employeeId,
-  //         name: user.username,
-  //       }));
-  //       setEmployees(formatted); // for changing employee too
-  //     })
-  //     .catch((err) => {
-  //       console.error("Failed to fetch assignees", err);
-  //     });
-  // }, []);
 
   useEffect(() => {
     const fetchTicket = async () => {
@@ -123,7 +98,7 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
 
   const handleSelectEmployee = (employee) => {
     setSelectedEmployee(employee);
-    setSearchQuery(`${employee.username} (${employee.id})`);
+    setSearchQuery(`${employee.username} (${employee.employeeId})`);
     setValue("assigneeId", employee.employeeId); // or creatorId, based on context
     setMatchedEmployees([]);
   };
