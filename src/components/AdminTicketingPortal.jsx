@@ -213,12 +213,12 @@ export default function AdminTicketingPortal() {
             >
               + Create Ticket
             </Button>
-            <Button
+            {/* <Button
               className="mb-4 bg-green-600 hover:bg-green-700"
               onClick={() => navigate("/user-assets")}
             >
               My Assets
-            </Button>
+            </Button> */}
 
             {userRole === "ADMIN" && (
               <button
