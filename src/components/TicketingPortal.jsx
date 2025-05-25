@@ -7,6 +7,7 @@ import {
   searchTickets,
 } from "../services/api";
 import TicketActionModal from "./TicketActionModal";
+import TicketAttachmentButton from "./TicketAttachmentButton";
 import TicketModal from "./TicketFormModal";
 import { Button, Card } from "./ui";
 import { format, formatDistanceToNow, parseISO, isBefore } from "date-fns";
@@ -563,6 +564,8 @@ export default function TicketingPortal() {
                   <MoreVertical className="w-4 h-4 text-gray-600" />
                 </button>
               )}
+
+              <TicketAttachmentButton ticket={selectedTicket} />
 
               {/* Close Button */}
               <button

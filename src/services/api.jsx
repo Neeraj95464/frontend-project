@@ -4,8 +4,8 @@ import { ResponsiveContainer } from "recharts";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -170,6 +170,43 @@ export const updateTicketStatus = async (ticketId, status) => {
       "Error updating ticket status:",
       error.response?.data || error.message
     );
+    throw error;
+  }
+};
+
+export const downloadAttachment = async (ticketId) => {
+  try {
+    const response = await api.get(
+      `/user-assets/tickets/${ticketId}/attachment`,
+      {
+        responseType: "blob",
+      }
+    );
+
+    // ✅ Extract filename from headers
+    const contentDisposition = response.headers["content-disposition"];
+    let fileName = `ticket_${ticketId}_attachment`;
+
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="(.+)"/);
+      if (match && match[1]) {
+        fileName = match[1];
+      }
+    }
+
+    const blob = new Blob([response.data], {
+      type: response.headers["content-type"],
+    });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Attachment download failed:", error);
     throw error;
   }
 };
@@ -424,8 +461,29 @@ export const addMessageToTicket = async (ticketId, message) => {
   }
 };
 
-export const createTicket = async (ticketData) => {
-  return await api.post(`${API_URL}/user-assets/tickets`, ticketData);
+// export const createTicket = async (ticketData) => {
+//   return await api.post(`${API_URL}/user-assets/tickets`, ticketData);
+// };
+
+export const createTicket = async (ticketData, attachment) => {
+  const formData = new FormData();
+
+  // Add JSON ticket data as a Blob (with content-type application/json)
+  formData.append(
+    "ticket",
+    new Blob([JSON.stringify(ticketData)], { type: "application/json" })
+  );
+
+  // Add the file if it exists
+  if (attachment) {
+    formData.append("attachment", attachment);
+  }
+
+  return await api.post(`${API_URL}/user-assets/tickets`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 };
 
 export const getCurrentUser = async () => {

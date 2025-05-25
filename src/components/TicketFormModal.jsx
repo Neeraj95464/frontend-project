@@ -5,7 +5,6 @@ import {
   searchEmployees,
   getUserAssets,
   getAssetByAssetTag,
-  assignAsset,
 } from "../services/api";
 import { useState, useEffect } from "react";
 
@@ -32,6 +31,7 @@ const TicketModal = ({ isOpen, onClose }) => {
   const [locationError, setLocationError] = useState("");
   const [loading, setLoading] = useState(false);
   const [ticketDepartment, setticketDepartment] = useState("IT"); // Default to IT
+  const [attachment, setAttachment] = useState(null);
 
   const itCategories = [
     "HARDWARE",
@@ -261,14 +261,40 @@ const TicketModal = ({ isOpen, onClose }) => {
     setSelectedAsset(e.target.value);
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (loading) return; // prevent double submission
+
+  //   setLoading(true); // block button
+  //   try {
+  //     await createTicket({
+  //       title,
+  //       description,
+  //       category,
+  //       employee,
+  //       assetTag: selectedAsset,
+  //       location,
+  //       ticketDepartment,
+  //     });
+
+  //     alert("Ticket created successfully!");
+  //     onClose();
+  //   } catch (error) {
+  //     console.error("Error creating ticket: ", error);
+  //   } finally {
+  //     setLoading(false); // re-enable button after API call
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
 
-    if (loading) return; // prevent double submission
+    setLoading(true);
 
-    setLoading(true); // block button
     try {
-      await createTicket({
+      const ticketData = {
         title,
         description,
         category,
@@ -276,14 +302,16 @@ const TicketModal = ({ isOpen, onClose }) => {
         assetTag: selectedAsset,
         location,
         ticketDepartment,
-      });
+      };
+
+      await createTicket(ticketData, attachment);
 
       alert("Ticket created successfully!");
       onClose();
     } catch (error) {
       console.error("Error creating ticket: ", error);
     } finally {
-      setLoading(false); // re-enable button after API call
+      setLoading(false);
     }
   };
 
@@ -531,6 +559,11 @@ const TicketModal = ({ isOpen, onClose }) => {
               ))}
             </ul>
           )}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => setAttachment(e.target.files[0])}
+          />
 
           <div className="flex justify-end gap-2 mt-4">
             <button
