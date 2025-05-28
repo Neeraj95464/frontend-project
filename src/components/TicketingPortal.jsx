@@ -561,7 +561,7 @@ export default function TicketingPortal() {
                     setIsTicketModalOpen(true);
                   }}
                 >
-                  <MoreVertical className="w-4 h-4 text-gray-600" />
+                  <MoreVertical className="w-5 h-5 text-gray-800" />
                 </button>
               )}
 

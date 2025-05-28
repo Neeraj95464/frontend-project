@@ -174,6 +174,25 @@ export const updateTicketStatus = async (ticketId, status) => {
   }
 };
 
+export const downloadThisMonthTickets = async () => {
+  try {
+    const response = await api.get("user-assets/tickets/download-this-month", {
+      responseType: "blob", // 📦 Important for file download
+    });
+
+    // Create download link
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "tickets_this_month.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (error) {
+    console.error("Download failed:", error);
+  }
+};
+
 export const downloadAttachment = async (ticketId) => {
   try {
     const response = await api.get(
@@ -519,12 +538,29 @@ export const changeTicketEmployeeIfSame = async (ticketId, newEmployeeId) => {
   }
 };
 
-export const getTickets = async ({ status = "OPEN", page = 0, size = 10 }) => {
+// export const getTickets = async ({ status = "OPEN", page = 0, size = 10 }) => {
+//   try {
+//     const response = await api.get(`${API_URL}/user-assets/tickets`, {
+//       params: { status, page, size },
+//     });
+//     console.log("your ticket data are ", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching tickets:", error);
+//     throw error;
+//   }
+// };
+
+export const getTickets = async ({
+  status = "OPEN",
+  page = 0,
+  size = 10,
+  employeeId = "ALL", // New optional param
+}) => {
   try {
     const response = await api.get(`${API_URL}/user-assets/tickets`, {
-      params: { status, page, size },
+      params: { status, page, size, employeeId }, // Include employeeId
     });
-    console.log("your ticket data are ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching tickets:", error);

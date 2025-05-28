@@ -9,6 +9,7 @@ import {
   getAssigneeResolutionStats,
   getAssignees,
 } from "../services/api";
+import DownloadButtonExcelTicket from "./DownloadButtonExcelTicket";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -83,6 +84,7 @@ const TicketDashboardChart = () => {
     // <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 p-4">
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-6 p-4">
       <div className="bg-white p-4 rounded-xl shadow-md">
+        {/* <DownloadButtonExcelTicket></DownloadButtonExcelTicket> */}
         <h2 className="text-lg font-semibold mb-2">Ticket Status Counts</h2>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>

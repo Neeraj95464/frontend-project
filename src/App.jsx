@@ -31,6 +31,7 @@ import TicketingPortal from "./components/TicketingPortal";
 import Unauthorized from "./components/Unauthorized";
 import UsersList from "./components/UsersList";
 import VendorListPage from "./components/VendorListPage";
+import Reports from "./components/reports";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -168,10 +169,20 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
+
+              <Route
+                path="/reports"
+                element={
+                  <PrivateRoute>
+                    <Reports />
+                  </PrivateRoute>
+                }
+              />
+
               <Route
                 path="/ticket"
                 element={
-                  <PrivateRoute>
+                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "USER"]}>
                     <TicketingPortal />
                   </PrivateRoute>
                 }

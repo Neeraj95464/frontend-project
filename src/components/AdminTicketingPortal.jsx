@@ -4,6 +4,7 @@ import {
   addMessageToTicket,
   hasRole,
   searchTickets,
+  getTickets,
 } from "../services/api";
 import TicketActionModal from "./TicketActionModal";
 import TicketAttachmentButton from "./TicketAttachmentButton";
@@ -21,6 +22,7 @@ export default function AdminTicketingPortal() {
   const [filteredTickets, setFilteredTickets] = useState([]);
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("OPEN");
+  const [selectedAssignee, setSelectedAssignee] = useState("ALL");
   const [selectedTicketId, setSelectedTicketId] = useState(null);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -34,7 +36,7 @@ export default function AdminTicketingPortal() {
   const [page, setPage] = useState(0);
   const [isSending, setIsSending] = useState(false);
 
-  const [size, setSize] = useState(20); // Default size from backend
+  const [size, setSize] = useState(30); // Default size from backend
   const [paginationInfo, setPaginationInfo] = useState({
     totalElements: 0,
     totalPages: 0,
@@ -42,11 +44,29 @@ export default function AdminTicketingPortal() {
   });
   const [loading, setLoading] = useState(false);
 
+  // const handleStatusChange = (e) => {
+  //   const status = e.target.value;
+  //   setSelectedStatus(status);
+  //   fetchTickets(status);
+  // };
+
   const handleStatusChange = (e) => {
     const status = e.target.value;
     setSelectedStatus(status);
-    fetchTickets(status);
+    fetchTickets(status, selectedAssignee);
   };
+
+  const handleAssigneeChange = (e) => {
+    const assignee = e.target.value;
+    setSelectedAssignee(assignee);
+    fetchTicketsAssignee(selectedStatus, page, assignee); // ✅ Correct
+  };
+
+  // const handleAssigneeChange = (e) => {
+  //   const assignee = e.target.value;
+  //   setSelectedAssignee(assignee);
+  //   fetchTicketsAssignee(selectedStatus, assignee);
+  // };
 
   // const fetchTickets = async (status = "OPEN", customPage = page) => {
   //   try {
@@ -75,6 +95,62 @@ export default function AdminTicketingPortal() {
   //     console.error("Error fetching tickets:", error);
   //   }
   // };
+
+  // const fetchTicketsAssignee = async (status = "OPEN", customPage = page) => {
+  //   console.log("calling assignee methoed");
+  //   try {
+  //     const res = await getTickets({ page: customPage, size, status });
+
+  //     const {
+  //       content = [],
+  //       page: pageNumber,
+  //       size: pageSize,
+  //       totalElements,
+  //       totalPages,
+  //       last,
+  //     } = res || {};
+
+  //     setFilteredTickets(content);
+  //     setPaginationInfo({ totalElements, totalPages, last });
+  //     setPage(pageNumber); // Sync page from backend
+  //     setSize(pageSize);
+  //   } catch (error) {
+  //     console.error("Error fetching tickets:", error);
+  //   }
+  // };
+
+  const fetchTicketsAssignee = async (
+    status = "OPEN",
+    customPage = page,
+    employeeId = "ALL" // New optional param
+  ) => {
+    console.log("Calling assignee method with employeeId:", employeeId);
+
+    try {
+      const res = await getTickets({
+        page: customPage,
+        size,
+        status,
+        employeeId, // Pass employeeId to API call
+      });
+
+      const {
+        content = [],
+        page: pageNumber,
+        size: pageSize,
+        totalElements,
+        totalPages,
+        last,
+      } = res || {};
+
+      setFilteredTickets(content);
+      setPaginationInfo({ totalElements, totalPages, last });
+      setPage(pageNumber); // Sync page from backend
+      setSize(pageSize);
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
 
   const fetchTickets = async (status = "OPEN", customPage = page) => {
     try {
@@ -164,6 +240,12 @@ export default function AdminTicketingPortal() {
     setUserRole(role);
   }, []);
 
+  const assignees = [
+    { employeeId: "john.doe", name: "John Doe" },
+    { employeeId: "mv4748", name: "Neeraj Kumar" },
+    { employeeId: "jane.smith", name: "Jane Smith" },
+  ];
+
   return (
     <div className="lg:ml-40 pt-16">
       {/* Left Section - Ticket List */}
@@ -234,7 +316,7 @@ export default function AdminTicketingPortal() {
               {/* <label className="block text-sm font-medium text-gray-700">
                 Filter by Status:
               </label> */}
-              <select
+              {/* <select
                 value={selectedStatus}
                 onChange={handleStatusChange}
                 className="w-full p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
@@ -244,7 +326,48 @@ export default function AdminTicketingPortal() {
                 <option value="RESOLVED">Resolved</option>
                 <option value="CLOSED">Closed</option>
                 <option value="UNASSIGNED">Unassigned</option>
-              </select>
+              </select> */}
+
+              <div className="flex flex-col sm:flex-row gap-4 mb-4">
+                {/* Status Filter */}
+                <select
+                  value={selectedStatus}
+                  onChange={handleStatusChange}
+                  className="w-full sm:w-1/2 p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
+                >
+                  <option value="OPEN">Open</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="RESOLVED">Resolved</option>
+                  <option value="CLOSED">Closed</option>
+                  <option value="UNASSIGNED">Unassigned</option>
+                </select>
+
+                {/* Assignee Filter */}
+                {/* <select
+                  value={selectedAssignee}
+                  onChange={handleAssigneeChange}
+                  className="w-full sm:w-1/2 p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
+                >
+                  <option value="ALL">All Assignees</option>
+                  <option value="john.doe">John Doe</option>
+                  <option value="neeraj.kumar">Neeraj Kumar</option>
+                  <option value="jane.smith">Jane Smith</option>
+                
+                </select> */}
+
+                <select
+                  value={selectedAssignee}
+                  onChange={handleAssigneeChange}
+                  className="w-full sm:w-1/2 p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
+                >
+                  <option value="ALL">All Assignees</option>
+                  {assignees.map(({ employeeId, name }) => (
+                    <option key={employeeId} value={employeeId}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             <div className="mb-4">

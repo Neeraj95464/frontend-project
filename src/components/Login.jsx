@@ -143,8 +143,9 @@ const Login = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-200">
       <div className="bg-white shadow-xl rounded-2xl p-10 w-full max-w-lg">
         <h2 className="text-3xl font-extrabold text-center text-blue-800 mb-6">
-          Welcome to Mahavir Assets
+          Welcome to Mahavir Group-Help Desk
         </h2>
+        {/* Gold color change the  */}
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
