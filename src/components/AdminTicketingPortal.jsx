@@ -241,9 +241,17 @@ export default function AdminTicketingPortal() {
   }, []);
 
   const assignees = [
-    { employeeId: "john.doe", name: "John Doe" },
-    { employeeId: "mv4748", name: "Neeraj Kumar" },
-    { employeeId: "jane.smith", name: "Jane Smith" },
+    { employeeId: "mv4135", name: "Narendra" },
+    { employeeId: "mv4748", name: "Neeraj" },
+    { employeeId: "mv4933", name: "Husain" },
+    { employeeId: "mv4422", name: "Guna shekhar" },
+    { employeeId: "mv4949", name: "Gagan Mohan" },
+    { employeeId: "mv4445", name: "Vikash" },
+    { employeeId: "aw2067", name: "V Sharath" },
+    { employeeId: "ar0293", name: "Pruthvi" },
+    { employeeId: "aw1562", name: "Ratheesh Ravi" },
+    { employeeId: "aw1136", name: "Sandeep Chandra" },
+    { employeeId: "jb1742", name: "Subhash Kumar" },
   ];
 
   return (
