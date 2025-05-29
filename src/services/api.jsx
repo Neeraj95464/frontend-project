@@ -265,6 +265,17 @@ export const getAllTickets = ({ page = 0, size = 10, status }) => {
   });
 };
 
+export const assignLocation = async (payload) => {
+  return api.post(`user-assets/location-assignments`, payload);
+};
+
+export const getAllAssignments = () => {
+  console.log("Fetching your assignments...");
+  return api.get(`/user-assets/all/locations-assignments`);
+};
+
+export const getAllLocations = () => api.get(`/locations`);
+
 export const searchLocations = async (name) => {
   if (!name || name.trim() === "") {
     console.warn("Search name is empty. Skipping API call.");
@@ -464,16 +475,13 @@ export const updateAsset = async (assetId, assetData) => {
   }
 };
 
-export const addMessageToTicket = async (ticketId, message) => {
+export const addMessageToTicket = async (ticketId, messageDTO) => {
   try {
     const response = await api.post(
       `/user-assets/tickets/${ticketId}/messages`,
-      {
-        message, // No need for JSON.stringify()
-      }
+      messageDTO
     );
-
-    return response.data; // Axios returns response data directly
+    return response.data;
   } catch (error) {
     console.error("Failed to add message:", error);
     throw error;
@@ -561,6 +569,7 @@ export const getTickets = async ({
     const response = await api.get(`${API_URL}/user-assets/tickets`, {
       params: { status, page, size, employeeId }, // Include employeeId
     });
+    console.log("response tickets are ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching tickets:", error);

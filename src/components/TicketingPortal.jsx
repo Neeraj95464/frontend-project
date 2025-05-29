@@ -24,7 +24,10 @@ export default function TicketingPortal() {
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
+  const [messageType, setMessageType] = useState("PUBLIC_RESPONSE");
+
   const navigate = useNavigate();
+  const [showPredefined, setShowPredefined] = useState(false);
   const [userRole, setUserRole] = useState(""); // Track user role
   const [selectedUsername, setSelectedUsername] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -68,24 +71,58 @@ export default function TicketingPortal() {
     }
   };
 
+  const predefinedMessages = [
+    "Thank you for your patience.",
+    "We are looking into your issue.",
+    "Can you please provide more details?",
+    "This ticket has been resolved.",
+  ];
+
+  const handlePredefinedSelect = (e) => {
+    setNewMessage(e.target.value); // fills textarea
+  };
+
+  const handleSelectPredefined = (msg) => {
+    setNewMessage(msg);
+    setShowPredefined(false);
+  };
+
   const handleAddMessage = async () => {
     if (!newMessage.trim()) return;
 
     setIsSending(true);
     try {
-      await addMessageToTicket(selectedTicket.id, newMessage);
+      const messageDTO = {
+        message: newMessage,
+        sender: "You", // or your logged-in user's username
+        ticketMessageType: messageType, // e.g., "PUBLIC_RESPONSE" or "INTERNAL_NOTE"
+      };
+
+      console.log("message dto is ", messageDTO);
+
+      const savedMessage = await addMessageToTicket(
+        selectedTicket.id,
+        messageDTO
+      );
+
       setNewMessage("");
+
       setSelectedTicket((prev) => ({
         ...prev,
         messages: [
           ...prev.messages,
-          { sender: "You", message: newMessage, sentAt: new Date() },
+          {
+            sender: savedMessage.sender,
+            message: savedMessage.message,
+            ticketMessageType: savedMessage.ticketMessageType,
+            sentAt: new Date(savedMessage.sentAt || Date.now()),
+          },
         ],
       }));
     } catch (error) {
       console.error("Error adding message: ", error);
     } finally {
-      setIsSending(false); // Re-enable the button
+      setIsSending(false);
     }
   };
 
@@ -576,9 +613,8 @@ export default function TicketingPortal() {
               </button>
             </div>
           </div>
-
           {/* Messages */}
-          <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
+          {/* <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
             {selectedTicket.messages.length === 0 ? (
               <p className="text-center text-gray-400 text-xs">
                 No messages yet.
@@ -601,10 +637,86 @@ export default function TicketingPortal() {
                 </div>
               ))
             )}
+          </div> */}
+
+          {/* <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
+            {selectedTicket.messages.filter((msg) => {
+              // Show all PUBLIC_RESPONSE messages
+              if (msg.ticketMessageType === "PUBLIC_RESPONSE") return true;
+              // Show INTERNAL_NOTE only if user is not a USER
+              return userRole !== "user";
+            }).length === 0 ? (
+              <p className="text-center text-gray-400 text-xs">
+                No messages yet.
+              </p>
+            ) : (
+              selectedTicket.messages
+                .filter((msg) => {
+                  if (msg.ticketMessageType === "PUBLIC_RESPONSE") return true;
+                  return userRole !== "user";
+                })
+                .map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-gray-100 px-3 py-2 rounded-lg shadow-sm"
+                  >
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-blue-600 text-xs font-semibold truncate">
+                        {msg.sender}
+                      </span>
+                      <span className="text-[10px] text-gray-400">
+                        {new Date(msg.sentAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 text-sm">{msg.message}</p>
+                  </div>
+                ))
+            )}
+          </div> */}
+
+          <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
+            {selectedTicket.messages.filter((msg) => {
+              if (msg.ticketMessageType === "PUBLIC_RESPONSE") return true;
+              return userRole !== "user";
+            }).length === 0 ? (
+              <p className="text-center text-gray-400 text-xs">
+                No messages yet.
+              </p>
+            ) : (
+              selectedTicket.messages
+                .filter((msg) => {
+                  if (msg.ticketMessageType === "PUBLIC_RESPONSE") return true;
+                  return userRole !== "user";
+                })
+                .map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-gray-100 px-3 py-2 rounded-lg shadow-sm"
+                  >
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-blue-600 text-xs font-semibold truncate">
+                        {msg.sender}
+                      </span>
+                      <span className="text-[10px] text-gray-400 flex items-center gap-1">
+                        {msg.ticketMessageType === "INTERNAL_NOTE" && (
+                          <span
+                            title="Internal Note"
+                            className="text-yellow-600"
+                          >
+                            🛡️
+                          </span>
+                        )}
+                        {new Date(msg.sentAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 text-sm">{msg.message}</p>
+                  </div>
+                ))
+            )}
           </div>
 
           {/* New Message Input */}
-          <div className="mt-auto">
+          {/* <div className="mt-auto">
             <textarea
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
               rows="3"
@@ -612,18 +724,173 @@ export default function TicketingPortal() {
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Write your message..."
             />
-            <div className="flex items-center gap-2 mt-2">
-              {/* <button
+            <div className="flex items-center gap-2 mt-2"> */}
+          {/* <button
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all"
                 onClick={handleAddMessage}
               >
                 Send
               </button> */}
-
-              <Button
+          {/* <Button
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleAddMessage}
                 disabled={isSending}
+              >
+                {isSending ? "Sending..." : "Send"}
+              </Button>
+            </div>
+          </div> */}
+          {/* <div className="mt-auto">
+            <select
+              onChange={handlePredefinedSelect}
+              className="w-full p-2 border border-gray-300 rounded-md mb-2 text-sm"
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select a predefined message...
+              </option>
+              {predefinedMessages.map((msg, idx) => (
+                <option key={idx} value={msg}>
+                  {msg}
+                </option>
+              ))}
+            </select>
+
+            <textarea
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+              rows="3"
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              placeholder="Write your message..."
+            />
+
+            <div className="flex items-center gap-2 mt-2">
+              <Button
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleAddMessage}
+                disabled={isSending || !newMessage.trim()}
+              >
+                {isSending ? "Sending..." : "Send"}
+              </Button>
+            </div>
+          </div> */}
+          {/* // from here upcomment */}
+          {/* <div className="mt-auto">
+            <div className="relative">
+              <textarea
+                className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                rows="3"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Write your message..."
+              /> */}
+
+          {/* Icon inside the textarea (bottom right) */}
+          {/* <button
+                type="button"
+                onClick={() => setShowPredefined((prev) => !prev)}
+                className="absolute bottom-2 right-2 text-gray-500 hover:text-blue-600"
+                title="Select predefined message"
+              >
+                💬
+              </button> */}
+
+          {/* Message picker inline popover (above icon inside box) */}
+          {/* {showPredefined && (
+                <div className="absolute right-0 top-full mt-1 z-10 w-64 bg-white shadow-lg border rounded-md">
+                  {predefinedMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleSelectPredefined(msg)}
+                      className="px-3 py-2 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {msg}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div> */}
+
+          {/* <div className="flex items-center gap-2 mt-2">
+              <Button
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleAddMessage}
+                disabled={isSending || !newMessage.trim()}
+              >
+                {isSending ? "Sending..." : "Send"}
+              </Button>
+            </div> */}
+          {/* </div> */}
+
+          <div className="mt-auto">
+            <div className="relative">
+              <textarea
+                className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                rows="3"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={
+                  messageType === "INTERNAL_NOTE"
+                    ? "Write an internal note (IT Team Only)..."
+                    : "Write your message..."
+                }
+              />
+
+              {userRole !== "user" && (
+                <>
+                  {/* Predefined message button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPredefined((prev) => !prev)}
+                    className="absolute bottom-2 right-20 text-gray-500 hover:text-blue-600"
+                    title="Select predefined message"
+                  >
+                    💬
+                  </button>
+
+                  {/* Message type toggle icon */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMessageType((prev) =>
+                        prev === "PUBLIC_RESPONSE"
+                          ? "INTERNAL_NOTE"
+                          : "PUBLIC_RESPONSE"
+                      )
+                    }
+                    className={`absolute bottom-2 right-0 text-sm px-1.5 py-0.5 rounded-md ${
+                      messageType === "INTERNAL_NOTE"
+                        ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                        : "bg-green-100 text-green-700 border border-green-300"
+                    }`}
+                    title="Toggle Message Type"
+                  >
+                    {messageType === "INTERNAL_NOTE" ? "🛡 Note" : "🌐 Public"}
+                  </button>
+                </>
+              )}
+
+              {/* Predefined messages popover */}
+              {showPredefined && (
+                <div className="absolute right-10 top-full mt-1 z-10 w-64 bg-white shadow-lg border rounded-md">
+                  {predefinedMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleSelectPredefined(msg)}
+                      className="px-3 py-2 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {msg}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 mt-2">
+              <Button
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleAddMessage}
+                disabled={isSending || !newMessage.trim()}
               >
                 {isSending ? "Sending..." : "Send"}
               </Button>

@@ -32,6 +32,7 @@ import Unauthorized from "./components/Unauthorized";
 import UsersList from "./components/UsersList";
 import VendorListPage from "./components/VendorListPage";
 import Reports from "./components/reports";
+import Settings from "./components/settings";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -166,6 +167,14 @@ const App = () => {
                 element={
                   <PrivateRoute>
                     <VendorListPage />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <PrivateRoute>
+                    <Settings />
                   </PrivateRoute>
                 }
               />

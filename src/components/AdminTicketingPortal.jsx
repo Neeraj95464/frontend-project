@@ -53,7 +53,7 @@ export default function AdminTicketingPortal() {
   const handleStatusChange = (e) => {
     const status = e.target.value;
     setSelectedStatus(status);
-    fetchTickets(status, selectedAssignee);
+    fetchTickets(status);
   };
 
   const handleAssigneeChange = (e) => {
