@@ -46,7 +46,7 @@ const TicketModal = ({ isOpen, onClose }) => {
     "WORKSHOP_DIAGNOSTIC_TOOLS",
     "OTHER",
 
-    // "MAINTENANCE",
+    "MAINTENANCE",
 
     // "ADMIN",
     // "LOGISTICS",
@@ -54,7 +54,7 @@ const TicketModal = ({ isOpen, onClose }) => {
 
     // "INTERCOM",
     // "PROJECTOR",
-    // "NEW_PROJECT",
+    "NEW_PROJECT",
     // "SERVER",
     // "SFDC",
     // "STORES",
@@ -533,7 +533,7 @@ const TicketModal = ({ isOpen, onClose }) => {
               ))}
             </select>
           )} */}
-          <label className="block mb-2">Location:</label>
+          <label className="block mb-2">Location: </label>
           <input
             type="text"
             value={searchLocationQuery}

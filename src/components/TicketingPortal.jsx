@@ -310,7 +310,7 @@ export default function TicketingPortal() {
                     <tr>
                       {[
                         "ID",
-                        "Description",
+                        "Subject",
                         "Status",
                         "Category",
                         "Location",
@@ -339,7 +339,7 @@ export default function TicketingPortal() {
                       >
                         <td className="px-3 py-2">{ticket.id}</td>
                         <td className="px-3 py-2 min-w-[200px] max-w-[300px] truncate">
-                          {ticket.description}
+                          {ticket.title}
                         </td>
                         <td className="px-3 py-2">
                           <span

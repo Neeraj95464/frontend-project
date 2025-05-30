@@ -24,7 +24,9 @@ export default function AdminTicketingPortal() {
   const [selectedStatus, setSelectedStatus] = useState("OPEN");
   const [selectedAssignee, setSelectedAssignee] = useState("ALL");
   const [selectedTicketId, setSelectedTicketId] = useState(null);
+  const [showPredefined, setShowPredefined] = useState(false);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
+  const [messageType, setMessageType] = useState("PUBLIC_RESPONSE");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const navigate = useNavigate();
@@ -61,6 +63,13 @@ export default function AdminTicketingPortal() {
     setSelectedAssignee(assignee);
     fetchTicketsAssignee(selectedStatus, page, assignee); // ✅ Correct
   };
+
+  const predefinedMessages = [
+    "Thank you for your patience.",
+    "We are looking into your issue.",
+    "Can you please provide more details?",
+    "This ticket has been resolved.",
+  ];
 
   // const handleAssigneeChange = (e) => {
   //   const assignee = e.target.value;
@@ -118,6 +127,11 @@ export default function AdminTicketingPortal() {
   //     console.error("Error fetching tickets:", error);
   //   }
   // };
+
+  const handleSelectPredefined = (msg) => {
+    setNewMessage(msg);
+    setShowPredefined(false);
+  };
 
   const fetchTicketsAssignee = async (
     status = "OPEN",
@@ -252,6 +266,8 @@ export default function AdminTicketingPortal() {
     { employeeId: "aw1562", name: "Ratheesh Ravi" },
     { employeeId: "aw1136", name: "Sandeep Chandra" },
     { employeeId: "jb1742", name: "Subhash Kumar" },
+    { employeeId: "mv4890", name: "Venkata Sai" },
+    { employeeId: "aw2304", name: "Mohammed Azhar Ali" },
   ];
 
   return (
@@ -602,7 +618,7 @@ export default function AdminTicketingPortal() {
                     <tr>
                       {[
                         "ID",
-                        "Description",
+                        "Subject",
                         "Status",
                         "Category",
                         "Location",
@@ -631,7 +647,7 @@ export default function AdminTicketingPortal() {
                       >
                         <td className="px-3 py-2">{ticket.id}</td>
                         <td className="px-3 py-2 max-w-[150px] truncate">
-                          {ticket.description}
+                          {ticket.title}
                         </td>
                         <td className="px-3 py-2">
                           <span
@@ -897,7 +913,7 @@ export default function AdminTicketingPortal() {
           </div>
 
           {/* Messages */}
-          <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
+          {/* <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
             {selectedTicket.messages.length === 0 ? (
               <p className="text-center text-gray-400 text-xs">
                 No messages yet.
@@ -920,10 +936,51 @@ export default function AdminTicketingPortal() {
                 </div>
               ))
             )}
+          </div> */}
+
+          <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
+            {selectedTicket.messages.filter((msg) => {
+              if (msg.ticketMessageType === "PUBLIC_RESPONSE") return true;
+              return userRole !== "user";
+            }).length === 0 ? (
+              <p className="text-center text-gray-400 text-xs">
+                No messages yet.
+              </p>
+            ) : (
+              selectedTicket.messages
+                .filter((msg) => {
+                  if (msg.ticketMessageType === "PUBLIC_RESPONSE") return true;
+                  return userRole !== "user";
+                })
+                .map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-gray-100 px-3 py-2 rounded-lg shadow-sm"
+                  >
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-blue-600 text-xs font-semibold truncate">
+                        {msg.sender}
+                      </span>
+                      <span className="text-[10px] text-gray-400 flex items-center gap-1">
+                        {msg.ticketMessageType === "INTERNAL_NOTE" && (
+                          <span
+                            title="Internal Note"
+                            className="text-yellow-600"
+                          >
+                            🛡️
+                          </span>
+                        )}
+                        {new Date(msg.sentAt).toLocaleString()}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 text-sm">{msg.message}</p>
+                  </div>
+                ))
+            )}
           </div>
 
           {/* New Message Input */}
-          <div className="mt-auto">
+          {/* <div className="mt-auto">
             <textarea
               className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
               rows="3"
@@ -931,18 +988,93 @@ export default function AdminTicketingPortal() {
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Write your message..."
             />
-            <div className="flex items-center gap-2 mt-2">
-              {/* <Button
+            <div className="flex items-center gap-2 mt-2"> */}
+          {/* <Button
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all"
                 onClick={handleAddMessage}
               >
                 Send
               </Button> */}
 
-              <Button
+          {/* <Button
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleAddMessage}
                 disabled={isSending}
+              >
+                {isSending ? "Sending..." : "Send"}
+              </Button>
+            </div>
+          </div> */}
+
+          <div className="mt-auto">
+            <div className="relative">
+              <textarea
+                className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                rows="3"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={
+                  messageType === "INTERNAL_NOTE"
+                    ? "Write an internal note (IT Team Only)..."
+                    : "Write your message..."
+                }
+              />
+
+              {userRole !== "user" && (
+                <>
+                  {/* Predefined message button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPredefined((prev) => !prev)}
+                    className="absolute bottom-2 right-20 text-gray-500 hover:text-blue-600"
+                    title="Select predefined message"
+                  >
+                    💬
+                  </button>
+
+                  {/* Message type toggle icon */}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMessageType((prev) =>
+                        prev === "PUBLIC_RESPONSE"
+                          ? "INTERNAL_NOTE"
+                          : "PUBLIC_RESPONSE"
+                      )
+                    }
+                    className={`absolute bottom-2 right-0 text-sm px-1.5 py-0.5 rounded-md ${
+                      messageType === "INTERNAL_NOTE"
+                        ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                        : "bg-green-100 text-green-700 border border-green-300"
+                    }`}
+                    title="Toggle Message Type"
+                  >
+                    {messageType === "INTERNAL_NOTE" ? "🛡 Note" : "🌐 Public"}
+                  </button>
+                </>
+              )}
+
+              {/* Predefined messages popover */}
+              {showPredefined && (
+                <div className="absolute right-10 top-full mt-1 z-10 w-64 bg-white shadow-lg border rounded-md">
+                  {predefinedMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleSelectPredefined(msg)}
+                      className="px-3 py-2 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {msg}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 mt-2">
+              <Button
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleAddMessage}
+                disabled={isSending || !newMessage.trim()}
               >
                 {isSending ? "Sending..." : "Send"}
               </Button>
