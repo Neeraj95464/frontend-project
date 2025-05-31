@@ -3,8 +3,8 @@ import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -249,8 +249,14 @@ export const updateTicketAssignee = (ticketId, assigneeId) => {
   return api.put(`user-assets/tickets/${ticketId}/assign/${assigneeId}`);
 };
 
-export const updateTicketLocation = (id, locationId) =>
-  api.put(`/tickets/${id}/location`, { locationId });
+// Update Ticket Location
+export const updateTicketLocation = (ticketId, locationId) =>
+  api.put(`user-assets/tickets/${ticketId}/location/${locationId}`);
+
+// Update Ticket Category
+export const updateTicketCategory = (ticketId, category) =>
+  api.put(`user-assets/tickets/${ticketId}/category/${category}`);
+
 export const updateTicketCCEmails = (id, ccEmails) =>
   api.put(`/tickets/${id}/cc-emails`, { ccEmails });
 
@@ -568,7 +574,7 @@ export const getTickets = async ({
     const response = await api.get(`${API_URL}/user-assets/tickets`, {
       params: { status, page, size, employeeId }, // Include employeeId
     });
-    console.log("response tickets are ", response.data);
+    // console.log("response tickets are ", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching tickets:", error);

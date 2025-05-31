@@ -268,6 +268,8 @@ export default function AdminTicketingPortal() {
     { employeeId: "jb1742", name: "Subhash Kumar" },
     { employeeId: "mv4890", name: "Venkata Sai" },
     { employeeId: "aw2304", name: "Mohammed Azhar Ali" },
+    { employeeId: "AW1562", name: "Ratheesh Ravi" },
+    { employeeId: "MV5041", name: "K Rupa Lavanya" },
   ];
 
   return (
@@ -646,7 +648,11 @@ export default function AdminTicketingPortal() {
                         onClick={() => setSelectedTicket(ticket)}
                       >
                         <td className="px-3 py-2">{ticket.id}</td>
-                        <td className="px-3 py-2 max-w-[150px] truncate">
+                        {/* <td className="px-3 py-2 max-w-[150px] truncate">
+                          {ticket.title}
+                        </td> */}
+
+                        <td className="px-3 py-2 min-w-[200px] max-w-[300px] truncate">
                           {ticket.title}
                         </td>
                         <td className="px-3 py-2">

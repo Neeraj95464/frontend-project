@@ -156,7 +156,7 @@ const Login = () => {
             <input
               type="text"
               className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-              placeholder="Username"
+              placeholder="Username (Your Employee ID) "
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required

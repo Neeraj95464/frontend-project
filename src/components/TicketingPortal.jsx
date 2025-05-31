@@ -14,6 +14,7 @@ import { format, formatDistanceToNow, parseISO, isBefore } from "date-fns";
 import { MoreVertical } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function TicketingPortal() {
   const [tickets, setTickets] = useState([]);
@@ -25,13 +26,15 @@ export default function TicketingPortal() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [messageType, setMessageType] = useState("PUBLIC_RESPONSE");
-
+  const [ticketStatus, setTicketStatus] = useState("");
   const navigate = useNavigate();
   const [showPredefined, setShowPredefined] = useState(false);
   const [userRole, setUserRole] = useState(""); // Track user role
   const [selectedUsername, setSelectedUsername] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(0);
   const [size, setSize] = useState(20); // Default size from backend
@@ -42,6 +45,7 @@ export default function TicketingPortal() {
   });
   const [loading, setLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleStatusChange = (e) => {
     const status = e.target.value;
@@ -85,6 +89,29 @@ export default function TicketingPortal() {
   const handleSelectPredefined = (msg) => {
     setNewMessage(msg);
     setShowPredefined(false);
+  };
+
+  // const handleSendAndClose = async () => {
+  //   try {
+  //     await handleAddMessage(); // Send message first
+  //     await handleCloseTicket(); // Then close ticket
+  //   } catch (err) {
+  //     console.error("Error sending and closing ticket:", err);
+  //   }
+  // };
+
+  const handleCloseTicket = async () => {
+    setIsUpdating(true);
+    try {
+      await updateTicketStatus(selectedTicket.id, "CLOSED");
+      setTicketStatus("CLOSED");
+      toast.success("Status updated");
+    } catch (error) {
+      toast.error("Failed to update status");
+      console.error("Error updating status:", error);
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const handleAddMessage = async () => {
@@ -822,6 +849,81 @@ export default function TicketingPortal() {
             </div> */}
           {/* </div> */}
 
+          {/* <div className="mt-auto">
+            <div className="relative">
+              <textarea
+                className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                rows="3"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={
+                  messageType === "INTERNAL_NOTE"
+                    ? "Write an internal note (IT Team Only)..."
+                    : "Write your message..."
+                }
+              />
+
+              {userRole !== "user" && (
+                <>
+ 
+                  <button
+                    type="button"
+                    onClick={() => setShowPredefined((prev) => !prev)}
+                    className="absolute bottom-2 right-20 text-gray-500 hover:text-blue-600"
+                    title="Select predefined message"
+                  >
+                    💬
+                  </button>
+
+              
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setMessageType((prev) =>
+                        prev === "PUBLIC_RESPONSE"
+                          ? "INTERNAL_NOTE"
+                          : "PUBLIC_RESPONSE"
+                      )
+                    }
+                    className={`absolute bottom-2 right-0 text-sm px-1.5 py-0.5 rounded-md ${
+                      messageType === "INTERNAL_NOTE"
+                        ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
+                        : "bg-green-100 text-green-700 border border-green-300"
+                    }`}
+                    title="Toggle Message Type"
+                  >
+                    {messageType === "INTERNAL_NOTE" ? "🛡 Note" : "🌐 Public"}
+                  </button>
+                </>
+              )}
+
+           
+              {showPredefined && (
+                <div className="absolute right-10 top-full mt-1 z-10 w-64 bg-white shadow-lg border rounded-md">
+                  {predefinedMessages.map((msg, idx) => (
+                    <div
+                      key={idx}
+                      onClick={() => handleSelectPredefined(msg)}
+                      className="px-3 py-2 hover:bg-blue-100 cursor-pointer"
+                    >
+                      {msg}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex items-center gap-2 mt-2">
+              <Button
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleAddMessage}
+                disabled={isSending || !newMessage.trim()}
+              >
+                {isSending ? "Sending..." : "Send"}
+              </Button>
+            </div>
+          </div> */}
+
           <div className="mt-auto">
             <div className="relative">
               <textarea
@@ -887,17 +989,62 @@ export default function TicketingPortal() {
             </div>
 
             <div className="flex items-center gap-2 mt-2">
-              <Button
+              {/* Main Send button */}
+              <button
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 rounded-md shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleAddMessage}
                 disabled={isSending || !newMessage.trim()}
               >
                 {isSending ? "Sending..." : "Send"}
-              </Button>
+              </button>
+
+              {userRole !== "user" && (
+                <>
+                  {/* Dropdown toggle button */}
+                  <div className="relative">
+                    <button
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md shadow-md"
+                      onClick={() => setDropdownOpen((prev) => !prev)}
+                      aria-haspopup="true"
+                      aria-expanded={dropdownOpen}
+                      disabled={isSending || !newMessage.trim()}
+                    >
+                      ▼
+                    </button>
+
+                    {dropdownOpen && (
+                      <ul className="absolute right-0 mt-1 w-40 bg-white border rounded shadow-md z-10">
+                        <li>
+                          <button
+                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                            onClick={async () => {
+                              setDropdownOpen(false);
+                              try {
+                                await handleAddMessage();
+                                await handleCloseTicket();
+                                toast.success(
+                                  "Message sent and ticket closed."
+                                );
+                              } catch (err) {
+                                toast.error("Failed to send and close.");
+                                console.error(err);
+                              }
+                            }}
+                            disabled={isSending || !newMessage.trim()}
+                          >
+                            Send and Close
+                          </button>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>
       )}
+
       {selectedUser && (
         <UserDetailsModal
           query={selectedUser} // ✅ Pass as `query`, not `username`
