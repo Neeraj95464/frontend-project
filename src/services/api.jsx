@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 // const API_URL = "http://localhost:7355/api";
 const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
-// Create Axios instance
+// Create Axios instancecfc
 const api = axios.create({
   baseURL: API_URL,
   headers: { "Content-Type": "application/json" },
@@ -992,6 +992,9 @@ export const fetchAssigneeTicketCounts = () =>
 
 export const fetchResolutionStats = () =>
   api.get(`/user-assets/tickets/stats/resolution-time`);
+
+export const fetchLocationStats = () =>
+  api.get(`/user-assets/tickets/stats/by-location`);
 
 export const getAssigneeResolutionStats = async (employeeId) => {
   const response = await api.get(
