@@ -5,6 +5,7 @@ import {
   hasRole,
   searchTickets,
   getTickets,
+  updateTicketStatus,
 } from "../services/api";
 import TicketActionModal from "./TicketActionModal";
 import TicketAttachmentButton from "./TicketAttachmentButton";
@@ -16,6 +17,7 @@ import { useState, useEffect } from "react";
 // Icon from lucide-react
 import { FiMenu, FiSearch, FiUser, FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function AdminTicketingPortal() {
   const [tickets, setTickets] = useState([]);
@@ -29,7 +31,9 @@ export default function AdminTicketingPortal() {
   const [messageType, setMessageType] = useState("PUBLIC_RESPONSE");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
+  const [ticketStatus, setTicketStatus] = useState("");
   const navigate = useNavigate();
+  const [isUpdating, setIsUpdating] = useState(false);
   const [userRole, setUserRole] = useState(""); // Track user role
   const [selectedUsername, setSelectedUsername] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,6 +41,7 @@ export default function AdminTicketingPortal() {
   const [searchInput, setSearchInput] = useState("");
   const [page, setPage] = useState(0);
   const [isSending, setIsSending] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const [size, setSize] = useState(30); // Default size from backend
   const [paginationInfo, setPaginationInfo] = useState({
@@ -188,28 +193,82 @@ export default function AdminTicketingPortal() {
     }
   };
 
+  // const handleAddMessage = async () => {
+  //   if (!newMessage.trim()) return;
+
+  //   setIsSending(true);
+  //   try {
+  //     await addMessageToTicket(selectedTicket.id, newMessage);
+  //     setNewMessage("");
+  //     setSelectedTicket((prev) => ({
+  //       ...prev,
+  //       messages: [
+  //         ...prev.messages,
+  //         { sender: "You", message: newMessage, sentAt: new Date() },
+  //       ],
+  //     }));
+  //   } catch (error) {
+  //     console.error("Error adding message: ", error);
+  //   } finally {
+  //     setIsSending(false); // Re-enable the button
+  //   }
+  // };
+
+  // Handle search form submission
+
+  const handleCloseTicket = async () => {
+    setIsUpdating(true);
+    try {
+      await updateTicketStatus(selectedTicket.id, "CLOSED");
+      setTicketStatus("CLOSED");
+      toast.success("Status updated");
+    } catch (error) {
+      toast.error("Failed to update status");
+      console.error("Error updating status:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   const handleAddMessage = async () => {
     if (!newMessage.trim()) return;
 
     setIsSending(true);
     try {
-      await addMessageToTicket(selectedTicket.id, newMessage);
+      const messageDTO = {
+        message: newMessage,
+        sender: "You", // or your logged-in user's username
+        ticketMessageType: messageType, // e.g., "PUBLIC_RESPONSE" or "INTERNAL_NOTE"
+      };
+
+      // console.log("message dto is ", messageDTO);
+
+      const savedMessage = await addMessageToTicket(
+        selectedTicket.id,
+        messageDTO
+      );
+
       setNewMessage("");
+
       setSelectedTicket((prev) => ({
         ...prev,
         messages: [
           ...prev.messages,
-          { sender: "You", message: newMessage, sentAt: new Date() },
+          {
+            sender: savedMessage.sender,
+            message: savedMessage.message,
+            ticketMessageType: savedMessage.ticketMessageType,
+            sentAt: new Date(savedMessage.sentAt || Date.now()),
+          },
         ],
       }));
     } catch (error) {
       console.error("Error adding message: ", error);
     } finally {
-      setIsSending(false); // Re-enable the button
+      setIsSending(false);
     }
   };
 
-  // Handle search form submission
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
 
@@ -233,7 +292,7 @@ export default function AdminTicketingPortal() {
       } = res || {};
 
       // Log content to ensure it's coming through
-      console.log("Fetched content:", content);
+      // console.log("Fetched content:", content);
 
       setFilteredTickets(content);
       setPaginationInfo({
@@ -366,6 +425,7 @@ export default function AdminTicketingPortal() {
                   <option value="RESOLVED">Resolved</option>
                   <option value="CLOSED">Closed</option>
                   <option value="UNASSIGNED">Unassigned</option>
+                  <option value="ALL">ALL</option>
                 </select>
 
                 {/* Assignee Filter */}
@@ -1014,8 +1074,20 @@ export default function AdminTicketingPortal() {
 
           <div className="mt-auto">
             <div className="relative">
-              <textarea
+              {/* <textarea
                 className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none text-sm"
+                rows="3"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={
+                  messageType === "INTERNAL_NOTE"
+                    ? "Write an internal note (IT Team Only)..."
+                    : "Write your message..."
+                }
+              /> */}
+
+              <textarea
+                className="w-full p-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 resize text-sm"
                 rows="3"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
@@ -1048,14 +1120,14 @@ export default function AdminTicketingPortal() {
                           : "PUBLIC_RESPONSE"
                       )
                     }
-                    className={`absolute bottom-2 right-0 text-sm px-1.5 py-0.5 rounded-md ${
+                    className={`absolute bottom-2 right-3 text-sm px-1.5 py-0.5 rounded-md ${
                       messageType === "INTERNAL_NOTE"
                         ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
                         : "bg-green-100 text-green-700 border border-green-300"
                     }`}
                     title="Toggle Message Type"
                   >
-                    {messageType === "INTERNAL_NOTE" ? "🛡 Note" : "🌐 Public"}
+                    {messageType === "INTERNAL_NOTE" ? "🛡 Note" : "Public"}
                   </button>
                 </>
               )}
@@ -1084,6 +1156,49 @@ export default function AdminTicketingPortal() {
               >
                 {isSending ? "Sending..." : "Send"}
               </Button>
+
+              {userRole !== "user" && (
+                <>
+                  {/* Dropdown toggle button */}
+                  <div className="relative">
+                    <button
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md shadow-md"
+                      onClick={() => setDropdownOpen((prev) => !prev)}
+                      aria-haspopup="true"
+                      aria-expanded={dropdownOpen}
+                      disabled={isSending || !newMessage.trim()}
+                    >
+                      ▼
+                    </button>
+
+                    {dropdownOpen && (
+                      <ul className="absolute right-0 mt-1 w-40 bg-white border rounded shadow-md z-10">
+                        <li>
+                          <button
+                            className="w-full text-left px-4 py-2 hover:bg-gray-100"
+                            onClick={async () => {
+                              setDropdownOpen(false);
+                              try {
+                                await handleAddMessage();
+                                await handleCloseTicket();
+                                toast.success(
+                                  "Message sent and ticket closed."
+                                );
+                              } catch (err) {
+                                toast.error("Failed to send and close.");
+                                console.error(err);
+                              }
+                            }}
+                            disabled={isSending || !newMessage.trim()}
+                          >
+                            Send and Close
+                          </button>
+                        </li>
+                      </ul>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

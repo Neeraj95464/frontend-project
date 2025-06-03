@@ -1,30 +1,94 @@
+// import axios from "axios";
+// import { toast } from "react-toastify";
+
+// // Base API URL
+// // const API_URL = "http://103.211.37.123:7355/api";
+// const API_URL = "http://localhost:7355/api";
+// // const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
+
+// // Create Axios instancecfc
+// const api = axios.create({
+//   baseURL: API_URL,
+//   headers: { "Content-Type": "application/json" },
+// });
+
+// // Attach token to every request
+// api.interceptors.request.use(
+//   (config) => {
+//     const storedUser = localStorage.getItem("user");
+//     if (storedUser) {
+//       const { token } = JSON.parse(storedUser) || {};
+//       if (token) {
+//         config.headers.Authorization = `Bearer ${token}`;
+//       }
+//     }
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
+
+// export default api;
+
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 
 // Base API URL
-// const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
+// const API_URL = "http://localhost:7355/api"; // change in prod
 const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
-// Create Axios instancecfc
+// Create Axios instance
 const api = axios.create({
   baseURL: API_URL,
   headers: { "Content-Type": "application/json" },
 });
 
-// Attach token to every request
+// Attach token + check expiration
 api.interceptors.request.use(
   (config) => {
     const storedUser = localStorage.getItem("user");
+
     if (storedUser) {
-      const { token } = JSON.parse(storedUser) || {};
+      const { token } = JSON.parse(storedUser);
+
       if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        try {
+          const decoded = jwtDecode(token);
+          const isExpired = decoded.exp * 1000 < Date.now();
+
+          if (isExpired) {
+            toast.error("Session expired. Please log in again.");
+            localStorage.removeItem("user");
+            window.location.href = "/login"; // redirect
+            return Promise.reject("Token expired");
+          }
+
+          config.headers.Authorization = `Bearer ${token}`;
+        } catch (err) {
+          console.error("JWT decode error:", err);
+          localStorage.removeItem("user");
+          window.location.href = "/login";
+          return Promise.reject("Invalid token");
+        }
       }
     }
+
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+// (Optional) Global response error handler
+api.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (error.response?.status === 401) {
+      toast.error("Unauthorized. Please login again.");
+      localStorage.removeItem("user");
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default api;
