@@ -14,7 +14,7 @@ export default function LocationAssignmentTable() {
     const fetchData = async () => {
       try {
         const res = await getAllAssignments();
-        console.log("Assignment data:", res.data);
+        // console.log("Assignment data:", res.data);
         setAssignments(res.data || []);
       } catch (error) {
         console.error("Failed to load assignments:", error);

@@ -263,7 +263,7 @@ export default function TicketingPortal() {
                 className="w-full p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
               >
                 <option value="OPEN">Open</option>
-                <option value="IN_PROGRESS">In Progress</option>
+                <option value="WAITING">Waiting</option>
                 <option value="RESOLVED">Resolved</option>
                 <option value="CLOSED">Closed</option>
                 <option value="UNASSIGNED">Unassigned</option>
@@ -376,7 +376,7 @@ export default function TicketingPortal() {
                             className={`px-2 py-0.5 rounded-full text-white text-xs ${
                               ticket.status === "OPEN"
                                 ? "bg-green-500"
-                                : ticket.status === "IN_PROGRESS"
+                                : ticket.status === "WAITING"
                                 ? "bg-yellow-500"
                                 : ticket.status === "RESOLVED"
                                 ? "bg-blue-500"

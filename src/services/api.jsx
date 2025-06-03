@@ -29,13 +29,15 @@
 
 // export default api;
 
+// import { logoutAndRedirect } from "./utils/logoutAndRedirect";
+
+// utils/logoutAndRedirect.js
+
 import axios from "axios";
-import { jwtDecode } from "jwt-decode";
 import { toast } from "react-toastify";
 
 // Base API URL
-// const API_URL = "http://localhost:7355/api"; // change in prod
-const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -43,33 +45,40 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// Attach token + check expiration
+// Helper: Check if token is expired using `exp`
+function isTokenExpired(token) {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const expiresAt = new Date(payload.exp * 1000);
+    const now = new Date();
+    return now >= expiresAt;
+  } catch (error) {
+    console.error("Token decoding failed:", error);
+    return true; // Treat as expired if decoding fails
+  }
+}
+
+// Logout + redirect
+function logoutAndRedirect() {
+  localStorage.removeItem("user");
+  toast.error("Session expired. Please login again.");
+  window.location.href = "/login"; // force reload + redirect
+}
+
+// Request Interceptor
 api.interceptors.request.use(
   (config) => {
     const storedUser = localStorage.getItem("user");
 
     if (storedUser) {
       const { token } = JSON.parse(storedUser);
-
       if (token) {
-        try {
-          const decoded = jwtDecode(token);
-          const isExpired = decoded.exp * 1000 < Date.now();
-
-          if (isExpired) {
-            toast.error("Session expired. Please log in again.");
-            localStorage.removeItem("user");
-            window.location.href = "/login"; // redirect
-            return Promise.reject("Token expired");
-          }
-
-          config.headers.Authorization = `Bearer ${token}`;
-        } catch (err) {
-          console.error("JWT decode error:", err);
-          localStorage.removeItem("user");
-          window.location.href = "/login";
-          return Promise.reject("Invalid token");
+        if (isTokenExpired(token)) {
+          logoutAndRedirect();
+          throw new axios.Cancel("Token expired");
         }
+
+        config.headers.Authorization = `Bearer ${token}`;
       }
     }
 
@@ -78,20 +87,83 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// (Optional) Global response error handler
+// Optional: handle 401 errors
 api.interceptors.response.use(
-  (res) => res,
+  (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      toast.error("Unauthorized. Please login again.");
-      localStorage.removeItem("user");
-      window.location.href = "/login";
+    if (!axios.isCancel(error) && error.response?.status === 401) {
+      toast.error("Unauthorized access");
+      // logoutAndRedirect();
     }
+
     return Promise.reject(error);
   }
 );
 
 export default api;
+
+// import axios from "axios";
+// import { toast } from "react-toastify";
+
+// const API_URL = "http://localhost:7355/api";
+
+// // Axios instance
+// const api = axios.create({
+//   baseURL: API_URL,
+//   headers: { "Content-Type": "application/json" },
+// });
+
+// // Manual token expiry check (based on iat + 24 hrs)
+// function isTokenExpiredByIat(token) {
+//   try {
+//     const payload = JSON.parse(atob(token.split(".")[1]));
+//     const issuedAt = payload.iat * 1000; // in milliseconds
+//     const now = Date.now();
+//     const expiryByIat = issuedAt + 24 * 60 * 60 * 1000; // 24 hours in ms
+//     return now > expiryByIat;
+//   } catch (error) {
+//     console.error("Invalid token decoding");
+//     return true; // treat as expired on error
+//   }
+// }
+
+// // Interceptor for attaching token and checking expiry
+// api.interceptors.request.use(
+//   (config) => {
+//     const storedUser = localStorage.getItem("user");
+
+//     if (storedUser) {
+//       const { token } = JSON.parse(storedUser);
+
+//       if (token) {
+//         if (isTokenExpiredByIat(token)) {
+//           console.warn("Token expired (based on iat)");
+//           // Let component handle it via a rejected promise
+//           throw new axios.Cancel("Token expired based on iat");
+//         }
+
+//         config.headers.Authorization = `Bearer ${token}`;
+//       }
+//     }
+
+//     return config;
+//   },
+//   (error) => Promise.reject(error)
+// );
+
+// // Response error handler (don't auto-logout here)
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     if (!axios.isCancel(error) && error.response?.status === 401) {
+//       toast.error("Unauthorized request");
+//     }
+
+//     return Promise.reject(error);
+//   }
+// );
+
+// export default api;
 
 // ================== AUTHENTICATION ==================
 
@@ -324,12 +396,22 @@ export const updateTicketCategory = (ticketId, category) =>
 export const updateTicketCCEmails = (id, ccEmails) =>
   api.put(`/tickets/${id}/cc-emails`, { ccEmails });
 
+// export const getAllTickets = ({ page = 0, size = 10, status }) => {
+//   return api.get("/user-assets/admin/tickets", {
+//     params: {
+//       page,
+//       size,
+//       ...(status ? { status } : {}),
+//     },
+//   });
+// };
+
 export const getAllTickets = ({ page = 0, size = 10, status }) => {
   return api.get("/user-assets/admin/tickets", {
     params: {
       page,
       size,
-      ...(status ? { status } : {}),
+      ...(status && status.toUpperCase() !== "ALL" ? { status } : {}),
     },
   });
 };
@@ -339,7 +421,7 @@ export const assignLocation = async (payload) => {
 };
 
 export const getAllAssignments = () => {
-  console.log("Fetching your assignments...");
+  // console.log("Fetching your assignments...");
   return api.get(`/user-assets/all/locations-assignments`);
 };
 

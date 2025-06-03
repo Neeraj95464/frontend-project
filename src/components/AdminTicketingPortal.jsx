@@ -421,11 +421,11 @@ export default function AdminTicketingPortal() {
                   className="w-full sm:w-1/2 p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
                 >
                   <option value="OPEN">Open</option>
-                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="WAITING">Waiting</option>
                   <option value="RESOLVED">Resolved</option>
                   <option value="CLOSED">Closed</option>
                   <option value="UNASSIGNED">Unassigned</option>
-                  <option value="ALL">ALL</option>
+                  <option value="ALL">All</option>
                 </select>
 
                 {/* Assignee Filter */}
