@@ -652,6 +652,7 @@ export const createTicket = async (ticketData, attachment) => {
     "ticket",
     new Blob([JSON.stringify(ticketData)], { type: "application/json" })
   );
+  console.log("sending ticket data are ", formData);
 
   // Add the file if it exists
   if (attachment) {

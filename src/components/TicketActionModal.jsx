@@ -656,8 +656,8 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
                 className="w-full border rounded-md px-2 py-1"
               >
                 <option value="OPEN">Open</option>
-                <option value="IN_PROGRESS">In Progress</option>
-                <option value="RESOLVED">Resolved</option>
+                <option value="WAITING">Waiting</option>
+                {/* <option value="RESOLVED">Resolved</option> */}
                 <option value="CLOSED">Closed</option>
               </select>
             </div>

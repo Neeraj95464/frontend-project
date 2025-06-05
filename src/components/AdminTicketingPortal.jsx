@@ -422,7 +422,7 @@ export default function AdminTicketingPortal() {
                 >
                   <option value="OPEN">Open</option>
                   <option value="WAITING">Waiting</option>
-                  <option value="RESOLVED">Resolved</option>
+                  {/* <option value="RESOLVED">Resolved</option> */}
                   <option value="CLOSED">Closed</option>
                   <option value="UNASSIGNED">Unassigned</option>
                   <option value="ALL">All</option>
@@ -526,154 +526,6 @@ export default function AdminTicketingPortal() {
             <p className="text-gray-500">No tickets available.</p>
           ) : (
             <div className="h-[500px] overflow-y-auto overflow-x-auto border rounded-lg">
-              {/* <table className="min-w-full divide-y divide-gray-200">
-                <thead className="sticky top-0 bg-white">
-                  <tr>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      ID
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Title
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Status
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Category
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Location
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Assignee
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Employee
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Asset Tag
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                      Created At
-                    </th>
-                    {userRole !== "user" && (
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-700">
-                        Actions
-                      </th>
-                    )}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {filteredTickets.map((ticket) => (
-                    <tr
-                      key={ticket.id}
-                      className="hover:bg-gray-50 transition cursor-pointer"
-                      onClick={() => setSelectedTicket(ticket)}
-                    >
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {ticket.id}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {ticket.title}
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        <span
-                          className={`px-2 py-1 rounded text-white text-xs ${
-                            ticket.status === "OPEN"
-                              ? "bg-green-500"
-                              : ticket.status === "IN_PROGRESS"
-                              ? "bg-yellow-500"
-                              : ticket.status === "RESOLVED"
-                              ? "bg-blue-500"
-                              : "bg-red-500"
-                          }`}
-                        >
-                          {ticket.status.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {ticket.category}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-700">
-                        {ticket.locationName}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-blue-600">
-                        {userRole !== "user" ? (
-                          <button
-                            type="button"
-                            className="hover:underline cursor-pointer text-blue-600"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedUser(ticket.assignee);
-                            }}
-                          >
-                            {ticket.assignee || "Unassigned"}
-                          </button>
-                        ) : (
-                          <span className="text-gray-800">
-                            {ticket.assignee || "Unassigned"}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-blue-600">
-                        {userRole !== "user" ? (
-                          <button
-                            type="button"
-                            className="hover:underline cursor-pointer text-blue-600"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedUser(ticket.employee);
-                            }}
-                          >
-                            {ticket.employee || "Unassigned"}
-                          </button>
-                        ) : (
-                          <span className="text-gray-800">
-                            {ticket.employee || "Unassigned"}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        {userRole !== "user" ? (
-                          <button
-                            type="button"
-                            className="text-blue-600 hover:underline cursor-pointer"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/asset/${ticket.assetTag}`);
-                            }}
-                          >
-                            {ticket.assetTag || "No Asset"}
-                          </button>
-                        ) : (
-                          <span className="text-gray-800">
-                            {ticket.assetTag || "No Asset"}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-gray-600">
-                        {new Date(ticket.createdAt).toLocaleDateString()}
-                      </td>
-                      {userRole !== "user" && (
-                        <td className="px-4 py-2 text-sm space-x-2">
-                          <button
-                            type="button"
-                            className="text-indigo-600 hover:underline"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedTicketId(ticket.id);
-                              setIsTicketModalOpen(true);
-                            }}
-                          >
-                            Actions
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table> */}
-
               <div className="overflow-x-auto border rounded-lg shadow-sm">
                 <table className="min-w-full text-sm text-left text-gray-700">
                   <thead className="sticky top-0 bg-gray-100 text-xs font-semibold uppercase text-gray-600">
@@ -741,15 +593,15 @@ export default function AdminTicketingPortal() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setSelectedUser(ticket.assignee);
+                                setSelectedUser(ticket.assignee?.employeeId);
                               }}
                               className="hover:underline truncate"
                             >
-                              {ticket.assignee || "Unassigned"}
+                              {ticket.assignee?.username || "Unassigned"}
                             </button>
                           ) : (
                             <span className="text-gray-800 truncate">
-                              {ticket.assignee || "Unassigned"}
+                              {ticket.assignee?.username || "Unassigned"}
                             </span>
                           )}
                         </td>
@@ -758,15 +610,16 @@ export default function AdminTicketingPortal() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setSelectedUser(ticket.employee);
+                                // setSelectedUser(ticket.employee);
+                                setSelectedUser(ticket.employee?.employeeId);
                               }}
                               className="hover:underline truncate"
                             >
-                              {ticket.employee || "Unassigned"}
+                              {ticket.employee?.username || "Unassigned"}
                             </button>
                           ) : (
                             <span className="text-gray-800 truncate">
-                              {ticket.employee || "Unassigned"}
+                              {ticket.employee?.username || "Unassigned"}
                             </span>
                           )}
                         </td>
@@ -1203,10 +1056,18 @@ export default function AdminTicketingPortal() {
           </div>
         </div>
       )}
-      {selectedUser && (
+      {/* {selectedUser && (
         <UserDetailsModal
           query={selectedUser} // ✅ Pass as `query`, not `username`
           isOpen={!!selectedUser}
+          onClose={() => setSelectedUser(null)}
+        />
+      )} */}
+
+      {Boolean(selectedUser) && (
+        <UserDetailsModal
+          query={selectedUser}
+          isOpen
           onClose={() => setSelectedUser(null)}
         />
       )}

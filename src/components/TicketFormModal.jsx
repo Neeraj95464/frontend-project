@@ -294,15 +294,30 @@ const TicketModal = ({ isOpen, onClose }) => {
     setLoading(true);
 
     try {
+      // const ticketData = {
+      //   title,
+      //   description,
+      //   category,
+      //   employee,
+      //   assetTag: selectedAsset,
+      //   location,
+      //   ticketDepartment,
+      // };
+
       const ticketData = {
         title,
         description,
         category,
-        employee,
+        employee: {
+          // id: selectedUser.id, // or username
+          // username: selectedUser.username,
+          employeeId: employee,
+        },
         assetTag: selectedAsset,
         location,
         ticketDepartment,
       };
+      console.log("ticket data are ", ticketData);
 
       await createTicket(ticketData, attachment);
 
@@ -329,9 +344,9 @@ const TicketModal = ({ isOpen, onClose }) => {
         >
           ✖
         </button>
-        {/* <label className="block mb-2">Ticket For:</label> */}
+        <label className="block mb-2">Ticket For:</label>
         <div className="flex items-center gap-4 mb-4">
-          {/* <label className="flex items-center">
+          <label className="flex items-center">
             <input
               type="radio"
               name="ticketDepartment"
@@ -341,8 +356,8 @@ const TicketModal = ({ isOpen, onClose }) => {
               className="mr-2"
             />
             IT
-          </label> */}
-          {/* <label className="flex items-center">
+          </label>
+          <label className="flex items-center">
             <input
               type="radio"
               name="ticketDepartment"
@@ -352,7 +367,7 @@ const TicketModal = ({ isOpen, onClose }) => {
               className="mr-2"
             />
             HR
-          </label> */}
+          </label>
         </div>
 
         {/* <h2 className="text-xl font-bold mb-4">Create New Ticket</h2> */}
@@ -376,16 +391,30 @@ const TicketModal = ({ isOpen, onClose }) => {
           />
 
           <label className="block mb-2">Category:</label>
+          {/* <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="w-full p-2 border rounded mb-4"
+          >
+            {(ticketDepartment === "HR" ? hrCategories : itCategories).map(
+              (cat) => (
+                <option key={cat} value={cat}>
+                  {cat.charAt(0) + cat.slice(1)}
+                </option>
+              )
+            )}
+          </select> */}
+
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
             className="w-full p-2 border rounded mb-4"
           >
-            {/* {categories.map((cat) => ( */}
+            <option value="">Select Category</option>
             {(ticketDepartment === "HR" ? hrCategories : itCategories).map(
               (cat) => (
                 <option key={cat} value={cat}>
-                  {cat.charAt(0) + cat.slice(1)}
+                  {cat.charAt(0).toUpperCase() + cat.slice(1).toLowerCase()}
                 </option>
               )
             )}

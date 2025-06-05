@@ -264,7 +264,7 @@ export default function TicketingPortal() {
               >
                 <option value="OPEN">Open</option>
                 <option value="WAITING">Waiting</option>
-                <option value="RESOLVED">Resolved</option>
+                {/* <option value="RESOLVED">Resolved</option> */}
                 <option value="CLOSED">Closed</option>
                 <option value="UNASSIGNED">Unassigned</option>
               </select>
@@ -397,15 +397,15 @@ export default function TicketingPortal() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setSelectedUser(ticket.assignee);
+                                setSelectedUser(ticket.assignee?.employeeId);
                               }}
                               className="hover:underline truncate"
                             >
-                              {ticket.assignee || "Unassigned"}
+                              {ticket.assignee?.username || "Unassigned"}
                             </button>
                           ) : (
                             <span className="text-gray-800 truncate">
-                              {ticket.assignee || "Unassigned"}
+                              {ticket.assignee?.username || "Unassigned"}
                             </span>
                           )}
                         </td>
@@ -414,15 +414,15 @@ export default function TicketingPortal() {
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
-                                setSelectedUser(ticket.employee);
+                                setSelectedUser(ticket.employee?.employeeId);
                               }}
                               className="hover:underline truncate"
                             >
-                              {ticket.employee || "Unassigned"}
+                              {ticket.employee?.username || "Unassigned"}
                             </button>
                           ) : (
                             <span className="text-gray-800 truncate">
-                              {ticket.employee || "Unassigned"}
+                              {ticket.employee?.username || "Unassigned"}
                             </span>
                           )}
                         </td>
