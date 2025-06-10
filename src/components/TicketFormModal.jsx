@@ -88,7 +88,34 @@ const TicketModal = ({ isOpen, onClose }) => {
     XENTRY: "Example: Login failed, functionality not working",
   };
 
-  const hrCategories = ["HIRING", "PAYROLL", "POLICY", "PAYSLIP"];
+  const hrCategories = [
+    "PAYROLL",
+    "RECRUITMENT",
+    "HR_OPERATIONS",
+    "GENERAL_HR_QUERIES",
+  ];
+
+  const hrCategoryRemarks = {
+    ...categoryRemarks, // 👈 to retain your existing IT remarks if combining
+
+    PAYROLL:
+      "Example: Payslip not showing, incorrect salary breakup, ESI/PF or tax issues, bonus missing, salary credited to wrong account",
+
+    RECRUITMENT:
+      "Example: Request for new position hiring, replacement position hiring",
+
+    HR_OPERATIONS: `Example: 
+    · Attendance not marked, biometric issues, attendance regularization\n
+    · Wrong shift assignment, leave not updated or applied\n
+    · Onboarding kit delay, F&F pending, letters not received\n
+    · Incorrect name, bank/address not updated, missing dependents\n
+    · ID/Insurance card issues, claims pending, policy queries\n
+    · Portal login failed, email issues, reimbursement problems\n
+    · Expense issues, POSH complaint, safety concern`,
+
+    GENERAL_HR_QUERIES:
+      "Example: General HR questions, contact details request, queries not listed in other categories",
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -420,11 +447,18 @@ const TicketModal = ({ isOpen, onClose }) => {
             )}
           </select>
 
-          {ticketDepartment === "IT" && categoryRemarks[category] && (
+          {/* {ticketDepartment === "IT" && categoryRemarks[category] && (
             <p className="text-sm text-blue-600 italic mt-1">
               {categoryRemarks[category]}
             </p>
-          )}
+          )} */}
+
+          <p className="text-sm text-blue-600 italic mt-1">
+            {ticketDepartment === "HR"
+              ? hrCategoryRemarks[category]
+              : categoryRemarks[category]}
+          </p>
+
           {/* <label className="block mb-2">Employee:</label>
           {userRole === "USER" ? (
             <input
