@@ -6,6 +6,7 @@ import {
   searchTickets,
   getTickets,
   updateTicketStatus,
+  getAssignees,
 } from "../services/api";
 import TicketActionModal from "./TicketActionModal";
 import TicketAttachmentButton from "./TicketAttachmentButton";
@@ -32,6 +33,7 @@ export default function AdminTicketingPortal() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [ticketStatus, setTicketStatus] = useState("");
+  const [assignees, setAssignees] = useState([]);
   const navigate = useNavigate();
   const [isUpdating, setIsUpdating] = useState(false);
   const [userRole, setUserRole] = useState(""); // Track user role
@@ -75,63 +77,6 @@ export default function AdminTicketingPortal() {
     "Can you please provide more details?",
     "This ticket has been resolved.",
   ];
-
-  // const handleAssigneeChange = (e) => {
-  //   const assignee = e.target.value;
-  //   setSelectedAssignee(assignee);
-  //   fetchTicketsAssignee(selectedStatus, assignee);
-  // };
-
-  // const fetchTickets = async (status = "OPEN", customPage = page) => {
-  //   try {
-  //     const res = await getAllTickets({ customPage, size, status });
-
-  //     const {
-  //       content = [],
-  //       page: pageNumber,
-  //       size: pageSize,
-  //       totalElements,
-  //       totalPages,
-  //       last,
-  //     } = res?.data || {};
-  //     console.log("your ticket response is ", res?.data || []);
-  //     setFilteredTickets(content);
-
-  //     setPaginationInfo({
-  //       totalElements,
-  //       totalPages,
-  //       last,
-  //     });
-
-  //     setPage(pageNumber); // Sync page in case backend adjusts it
-  //     setSize(pageSize);
-  //   } catch (error) {
-  //     console.error("Error fetching tickets:", error);
-  //   }
-  // };
-
-  // const fetchTicketsAssignee = async (status = "OPEN", customPage = page) => {
-  //   console.log("calling assignee methoed");
-  //   try {
-  //     const res = await getTickets({ page: customPage, size, status });
-
-  //     const {
-  //       content = [],
-  //       page: pageNumber,
-  //       size: pageSize,
-  //       totalElements,
-  //       totalPages,
-  //       last,
-  //     } = res || {};
-
-  //     setFilteredTickets(content);
-  //     setPaginationInfo({ totalElements, totalPages, last });
-  //     setPage(pageNumber); // Sync page from backend
-  //     setSize(pageSize);
-  //   } catch (error) {
-  //     console.error("Error fetching tickets:", error);
-  //   }
-  // };
 
   const handleSelectPredefined = (msg) => {
     setNewMessage(msg);
@@ -313,23 +258,37 @@ export default function AdminTicketingPortal() {
     setUserRole(role);
   }, []);
 
-  const assignees = [
-    { employeeId: "mv4135", name: "Narendra" },
-    { employeeId: "mv4748", name: "Neeraj" },
-    { employeeId: "mv4933", name: "Husain" },
-    { employeeId: "mv4422", name: "Guna shekhar" },
-    { employeeId: "mv4949", name: "Gagan Mohan" },
-    { employeeId: "mv4445", name: "Vikash" },
-    { employeeId: "aw2114", name: "V Sharath" },
-    { employeeId: "ar0293", name: "Pruthvi" },
-    { employeeId: "aw1562", name: "Ratheesh Ravi" },
-    { employeeId: "aw1136", name: "Sandeep Chandra" },
-    { employeeId: "jb1742", name: "Subhash Kumar" },
-    { employeeId: "mv4890", name: "Venkata Sai" },
-    { employeeId: "aw2304", name: "Mohammed Azhar Ali" },
-    { employeeId: "AW1562", name: "Ratheesh Ravi" },
-    { employeeId: "MV5041", name: "K Rupa Lavanya" },
-  ];
+  // const assignees = [
+  //   { employeeId: "mv4135", name: "Narendra" },
+  //   { employeeId: "mv4748", name: "Neeraj" },
+  //   { employeeId: "mv4933", name: "Husain" },
+  //   { employeeId: "mv4422", name: "Guna shekhar" },
+  //   { employeeId: "mv4949", name: "Gagan Mohan" },
+  //   { employeeId: "mv4445", name: "Vikash" },
+  //   { employeeId: "aw2114", name: "V Sharath" },
+  //   { employeeId: "ar0293", name: "Pruthvi" },
+  //   { employeeId: "aw1562", name: "Ratheesh Ravi" },
+  //   { employeeId: "aw1136", name: "Sandeep Chandra" },
+  //   { employeeId: "jb1742", name: "Subhash Kumar" },
+  //   { employeeId: "mv4890", name: "Venkata Sai" },
+  //   { employeeId: "aw2304", name: "Mohammed Azhar Ali" },
+  //   { employeeId: "AW1562", name: "Ratheesh Ravi" },
+  //   { employeeId: "MV5041", name: "K Rupa Lavanya" },
+  // ];
+
+  useEffect(() => {
+    getAssignees()
+      .then((res) => {
+        const formatted = res.data.map((user) => ({
+          employeeId: user.employeeId,
+          name: user.username,
+        }));
+        setAssignees(formatted);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch assignees", err);
+      });
+  }, []);
 
   return (
     <div className="lg:ml-40 pt-16">
