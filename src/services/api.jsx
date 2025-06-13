@@ -1103,6 +1103,13 @@ export const getSites = async () => {
   }
 };
 
+export const fetchSites = () => api.get("/sites/all");
+export const addSite = (siteData) => api.post("/sites", siteData);
+
+// --- Locations ---
+export const addLocation = (locationData) =>
+  api.post("sites/location", locationData);
+
 export const getLocationsBySite = async (siteId) => {
   try {
     const response = await api.get(`/locations/site/${siteId}`);
@@ -1111,6 +1118,9 @@ export const getLocationsBySite = async (siteId) => {
     throw error;
   }
 };
+
+export const getAllAssigneeFeedbacks = () =>
+  api.get("user-assets/feedback/all");
 
 export const getDepartments = async () => {
   try {

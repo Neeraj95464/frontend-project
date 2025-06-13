@@ -310,6 +310,7 @@ import {
   fetchLocationStats,
   fetchResolutionStats,
 } from "../services/api";
+import AssigneeFeedbackOverview from "./TicketFeedback";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -592,6 +593,10 @@ const TicketDashboardChart = () => {
             <Bar dataKey="value" fill="#5DADE2" />
           </BarChart>
         </ResponsiveContainer>
+      </div>
+
+      <div>
+        <AssigneeFeedbackOverview />
       </div>
     </div>
   );

@@ -27,6 +27,7 @@ import Register from "./components/Register";
 import SearchResults from "./components/SearchResult";
 import Sidebar from "./components/Sidebar";
 import SingleAsset from "./components/SingleAsset";
+import SiteLocationManager from "./components/SiteLocationManager";
 import TicketingPortal from "./components/TicketingPortal";
 import Unauthorized from "./components/Unauthorized";
 import UsersList from "./components/UsersList";
@@ -175,6 +176,14 @@ const App = () => {
                 element={
                   <PrivateRoute>
                     <Settings />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/sites"
+                element={
+                  <PrivateRoute>
+                    <SiteLocationManager />
                   </PrivateRoute>
                 }
               />
