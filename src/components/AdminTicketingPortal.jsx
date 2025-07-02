@@ -7,18 +7,24 @@ import {
   getTickets,
   updateTicketStatus,
   getAssignees,
+  getSites,
+  getTicketsBySite,
+  fetchSites,
 } from "../services/api";
 import TicketActionModal from "./TicketActionModal";
 import TicketAttachmentButton from "./TicketAttachmentButton";
 import TicketModal from "./TicketFormModal";
 import { Button, Card } from "./ui";
 import { format, formatDistanceToNow, parseISO, isBefore } from "date-fns";
+import dayjs from "dayjs";
 import { MoreVertical } from "lucide-react";
 import { useState, useEffect } from "react";
 // Icon from lucide-react
 import { FiMenu, FiSearch, FiUser, FiLogOut } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
+// make sure to `npm install dayjs`
 
 export default function AdminTicketingPortal() {
   const [tickets, setTickets] = useState([]);
@@ -44,6 +50,15 @@ export default function AdminTicketingPortal() {
   const [page, setPage] = useState(0);
   const [isSending, setIsSending] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sites, setSites] = useState([]);
+  const [selectedSite, setSelectedSite] = useState("");
+  //   const [selectedSite, setSelectedSite] = useState("ALL");
+  // const [tickets, setTickets] = useState([]);
+  const [selectedRange, setSelectedRange] = useState("30"); // default: last 30 days
+  const [selectedRangeForLocation, setSelectedRangeRangeForLocation] =
+    useState("50");
+  // const [tickets, setTickets] = useState([]);
+  // const [loading, setLoading] = useState(false);
 
   const [size, setSize] = useState(30); // Default size from backend
   const [paginationInfo, setPaginationInfo] = useState({
@@ -59,17 +74,155 @@ export default function AdminTicketingPortal() {
   //   fetchTickets(status);
   // };
 
+  // const handleSiteChange = (e) => {
+  //   setSelectedSite(e.target.value);
+  // };
+
+  const handleSiteChange = async (e) => {
+    const chosenSite = e.target.value;
+    setSelectedSite(chosenSite);
+
+    if (chosenSite === "ALL") {
+      setFilteredTickets([]); // or setTickets([])
+      return;
+    }
+
+    const end = dayjs().endOf("day").toISOString();
+    let start;
+
+    if (selectedRange === "7") {
+      start = dayjs().subtract(7, "day").startOf("day").toISOString();
+    } else if (selectedRange === "15") {
+      start = dayjs().subtract(15, "day").startOf("day").toISOString();
+    } else if (selectedRange === "30") {
+      start = dayjs().subtract(30, "day").startOf("day").toISOString();
+    } else {
+      start = dayjs("2000-01-01").toISOString(); // more than 30
+    }
+
+    try {
+      // console.log(
+      //   "requesting data are ",
+      //   chosenSite,
+      //   start,
+      //   end,
+      //   page,
+      //   selectedRangeForLocation
+      // );
+      const res = await getTicketsBySite(chosenSite, start, end, page, size); // ✅ include pagination args
+      const {
+        content = [],
+        page: pageNumber,
+        size: pageSize,
+        totalElements,
+        totalPages,
+        last,
+      } = res || {};
+
+      setFilteredTickets(content);
+      setPaginationInfo({ totalElements, totalPages, last });
+      setPage(pageNumber);
+      setSize(pageSize);
+    } catch (err) {
+      console.error("Error fetching tickets:", err);
+    }
+  };
+
+  const handleDateRange = async (range) => {
+    setSelectedRange(range);
+    if (selectedSite === "ALL") return;
+
+    const today = dayjs().endOf("day");
+    let start, end;
+
+    if (range === "7") {
+      start = dayjs().subtract(7, "day").startOf("day").toISOString();
+      end = today.toISOString();
+    } else if (range === "15") {
+      start = dayjs().subtract(15, "day").startOf("day").toISOString();
+      end = dayjs().subtract(8, "day").endOf("day").toISOString();
+    } else if (range === "30") {
+      start = dayjs().subtract(30, "day").startOf("day").toISOString();
+      end = dayjs().subtract(16, "day").endOf("day").toISOString();
+    } else {
+      start = dayjs("2000-01-01").toISOString();
+      end = dayjs().subtract(31, "day").endOf("day").toISOString();
+    }
+
+    try {
+      // console.log(
+      //   "requesting data are ",
+      //   selectedSite,
+      //   start,
+      //   end,
+      //   page,
+      //   selectedRangeForLocation
+      // );
+      const res = await getTicketsBySite(selectedSite, start, end, page, size);
+      const {
+        content = [],
+        page: pageNumber,
+        size: pageSize,
+        totalElements,
+        totalPages,
+        last,
+      } = res || {};
+      setFilteredTickets(content);
+      setPaginationInfo({ totalElements, totalPages, last });
+      setPage(pageNumber);
+      setSize(pageSize);
+    } catch (err) {
+      console.error("Error fetching tickets:", err);
+    }
+  };
+
   const handleStatusChange = (e) => {
     const status = e.target.value;
     setSelectedStatus(status);
     fetchTickets(status);
   };
 
+  useEffect(() => {
+    fetchSites()
+      .then((res) => {
+        const formatted = res.data.map((site) => ({
+          siteId: site.id,
+          name: site.name,
+        }));
+        setSites(formatted);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch assignees", err);
+      });
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchSites = async () => {
+  //     try {
+  //       const data = await getSites();
+  //       console.log("sites data got fetched is ", data);
+  //       setSites(data);
+  //     } catch (err) {
+  //       console.error("Failed to load sites", err);
+  //     }
+  //   };
+  //   fetchSites();
+  // }, []);
+
   const handleAssigneeChange = (e) => {
     const assignee = e.target.value;
+    // console.log("assignee is ", assignee);
     setSelectedAssignee(assignee);
     fetchTicketsAssignee(selectedStatus, page, assignee); // ✅ Correct
   };
+
+  // const handleSiteChange = (e) => {
+  //   const choosenSite = e.target.value;
+  //   // console.log("site choosen is ", choosenSite);
+  //   setSelectedSite(choosenSite);
+  //   const res = getTicketsBySite(choosenSite); // ✅ Correct
+  //   console.log("res from site is ", res);
+  // };
 
   const predefinedMessages = [
     "Thank you for your patience.",
@@ -88,7 +241,7 @@ export default function AdminTicketingPortal() {
     customPage = page,
     employeeId = "ALL" // New optional param
   ) => {
-    console.log("Calling assignee method with employeeId:", employeeId);
+    // console.log("Calling assignee method with employeeId:", employeeId);
 
     try {
       const res = await getTickets({
@@ -137,29 +290,6 @@ export default function AdminTicketingPortal() {
       console.error("Error fetching tickets:", error);
     }
   };
-
-  // const handleAddMessage = async () => {
-  //   if (!newMessage.trim()) return;
-
-  //   setIsSending(true);
-  //   try {
-  //     await addMessageToTicket(selectedTicket.id, newMessage);
-  //     setNewMessage("");
-  //     setSelectedTicket((prev) => ({
-  //       ...prev,
-  //       messages: [
-  //         ...prev.messages,
-  //         { sender: "You", message: newMessage, sentAt: new Date() },
-  //       ],
-  //     }));
-  //   } catch (error) {
-  //     console.error("Error adding message: ", error);
-  //   } finally {
-  //     setIsSending(false); // Re-enable the button
-  //   }
-  // };
-
-  // Handle search form submission
 
   const handleCloseTicket = async () => {
     setIsUpdating(true);
@@ -258,24 +388,6 @@ export default function AdminTicketingPortal() {
     setUserRole(role);
   }, []);
 
-  // const assignees = [
-  //   { employeeId: "mv4135", name: "Narendra" },
-  //   { employeeId: "mv4748", name: "Neeraj" },
-  //   { employeeId: "mv4933", name: "Husain" },
-  //   { employeeId: "mv4422", name: "Guna shekhar" },
-  //   { employeeId: "mv4949", name: "Gagan Mohan" },
-  //   { employeeId: "mv4445", name: "Vikash" },
-  //   { employeeId: "aw2114", name: "V Sharath" },
-  //   { employeeId: "ar0293", name: "Pruthvi" },
-  //   { employeeId: "aw1562", name: "Ratheesh Ravi" },
-  //   { employeeId: "aw1136", name: "Sandeep Chandra" },
-  //   { employeeId: "jb1742", name: "Subhash Kumar" },
-  //   { employeeId: "mv4890", name: "Venkata Sai" },
-  //   { employeeId: "aw2304", name: "Mohammed Azhar Ali" },
-  //   { employeeId: "AW1562", name: "Ratheesh Ravi" },
-  //   { employeeId: "MV5041", name: "K Rupa Lavanya" },
-  // ];
-
   useEffect(() => {
     getAssignees()
       .then((res) => {
@@ -298,28 +410,6 @@ export default function AdminTicketingPortal() {
       //   selectedTicket ? "lg:w-1/2" : "lg:w-2/3"
       // }`}
       >
-        {/* <Button
-          onClick={() => setIsDialogOpen(true)}
-          className="mb-4 bg-green-600"
-        >
-          + Create Ticket
-        </Button>
-        <Button
-          className="mb-4 bg-green-600 hover:bg-green-700"
-          onClick={() => navigate("/user-assets")}
-        >
-          My Assets
-        </Button>
-
-        {userRole === "ADMIN" && (
-          <button
-            className="px-4 py-2 rounded-lg shadow-md bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-blue-400 mb-4"
-            onClick={() => navigate("/ticket/admin")}
-          >
-            Admin Tickets
-          </button>
-        )} */}
-
         <TicketModal
           isOpen={isDialogOpen}
           onClose={() => {
@@ -331,7 +421,7 @@ export default function AdminTicketingPortal() {
 
         <Card>
           {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-2 items-center mb-4"> */}
-          <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center mb-4 overflow-x-auto">
+          <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center mb-2 overflow-x-auto">
             {/* <h2 className="text-xl font-semibold mb-4">Your Tickets</h2> */}
 
             <Button
@@ -478,6 +568,80 @@ export default function AdminTicketingPortal() {
               >
                 &gt;
               </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Site Dropdown */}
+              {/* <select
+                value={selectedSite}
+                onChange={handleSiteChange}
+                className="w-full sm:w-1/2 p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
+              >
+                <option value="ALL">Select Site</option>
+                {sites.map(({ siteId, name }) => (
+                  <option key={siteId} value={siteId}>
+                    {name}
+                  </option>
+                ))}
+              </select> */}
+
+              {/* Date Filter Buttons */}
+              {/* <div className="flex gap-3 flex-wrap">
+                {[
+                  { label: "0-7 Days", value: "7" },
+                  { label: "8-15 Days", value: "15" },
+                  { label: "16-30 Days", value: "30" },
+                  { label: "> 30 Days", value: "more" },
+                ].map(({ label, value }) => (
+                  <button
+                    key={value}
+                    onClick={() => handleDateRange(value)}
+                    className={`px-1 py-0.5 text-xs rounded-md border transition ${
+                      selectedRange === value
+                        ? "bg-blue-600 text-white"
+                        : "bg-white text-blue-600 border-blue-600"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div> */}
+
+              {/* Site Filter */}
+              <select
+                value={selectedSite}
+                onChange={handleSiteChange}
+                className="text-xs px-2 py-1 border rounded w-auto"
+              >
+                <option value="ALL">Select Site</option>
+                {sites.map(({ siteId, name }) => (
+                  <option key={siteId} value={siteId}>
+                    {name}
+                  </option>
+                ))}
+              </select>
+
+              {/* Date Range Buttons */}
+              <div className="flex gap-1">
+                {[
+                  { label: "0-7", value: "7" },
+                  { label: "8-15", value: "15" },
+                  { label: "16-30", value: "30" },
+                  { label: ">30", value: "more" },
+                ].map(({ label, value }) => (
+                  <button
+                    key={value}
+                    onClick={() => handleDateRange(value)}
+                    className={`text-xs px-2 py-1 rounded border ${
+                      selectedRange === value
+                        ? "bg-blue-600 text-white"
+                        : "bg-white text-blue-600 border-blue-600"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 

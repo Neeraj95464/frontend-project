@@ -289,6 +289,35 @@ export const updateTicketDueDate = (ticketId, dueDate) => {
   return api.put(`/user-assets/${ticketId}/due-date`, { dueDate });
 };
 
+export const getTicketsBySite = async (
+  siteId,
+  startDate,
+  endDate,
+  page = 0,
+  size = 50
+) => {
+  const res = await api.get(`/user-assets/by-site/${siteId}`, {
+    params: {
+      startDate,
+      endDate,
+      page,
+      size,
+    },
+  });
+  return res.data;
+};
+
+// export const getTicketsBySite = async (siteId, startDate, endDate) => {
+//   const res = await api.get(`/user-assets/by-site/${siteId}`, {
+//     params: {
+//       startDate,
+//       endDate,
+//     },
+//   });
+//   console.log("🎫 Tickets received by site:", res.data);
+//   return res.data;
+// };
+
 export const updateTicketStatus = async (ticketId, status) => {
   try {
     const response = await api.put(
