@@ -37,8 +37,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Base API URL
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -289,6 +289,24 @@ export const updateTicketDueDate = (ticketId, dueDate) => {
   return api.put(`/user-assets/${ticketId}/due-date`, { dueDate });
 };
 
+// export const getTicketsBySite = async (
+//   siteId,
+//   startDate,
+//   endDate,
+//   page = 0,
+//   size = 50
+// ) => {
+//   const res = await api.get(`/user-assets/by-site/${siteId}`, {
+//     params: {
+//       startDate,
+//       endDate,
+//       page,
+//       size,
+//     },
+//   });
+//   return res.data;
+// };
+
 export const getTicketsBySite = async (
   siteId,
   startDate,
@@ -296,14 +314,19 @@ export const getTicketsBySite = async (
   page = 0,
   size = 50
 ) => {
-  const res = await api.get(`/user-assets/by-site/${siteId}`, {
-    params: {
-      startDate,
-      endDate,
-      page,
-      size,
-    },
-  });
+  const params = {
+    startDate,
+    endDate,
+    page,
+    size,
+  };
+
+  // Only add siteId if it's defined and not "ALL"
+  if (siteId && siteId !== "ALL") {
+    params.siteId = siteId;
+  }
+
+  const res = await api.get("/user-assets/by-site", { params });
   return res.data;
 };
 
@@ -1163,6 +1186,28 @@ export const getDepartments = async () => {
 export const getAssignees = () => {
   return api.get("user-assets/assignees"); // Update path based on your backend route
 };
+
+export const getTicketsWithFeedback = async (
+  employeeId,
+  page = 0,
+  size = 20
+) => {
+  const params = new URLSearchParams({ page, size });
+  if (employeeId) params.append("employeeId", employeeId);
+
+  const response = await api.get(
+    `user-assets/tickets/feedbacks?${params.toString()}`
+  );
+  // console.log("res ", response.data);
+  return response.data; // should be PaginatedResponse<TicketWithFeedbackDTO>
+};
+
+// export const getAssigneeFeedback = async (page = 0, size = 30) => {
+//   const res = await api.get("/user-assets/tickets/feedbacks", {
+//     params: { page, size },
+//   });
+//   return res.data;
+// };
 
 // ============== Ticket Charts ==========================================
 

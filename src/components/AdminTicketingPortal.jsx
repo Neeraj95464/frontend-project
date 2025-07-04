@@ -101,14 +101,6 @@ export default function AdminTicketingPortal() {
     }
 
     try {
-      // console.log(
-      //   "requesting data are ",
-      //   chosenSite,
-      //   start,
-      //   end,
-      //   page,
-      //   selectedRangeForLocation
-      // );
       const res = await getTicketsBySite(chosenSite, start, end, page, size); // ✅ include pagination args
       const {
         content = [],
@@ -128,9 +120,48 @@ export default function AdminTicketingPortal() {
     }
   };
 
+  // const handleDateRange = async (range) => {
+  //   setSelectedRange(range);
+  //   // if (selectedSite === "ALL") return;
+
+  //   const today = dayjs().endOf("day");
+  //   let start, end;
+
+  //   if (range === "7") {
+  //     start = dayjs().subtract(7, "day").startOf("day").toISOString();
+  //     end = today.toISOString();
+  //   } else if (range === "15") {
+  //     start = dayjs().subtract(15, "day").startOf("day").toISOString();
+  //     end = dayjs().subtract(8, "day").endOf("day").toISOString();
+  //   } else if (range === "30") {
+  //     start = dayjs().subtract(30, "day").startOf("day").toISOString();
+  //     end = dayjs().subtract(16, "day").endOf("day").toISOString();
+  //   } else {
+  //     start = dayjs("2000-01-01").toISOString();
+  //     end = dayjs().subtract(31, "day").endOf("day").toISOString();
+  //   }
+
+  //   try {
+  //     const res = await getTicketsBySite(selectedSite, start, end, page, size);
+  //     const {
+  //       content = [],
+  //       page: pageNumber,
+  //       size: pageSize,
+  //       totalElements,
+  //       totalPages,
+  //       last,
+  //     } = res || {};
+  //     setFilteredTickets(content);
+  //     setPaginationInfo({ totalElements, totalPages, last });
+  //     setPage(pageNumber);
+  //     setSize(pageSize);
+  //   } catch (err) {
+  //     console.error("Error fetching tickets:", err);
+  //   }
+  // };
+
   const handleDateRange = async (range) => {
     setSelectedRange(range);
-    if (selectedSite === "ALL") return;
 
     const today = dayjs().endOf("day");
     let start, end;
@@ -150,15 +181,13 @@ export default function AdminTicketingPortal() {
     }
 
     try {
-      // console.log(
-      //   "requesting data are ",
-      //   selectedSite,
-      //   start,
-      //   end,
-      //   page,
-      //   selectedRangeForLocation
-      // );
-      const res = await getTicketsBySite(selectedSite, start, end, page, size);
+      let res;
+      if (selectedSite && selectedSite !== "ALL") {
+        res = await getTicketsBySite(selectedSite, start, end, page, size);
+      } else {
+        res = await getTicketsBySite(null, start, end, page, size);
+      }
+
       const {
         content = [],
         page: pageNumber,
@@ -167,6 +196,7 @@ export default function AdminTicketingPortal() {
         totalPages,
         last,
       } = res || {};
+
       setFilteredTickets(content);
       setPaginationInfo({ totalElements, totalPages, last });
       setPage(pageNumber);
