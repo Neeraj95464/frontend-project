@@ -595,7 +595,7 @@ const TicketDashboardChart = () => {
         </ResponsiveContainer>
       </div>
 
-      <div>
+      <div className="... md:col-span-2 xl:col-span-2">
         <AssigneeFeedbackOverview />
       </div>
     </div>
