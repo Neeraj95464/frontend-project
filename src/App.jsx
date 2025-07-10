@@ -30,6 +30,7 @@ import SingleAsset from "./components/SingleAsset";
 import SiteLocationManager from "./components/SiteLocationManager";
 import TicketingPortal from "./components/TicketingPortal";
 import Unauthorized from "./components/Unauthorized";
+import Updates from "./components/Updates";
 import UsersList from "./components/UsersList";
 import VendorListPage from "./components/VendorListPage";
 import Reports from "./components/reports";
@@ -164,6 +165,15 @@ const App = () => {
                 }
               />
               <Route
+                path="/updates"
+                element={
+                  <PrivateRoute>
+                    <Updates />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
                 path="/vendors"
                 element={
                   <PrivateRoute>
@@ -221,6 +231,7 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
+
               <Route
                 path="/create-user"
                 element={

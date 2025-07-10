@@ -158,22 +158,21 @@ const Sidebar = () => {
                 <FiSettings className="mr-3" />
                 Settings
               </NavLink>
+
+              <NavLink
+                to="/updates"
+                className={({ isActive }) =>
+                  `flex items-center px-4 py-2 rounded-lg text-sm ${
+                    isActive ? "bg-blue-600" : "hover:bg-gray-700"
+                  }`
+                }
+              >
+                <FiSettings className="mr-3" />
+                Updates
+              </NavLink>
             </>
           )}
         </nav>
-
-        {/* Footer Info */}
-        {/* <div className="p-4 border-t border-gray-700 text-xs text-gray-300">
-          <p>
-            Logged in as: <span className="font-medium">{user?.username}</span>
-          </p>
-          <p>
-            Role:{" "}
-            <span className="uppercase text-blue-400 font-semibold">
-              {user?.role}
-            </span>
-          </p>
-        </div> */}
 
         <div className="p-4 border-t border-gray-700 text-xs text-gray-300">
           <p>
@@ -185,9 +184,6 @@ const Sidebar = () => {
               {user?.role}
             </span>
           </p>
-          {/* <p className="mt-2 text-center text-gray-400">
-            Copyright {new Date().getFullYear()} <br></br>© Safetag Enterprises
-          </p> */}
         </div>
       </aside>
 

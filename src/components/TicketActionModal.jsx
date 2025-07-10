@@ -184,38 +184,12 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
       });
   }, []);
 
-  // useEffect(() => {
-  //   const fetchTicket = async () => {
-  //     if (ticketId) {
-  //       try {
-  //         const data = await getTicketById(ticketId);
-  //         setTicket(data);
-  //         setTicketStatus(data.status);
-  //         setCategory(data.category); // Enum string like "HARDWARE"
-  //         setLocation(data.locationName || ""); // ✅ Set location ID for select
-  //         console.log("ticekt location is ", data.locationName);
-  //         setCcEmails(data.ccEmails || []);
-  //         // setAssignee(data.assignee || "");
-  //         // Match assignee by name
-  //         const found = assignees.find((a) => a.name === data.assignee);
-  //         setAssignee(found?.id || "");
-  //         setRawAssigneeName(data.assignee);
-  //         // setDueDate(data.dueDate);
-  //         // console.log("assignee is ", data.assignee, data.dueDate);
-  //       } catch (error) {
-  //         console.error("Error fetching ticket:", error);
-  //       }
-  //     }
-  //   };
-  //   fetchTicket();
-  // }, [ticketId]);
-
   useEffect(() => {
     const fetchTicket = async () => {
       if (ticketId) {
         try {
           const data = await getTicketById(ticketId);
-          console.log("data are ", data);
+          // console.log("data are ", data);
           setTicket(data);
           setTicketStatus(data.status);
           setCategory(data.category);

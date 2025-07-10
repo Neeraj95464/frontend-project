@@ -24,6 +24,7 @@ export default function TicketingPortal() {
   const [selectedTicketId, setSelectedTicketId] = useState(null);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const [messageType, setMessageType] = useState("PUBLIC_RESPONSE");
   const [ticketStatus, setTicketStatus] = useState("");
@@ -362,10 +363,20 @@ export default function TicketingPortal() {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {filteredTickets.map((ticket) => (
+                      // <tr
+                      //   key={ticket.id}
+                      //   className="hover:bg-gray-50 transition cursor-pointer"
+                      //   onClick={() => setSelectedTicket(ticket)}
+                      // >
+
                       <tr
                         key={ticket.id}
                         className="hover:bg-gray-50 transition cursor-pointer"
                         onClick={() => setSelectedTicket(ticket)}
+                        onDoubleClick={() => {
+                          setIsTicketModalOpen(true); // 👈 Open the modal
+                          setSelectedTicketId(ticket.id); // 👈 Pass the ticket ID
+                        }}
                       >
                         <td className="px-3 py-2">{ticket.id}</td>
                         <td className="px-3 py-2 min-w-[200px] max-w-[300px] truncate">
@@ -592,7 +603,13 @@ export default function TicketingPortal() {
 
       {/* Right Section - Message Panel */}
       {selectedTicket && (
-        <div className="fixed top-[64px] right-0 w-full md:w-[320px] h-[calc(100%-64px)] bg-white border-l shadow-xl p-4 overflow-y-auto z-40 transition-all duration-300 ease-in-out">
+        // <div className="fixed top-[64px] right-0 w-full md:w-[320px] h-[calc(100%-64px)] bg-white border-l shadow-xl p-4 overflow-y-auto z-40 transition-all duration-300 ease-in-out">
+
+        <div
+          className={`fixed top-[64px] right-0 h-[calc(100%-64px)] bg-white border-l shadow-xl p-4 overflow-y-auto z-40 transition-all duration-300 ease-in-out ${
+            isMaximized ? "w-full md:w-full" : "w-full md:w-[320px]"
+          }`}
+        >
           {/* Header with title and action icon */}
           <div className="flex items-start justify-between mb-4 border-b pb-2">
             <div className="flex-1 pr-2">
@@ -605,6 +622,68 @@ export default function TicketingPortal() {
             </div>
 
             <div className="flex items-center gap-2">
+              {/* <button
+                className="p-2 rounded-full hover:bg-gray-100 transition"
+                title={isMaximized ? "Minimize" : "Maximize"}
+                onClick={() => setIsMaximized((prev) => !prev)}
+              >
+                {isMaximized ? (
+                  <svg
+                    className="w-4 h-4 text-gray-600"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M4 8h16M4 16h16" />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-4 h-4 text-gray-600"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M4 4h16v16H4z" />
+                  </svg>
+                )}
+              </button> */}
+
+              <button
+                className="w-10 h-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow-md transition-all duration-200 flex items-center justify-center"
+                title={isMaximized ? "Minimize" : "Maximize"}
+                onClick={() => setIsMaximized((prev) => !prev)}
+              >
+                {isMaximized ? (
+                  // Minimize Icon (Two horizontal lines)
+                  <svg
+                    className="w-6 h-6 text-gray-700"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M5 12h14M5 18h14" />
+                  </svg>
+                ) : (
+                  // Maximize Icon (Square outline)
+                  <svg
+                    className="w-6 h-6 text-gray-700"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    viewBox="0 0 24 24"
+                  >
+                    <rect x="5" y="5" width="14" height="14" rx="2" ry="2" />
+                  </svg>
+                )}
+              </button>
+
               {/* Action Icon */}
               {/* {userRole !== "user" ? (<button
                 className="p-2 rounded-full hover:bg-gray-100 transition"
@@ -635,9 +714,17 @@ export default function TicketingPortal() {
               <TicketAttachmentButton ticket={selectedTicket} />
 
               {/* Close Button */}
-              <button
+              {/* <button
                 className="text-lg text-gray-500 hover:text-gray-700 transition"
                 onClick={() => setSelectedTicket(null)}
+              >
+                &times;
+              </button> */}
+
+              <button
+                onClick={() => setSelectedTicket(null)}
+                aria-label="Close"
+                className="text-white bg-red-600 hover:bg-red-700 text-2xl font-bold rounded-full w-12 h-12 flex items-center justify-center shadow-md transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-300"
               >
                 &times;
               </button>
