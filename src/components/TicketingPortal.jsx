@@ -214,9 +214,20 @@ export default function TicketingPortal() {
     }
   };
 
+  // useEffect(() => {
+  //   fetchTickets();
+  //   const role = hasRole("ADMIN") ? "admin" : "user";
+  //   setUserRole(role);
+  // }, []);
+
   useEffect(() => {
     fetchTickets();
-    const role = hasRole("ADMIN") ? "admin" : "user";
+
+    let role = "user";
+    if (hasRole("ADMIN") || hasRole("HR_ADMIN")) {
+      role = "admin";
+    }
+
     setUserRole(role);
   }, []);
 
@@ -712,14 +723,6 @@ export default function TicketingPortal() {
               )}
 
               <TicketAttachmentButton ticket={selectedTicket} />
-
-              {/* Close Button */}
-              {/* <button
-                className="text-lg text-gray-500 hover:text-gray-700 transition"
-                onClick={() => setSelectedTicket(null)}
-              >
-                &times;
-              </button> */}
 
               <button
                 onClick={() => setSelectedTicket(null)}

@@ -11,6 +11,7 @@ import AssetPhotos from "./components/AssetPhoto";
 import AssetStatusPage from "./components/AssetStatusPage";
 import AssignAssetModal from "./components/AssignAssetModel";
 import CheckInModal from "./components/CheckInModal";
+import ContactUsSection from "./components/ContactUsSection";
 import ContractPage from "./components/ContractPage";
 import CreateUser from "./components/CreateUser";
 import Dashboard from "./components/Dashboard";
@@ -76,6 +77,15 @@ const App = () => {
                 element={
                   <PrivateRoute>
                     <Profile />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/contact-admin"
+                element={
+                  <PrivateRoute>
+                    <ContactUsSection />
                   </PrivateRoute>
                 }
               />
@@ -210,7 +220,9 @@ const App = () => {
               <Route
                 path="/ticket"
                 element={
-                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "USER"]}>
+                  <PrivateRoute
+                    allowedRoles={["ADMIN", "MANAGER", "USER", "HR_ADMIN"]}
+                  >
                     <TicketingPortal />
                   </PrivateRoute>
                 }
@@ -218,7 +230,7 @@ const App = () => {
               <Route
                 path="/ticket/admin"
                 element={
-                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "HR_ADMIN"]}>
                     <AdminTicketingPortal />
                   </PrivateRoute>
                 }
@@ -226,7 +238,9 @@ const App = () => {
               <Route
                 path="/user-assets"
                 element={
-                  <PrivateRoute allowedRoles={["USER", "ADMIN", "MANAGER"]}>
+                  <PrivateRoute
+                    allowedRoles={["USER", "ADMIN", "MANAGER", "HR_ADMIN"]}
+                  >
                     <NormalUserAsset />
                   </PrivateRoute>
                 }

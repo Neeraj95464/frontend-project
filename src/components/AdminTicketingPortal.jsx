@@ -428,14 +428,15 @@ export default function AdminTicketingPortal() {
               My Assets
             </Button> */}
 
-            {userRole === "ADMIN" && (
-              <button
-                className="px-4 py-2 rounded-lg shadow-md bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-blue-400 mb-4"
-                onClick={() => navigate("/ticket/admin")}
-              >
-                Admin Tickets
-              </button>
-            )}
+            {userRole === "ADMIN" ||
+              (userRole === "HR_ADMIN" && (
+                <button
+                  className="px-4 py-2 rounded-lg shadow-md bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-blue-400 mb-4"
+                  onClick={() => navigate("/ticket/admin")}
+                >
+                  Admin Tickets
+                </button>
+              ))}
 
             <div className="mb-4">
               {/* <label className="block text-sm font-medium text-gray-700">
@@ -731,26 +732,6 @@ export default function AdminTicketingPortal() {
                             </span>
                           )}
                         </td>
-                        {/* <td className="px-3 py-2">
-                          {userRole !== "user" ? (
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                navigate(`/asset/${ticket.assetTag}`);
-                              }}
-                              className="text-blue-600 hover:underline truncate"
-                            >
-                              {ticket.assetTag || "No Asset"}
-                            </button>
-                          ) : (
-                            <span className="text-gray-800 truncate">
-                              {ticket.assetTag || "No Asset"}
-                            </span>
-                          )}
-                        </td> */}
-                        {/* <td className="px-3 py-2 text-gray-600">
-                          {new Date(ticket.createdAt).toLocaleDateString()}
-                        </td> */}
 
                         <td className="px-3 py-2 whitespace-nowrap">
                           {format(parseISO(ticket.createdAt), "d/M/yyyy")} (

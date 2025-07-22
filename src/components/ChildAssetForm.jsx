@@ -8,6 +8,7 @@ const ChildAssetForm = ({ assetTag, onClose }) => {
     name: "",
     warranty: "",
     purchaseFrom: "",
+    childAssetNote: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,9 +25,9 @@ const ChildAssetForm = ({ assetTag, onClose }) => {
     e.preventDefault();
     setError("");
 
-    const { name, warranty, purchaseFrom } = formData;
+    const { name, warranty, purchaseFrom, childAssetNote } = formData;
 
-    if (!name || !warranty || !purchaseFrom) {
+    if (!name || !warranty || !purchaseFrom || !childAssetNote) {
       setError("All fields are required.");
       return;
     }
@@ -40,7 +41,12 @@ const ChildAssetForm = ({ assetTag, onClose }) => {
       // Optional: show success toast/toast notification
 
       // Reset form
-      setFormData({ name: "", warranty: "", purchaseFrom: "" });
+      setFormData({
+        name: "",
+        warranty: "",
+        purchaseFrom: "",
+        childAssetNote: "",
+      });
 
       if (onClose) onClose();
     } catch (err) {
@@ -115,6 +121,23 @@ const ChildAssetForm = ({ assetTag, onClose }) => {
               value={formData.purchaseFrom}
               onChange={handleChange}
               placeholder="Vendor or source"
+              className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="purchaseFrom"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Child Asset Note
+            </label>
+
+            <input
+              id="childAssetNote"
+              type="text"
+              value={formData.childAssetNote}
+              onChange={handleChange}
+              placeholder="Child Asset Note"
               className="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             />
           </div>

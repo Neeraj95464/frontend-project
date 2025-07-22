@@ -38,8 +38,7 @@ import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://localhost:7355/api";
-// const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
-const API_URL = "https://crack-segment-hobbies-albert.trycloudflare.com/api";
+const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -1050,6 +1049,20 @@ export const searchTickets = async (filters) => {
   } catch (error) {
     console.error("Error fetching tickets:", error);
     throw error; // You can optionally handle this error elsewhere
+  }
+};
+
+export const getChildAssetsByParent = async (assetTag) => {
+  try {
+    const res = await api.get(`/child-assets/${assetTag}`);
+    if (res.status === 200 && Array.isArray(res.data)) {
+      return res.data; // ✅ Return data
+    } else {
+      throw new Error("Unexpected response structure");
+    }
+  } catch (err) {
+    console.error("API error:", err);
+    throw new Error("Failed to fetch child assets");
   }
 };
 
