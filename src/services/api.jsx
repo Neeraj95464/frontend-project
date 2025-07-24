@@ -1247,6 +1247,7 @@ export const getAssigneeResolutionStats = async (employeeId) => {
   const response = await api.get(
     `/user-assets/tickets/stats/resolution/assignee/${employeeId}`
   );
+
   return response.data;
 };
 

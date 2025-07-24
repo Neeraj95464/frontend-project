@@ -311,6 +311,7 @@ import {
   fetchResolutionStats,
 } from "../services/api";
 import AssigneeFeedbackOverview from "./TicketFeedback";
+import { BarChart3, CalendarDays, User } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import {
   BarChart,
@@ -374,9 +375,8 @@ const TicketDashboardChart = () => {
   }, []);
 
   const fetchResolutionStatsByAssignee = async (employeeId) => {
-    console.log("sending data are ", employeeId);
     const data = await getAssigneeResolutionStats(employeeId || "");
-    console.log("data is stats ", data);
+
     setResolutionStats(data);
   };
 
@@ -412,36 +412,7 @@ const TicketDashboardChart = () => {
         </ResponsiveContainer>
       </div>
 
-      {/* Assignee-based Resolution Stats */}
       {/* <div className="bg-white p-4 rounded-xl shadow-md">
-        <h2 className="text-lg font-semibold mb-2">Resolution Time Stats</h2>
-        <select
-          className="mb-4 p-2 border rounded"
-          onChange={(e) => fetchResolutionStatsByAssignee(e.target.value)}
-        >
-          <option value="">All Assignees</option>
-          {assignees.map((assignee) => (
-            <option key={assignee.employeeId} value={assignee.employeeId}>
-              {assignee.username}
-            </option>
-          ))}
-        </select>
-        {resolutionStats && (
-          <ul className="text-base">
-            <li>
-              Average: {resolutionStats.avgResolutionTimeInDays.toFixed(2)} days
-            </li>
-            <li>
-              Minimum: {resolutionStats.minResolutionTimeInDays.toFixed(2)} days
-            </li>
-            <li>
-              Maximum: {resolutionStats.maxResolutionTimeInDays.toFixed(2)} days
-            </li>
-          </ul>
-        )}
-      </div> */}
-
-      <div className="bg-white p-4 rounded-xl shadow-md">
         <h2 className="text-lg font-semibold mb-2">Resolution Time Stats</h2>
         <select
           className="mb-4 p-2 border rounded"
@@ -482,6 +453,146 @@ const TicketDashboardChart = () => {
                 : "N/A"}
             </li>
           </ul>
+        )}
+      </div> */}
+
+      <div className="bg-white p-6 rounded-2xl shadow-xl space-y-6">
+        <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
+          <BarChart3 className="w-6 h-6 text-blue-600" />
+          Resolution Time Stats
+        </h2>
+
+        {/* Assignee Selector */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-1">
+            Filter by Assignee:
+          </label>
+          <select
+            className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            onChange={(e) => fetchResolutionStatsByAssignee(e.target.value)}
+          >
+            <option value="">All Assignees</option>
+            {assignees.map((assignee) => (
+              <option key={assignee.employeeId} value={assignee.employeeId}>
+                {assignee.username}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {resolutionStats && (
+          <div className="space-y-6">
+            <div className="bg-blue-50 rounded-lg p-4 shadow-md">
+              <h3 className="text-lg font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                <User className="w-5 h-5 text-blue-600" />
+                Overall
+              </h3>
+              <div className="grid grid-cols-3 gap-4 text-sm text-blue-900">
+                <div className="bg-white rounded-md p-3 shadow">
+                  <strong>Avg:</strong>{" "}
+                  {(resolutionStats?.overall?.avg ?? 0).toFixed(2)} days
+                </div>
+                <div className="bg-white rounded-md p-3 shadow">
+                  <strong>Min:</strong>{" "}
+                  {(resolutionStats?.overall?.min ?? 0).toFixed(2)} days
+                </div>
+                <div className="bg-white rounded-md p-3 shadow">
+                  <strong>Max:</strong>{" "}
+                  {(resolutionStats?.overall?.max ?? 0).toFixed(2)} days
+                </div>
+                <div className="bg-white rounded-md p-3 shadow">
+                  <strong>All Tickets:</strong>{" "}
+                  {(resolutionStats?.overall?.ticketCount ?? 0).toFixed(2)} days
+                </div>
+              </div>
+            </div>
+
+            {/* ✅ Weekly Stats */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <CalendarDays className="w-5 h-5 text-green-600" />
+                Weekly
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Object.entries(resolutionStats.weekly || {}).map(
+                  ([week, stats]) => (
+                    <div
+                      key={week}
+                      className="bg-green-50 p-4 rounded-md shadow-md text-sm"
+                    >
+                      <div className="font-semibold text-green-800">{week}</div>
+                      <div>
+                        Avg:{" "}
+                        {(typeof stats?.avg === "number"
+                          ? stats.avg
+                          : 0
+                        ).toFixed(2)}
+                        d
+                      </div>
+                      <div>
+                        Min:{" "}
+                        {(typeof stats?.min === "number"
+                          ? stats.min
+                          : 0
+                        ).toFixed(2)}
+                        d
+                      </div>
+                      <div>
+                        Max:{" "}
+                        {(typeof stats?.max === "number"
+                          ? stats.max
+                          : 0
+                        ).toFixed(2)}
+                        d
+                      </div>
+                      <div>Tickets: {stats?.ticketCount ?? 0}</div>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+
+            {/* ✅ Monthly Stats */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <LineChart className="w-5 h-5 text-purple-600" />
+                Monthly
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* {Object.entries(resolutionStats.monthly || {}).map(
+                  ([month, stats]) => (
+                    <div
+                      key={month}
+                      className="bg-purple-50 p-4 rounded-md shadow-md text-sm"
+                    >
+                      <div className="font-semibold text-purple-800">
+                        {month}
+                      </div>
+                      <div>Avg: {(stats.avg / 1440).toFixed(2)}d</div>
+                      <div>Min: {(stats.min / 1440).toFixed(2)}d</div>
+                      <div>Max: {(stats.max / 1440).toFixed(2)}d</div>
+                    </div>
+                  )
+                )} */}
+
+                {Object.entries(resolutionStats?.monthly || {}).map(
+                  ([month, stats]) => (
+                    <div
+                      key={month}
+                      className="bg-purple-50 p-4 rounded-md shadow-md text-sm"
+                    >
+                      <div className="font-semibold text-purple-800">
+                        {month}
+                      </div>
+                      <div>Avg: {(stats?.avg ?? 0).toFixed(2)}d</div>
+                      <div>Min: {(stats?.min ?? 0).toFixed(2)}d</div>
+                      <div>Max: {(stats?.max ?? 0).toFixed(2)}d</div>
+                    </div>
+                  )
+                )}
+              </div>
+            </div>
+          </div>
         )}
       </div>
 

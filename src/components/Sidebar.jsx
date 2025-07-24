@@ -213,7 +213,7 @@ const navItems = [
     label: "Reports",
     icon: FiBarChart2,
     to: "/reports",
-    roles: ["ADMIN", "MANAGER"],
+    roles: ["ADMIN", "HR_ADMIN", "MANAGER"],
   },
   {
     label: "Users",

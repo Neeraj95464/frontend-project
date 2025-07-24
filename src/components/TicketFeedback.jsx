@@ -87,7 +87,6 @@ export default function AssigneeFeedbackOverview() {
     async function loadFeedbacks() {
       try {
         const res = await getAllAssigneeFeedbacks();
-        console.log("rs ", res.data);
         setFeedbackData(res.data);
       } catch (err) {
         console.error("Failed to fetch feedbacks", err);
