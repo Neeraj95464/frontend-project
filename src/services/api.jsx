@@ -250,12 +250,127 @@ export const deleteVendor = async (id) => {
 };
 
 // ================== ASSET MANAGEMENT ==================
-export const getAllAssets = async () => {
+// export const getAllAssets = async () => {
+//   try {
+//     const response = await api.get("/assets");
+//     return response.data;
+//   } catch (error) {
+//     return [];
+//   }
+// };
+
+export const getAllAssets = async (
+  page = 0,
+  size = 10,
+  sortField = "id",
+  sortDirection = "asc"
+) => {
   try {
-    const response = await api.get("/assets");
-    return response.data;
+    const response = await api.get("/assets", {
+      params: {
+        page,
+        size,
+        sort: `${sortField},${sortDirection}`,
+      },
+    });
+    return response.data; // This will now be a PaginatedResponse
   } catch (error) {
-    return [];
+    console.error("Error fetching assets:", error);
+    return {
+      content: [],
+      page: 0,
+      size,
+      totalElements: 0,
+      totalPages: 0,
+      last: true,
+    };
+  }
+};
+
+// export const fetchAssets = async () => {
+//   const params = new URLSearchParams({
+//     status: selectedStatus || "",
+//     type: selectedType || "",
+//     department: selectedDept || "",
+//     createdBy: createdBy || "",
+//     siteId: selectedSite || "",
+//     locationId: selectedLocation || "",
+//     purchaseStart: purchaseStartDate || "",
+//     purchaseEnd: purchaseEndDate || "",
+//     createdStart: createdStartDateTime || "",
+//     createdEnd: createdEndDateTime || "",
+//     keyword: searchKeyword || "",
+//     page: currentPage,
+//     size: 10,
+//   });
+
+//   const res = await api.get(`/assets/filter?${params}`);
+//   const data = await res.json();
+//   setAssets(data.content);
+//   setPaginationInfo({
+//     totalPages: data.totalPages,
+//     totalElements: data.totalElements,
+//     last: data.last,
+//   });
+// };
+
+export const fetchAssets = async (filters) => {
+  const params = new URLSearchParams();
+
+  // Add only non-empty filters to params
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      params.append(key, value);
+    }
+  });
+
+  const response = await api.get(`/assets/filter?${params.toString()}`);
+  return response.data; // Axios response contains data here
+};
+
+// // === Export filtered assets to Excel ===
+// export const exportAssetsExcel = (filters) => {
+//   const params = new URLSearchParams();
+//   Object.entries(filters).forEach(([key, value]) => {
+//     if (value !== undefined && value !== null && value !== "") {
+//       params.append(key, value);
+//     }
+//   });
+//   // Opening as file download in browser
+//   api.get(`/assets/filter/export?${params.toString()}`, "_blank");
+// };
+
+// In services/api.js
+export const exportAssetsExcel = async (filters) => {
+  try {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, value);
+      }
+    });
+
+    const response = await api.get(
+      `/assets/filter/export?${params.toString()}`,
+      {
+        responseType: "blob", // important for file download
+      }
+    );
+
+    // Create blob link to download
+    const url = window.URL.createObjectURL(
+      response.data instanceof Blob ? response.data : new Blob([response.data])
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "filtered_assets.xlsx");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("Asset export failed:", error);
   }
 };
 
@@ -514,6 +629,36 @@ export const getAssetHistory = async (id) => {
     throw error;
   }
 };
+
+// services/api.js
+export const getAssetsByUser = async (query) => {
+  try {
+    // console.log("query in api ", query);
+
+    const res = await api.get(`/assets/user/${query}`); // Axios GET request
+    // console.log("res is ", res);
+
+    // Axios automatically parses JSON
+    return res.data; // ✅ send only the data
+  } catch (error) {
+    console.error("Failed to fetch assets", error);
+    throw new Error("Failed to fetch assets");
+  }
+};
+
+// export const getAssetsByUser = async (empId) => {
+//   const res = await api.get(`/assets/user/${empId}`); // or use axios.get if axios is in use
+//   if (!res.ok) {
+//     throw new Error(`Failed to fetch assets, status code: ${res.status}`);
+//   }
+//   console.log()
+//   const data = await res.json();
+//   // Ensure data is the array you expect (List<AssetDTO>)
+//   if (!Array.isArray(data)) {
+//     throw new Error("Invalid data format from API");
+//   }
+//   return data;
+// };
 
 export const reserveAsset = async (assetTag, formData) => {
   try {

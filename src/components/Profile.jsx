@@ -25,7 +25,7 @@ const Profile = () => {
 
           setLoginTime(issuedAt.toLocaleString());
           setExpTime(expiresAt.toLocaleString());
-          console.log("Stored user is ", storedUser);
+
           setUser(storedUser);
 
           // Check if token is expired

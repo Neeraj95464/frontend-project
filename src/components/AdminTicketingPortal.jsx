@@ -373,9 +373,20 @@ export default function AdminTicketingPortal() {
     }
   };
 
+  // useEffect(() => {
+  //   fetchTickets();
+  //   const role = hasRole("ADMIN") ? "admin" : "user";
+  //   setUserRole(role);
+  // }, []);
+
   useEffect(() => {
     fetchTickets();
-    const role = hasRole("ADMIN") ? "admin" : "user";
+
+    let role = "user";
+    if (hasRole("ADMIN") || hasRole("HR_ADMIN")) {
+      role = "admin";
+    }
+
     setUserRole(role);
   }, []);
 

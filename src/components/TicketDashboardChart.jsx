@@ -459,7 +459,7 @@ const TicketDashboardChart = () => {
       <div className="bg-white p-6 rounded-2xl shadow-xl space-y-6">
         <h2 className="text-xl font-bold text-gray-800 flex items-center gap-2">
           <BarChart3 className="w-6 h-6 text-blue-600" />
-          Resolution Time Stats
+          Resolution Time Statistics
         </h2>
 
         {/* Assignee Selector */}
@@ -492,17 +492,22 @@ const TicketDashboardChart = () => {
                   <strong>Avg:</strong>{" "}
                   {(resolutionStats?.overall?.avg ?? 0).toFixed(2)} days
                 </div>
-                <div className="bg-white rounded-md p-3 shadow">
+                {/* <div className="bg-white rounded-md p-3 shadow">
                   <strong>Min:</strong>{" "}
                   {(resolutionStats?.overall?.min ?? 0).toFixed(2)} days
-                </div>
+                </div> */}
                 <div className="bg-white rounded-md p-3 shadow">
                   <strong>Max:</strong>{" "}
                   {(resolutionStats?.overall?.max ?? 0).toFixed(2)} days
                 </div>
                 <div className="bg-white rounded-md p-3 shadow">
-                  <strong>All Tickets:</strong>{" "}
-                  {(resolutionStats?.overall?.ticketCount ?? 0).toFixed(2)} days
+                  <strong>Close Count:</strong>{" "}
+                  {(resolutionStats?.overall?.ticketClosed ?? 0).toFixed(2)}
+                </div>
+
+                <div className="bg-white rounded-md p-3 shadow">
+                  <strong>Open Count:</strong>{" "}
+                  {(resolutionStats?.overall?.ticketOpened ?? 0).toFixed(2)}
                 </div>
               </div>
             </div>
@@ -529,14 +534,14 @@ const TicketDashboardChart = () => {
                         ).toFixed(2)}
                         d
                       </div>
-                      <div>
+                      {/* <div>
                         Min:{" "}
                         {(typeof stats?.min === "number"
                           ? stats.min
                           : 0
                         ).toFixed(2)}
                         d
-                      </div>
+                      </div> */}
                       <div>
                         Max:{" "}
                         {(typeof stats?.max === "number"
@@ -545,7 +550,8 @@ const TicketDashboardChart = () => {
                         ).toFixed(2)}
                         d
                       </div>
-                      <div>Tickets: {stats?.ticketCount ?? 0}</div>
+                      <div>Open Count: {stats?.ticketClosed ?? 0}</div>
+                      <div>Close Count: {stats?.ticketOpened ?? 0}</div>
                     </div>
                   )
                 )}
@@ -585,8 +591,10 @@ const TicketDashboardChart = () => {
                         {month}
                       </div>
                       <div>Avg: {(stats?.avg ?? 0).toFixed(2)}d</div>
-                      <div>Min: {(stats?.min ?? 0).toFixed(2)}d</div>
+                      {/* <div>Min: {(stats?.min ?? 0).toFixed(2)}d</div> */}
                       <div>Max: {(stats?.max ?? 0).toFixed(2)}d</div>
+                      <div>Close Count: {stats?.ticketClosed ?? 0}</div>
+                      <div>Open Count: {stats?.ticketOpened ?? 0}</div>
                     </div>
                   )
                 )}

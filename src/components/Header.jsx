@@ -30,7 +30,7 @@ const Header = ({ onMenuClick }) => {
         </button>
 
         <img
-          src="https://www.mahavirgroup.co/wp-content/uploads/2018/10/Mahavir-Group-Logo.png"
+          src="https://tse1.mm.bing.net/th/id/OIP.5oPSfDKKs7b_Vl58PPGp_AAAAA?pid=Api&P=0&h=220"
           alt="Mahavir Logo"
           className="h-10 w-auto"
         />

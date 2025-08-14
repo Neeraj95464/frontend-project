@@ -35,6 +35,7 @@ const AssetTable = ({ assets = [], refreshAssets }) => {
 
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+      {/* // <div className="lg:ml-40 pt-16 mr-8"> */}
       {/* Add a wrapper with a fixed height for the table */}
       <div className="overflow-y-auto" style={{ maxHeight: "500px" }}>
         <table className="min-w-full border border-gray-200 divide-y divide-gray-200">
