@@ -179,10 +179,12 @@ const AssetList = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this asset?")) {
+  const handleDelete = async (assetTag) => {
+    if (
+      window.confirm("Are you sure you want to delete this asset? ", assetTag)
+    ) {
       try {
-        await deleteAsset(id);
+        await deleteAsset(assetTag);
         loadAssets(); // refresh current page
       } catch (error) {
         console.error("Error deleting asset:", error);
@@ -635,7 +637,7 @@ const AssetList = () => {
                   </button>
                   <button
                     className="text-red-500 hover:text-red-700"
-                    onClick={() => handleDelete(asset.id)}
+                    onClick={() => handleDelete(asset.assetTag)}
                   >
                     <FiTrash2 size={16} />
                   </button>

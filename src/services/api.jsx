@@ -38,7 +38,8 @@ import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://localhost:7355/api";
-const API_URL = "https://crack-segment-hobbies-albert.trycloudflare.com/api";
+const API_URL =
+  "https://suspension-colony-conducting-exhibition.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -927,9 +928,9 @@ export const getTickets = async ({
   }
 };
 
-export const deleteAsset = async (assetId) => {
+export const deleteAsset = async (assetTag) => {
   try {
-    await api.delete(`/assets/${assetId}`);
+    await api.delete(`/assets/${assetTag}`);
   } catch (error) {
     throw error;
   }
