@@ -265,7 +265,7 @@ const App = () => {
               <Route
                 path="/users"
                 element={
-                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "HR_ADMIN"]}>
                     <UsersList />
                   </PrivateRoute>
                 }

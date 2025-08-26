@@ -622,7 +622,7 @@ export default function TicketingPortal() {
           }`}
         >
           {/* Header with title and action icon */}
-          <div className="flex items-start justify-between mb-4 border-b pb-2">
+          {/* <div className="flex items-start justify-between mb-4 border-b pb-2">
             <div className="flex-1 pr-2">
               <h2 className="text-sm font-semibold text-gray-800">
                 {selectedTicket.title}
@@ -633,34 +633,6 @@ export default function TicketingPortal() {
             </div>
 
             <div className="flex items-center gap-2">
-              {/* <button
-                className="p-2 rounded-full hover:bg-gray-100 transition"
-                title={isMaximized ? "Minimize" : "Maximize"}
-                onClick={() => setIsMaximized((prev) => !prev)}
-              >
-                {isMaximized ? (
-                  <svg
-                    className="w-4 h-4 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M4 8h16M4 16h16" />
-                  </svg>
-                ) : (
-                  <svg
-                    className="w-4 h-4 text-gray-600"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M4 4h16v16H4z" />
-                  </svg>
-                )}
-              </button> */}
-
               <button
                 className="w-10 h-10 p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow-md transition-all duration-200 flex items-center justify-center"
                 title={isMaximized ? "Minimize" : "Maximize"}
@@ -695,19 +667,6 @@ export default function TicketingPortal() {
                 )}
               </button>
 
-              {/* Action Icon */}
-              {/* {userRole !== "user" ? (<button
-                className="p-2 rounded-full hover:bg-gray-100 transition"
-                title="Ticket actions"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedTicketId(selectedTicket.id);
-                  setIsTicketModalOpen(true);
-                }}
-              >
-                <MoreVertical className="w-4 h-4 text-gray-600" />
-              </button>)} */}
-
               {userRole !== "user" && (
                 <button
                   className="p-2 rounded-full hover:bg-gray-100 transition"
@@ -732,67 +691,90 @@ export default function TicketingPortal() {
                 &times;
               </button>
             </div>
-          </div>
-          {/* Messages */}
-          {/* <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
-            {selectedTicket.messages.length === 0 ? (
-              <p className="text-center text-gray-400 text-xs">
-                No messages yet.
-              </p>
-            ) : (
-              selectedTicket.messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className="bg-gray-100 px-3 py-2 rounded-lg shadow-sm"
-                >
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-blue-600 text-xs font-semibold truncate">
-                      {msg.sender}
-                    </span>
-                    <span className="text-[10px] text-gray-400">
-                      {new Date(msg.sentAt).toLocaleString()}
-                    </span>
-                  </div>
-                  <p className="text-gray-700 text-sm">{msg.message}</p>
-                </div>
-              ))
-            )}
           </div> */}
 
-          {/* <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
-            {selectedTicket.messages.filter((msg) => {
-              // Show all PUBLIC_RESPONSE messages
-              if (msg.ticketMessageType === "PUBLIC_RESPONSE") return true;
-              // Show INTERNAL_NOTE only if user is not a USER
-              return userRole !== "user";
-            }).length === 0 ? (
-              <p className="text-center text-gray-400 text-xs">
-                No messages yet.
-              </p>
-            ) : (
-              selectedTicket.messages
-                .filter((msg) => {
-                  if (msg.ticketMessageType === "PUBLIC_RESPONSE") return true;
-                  return userRole !== "user";
-                })
-                .map((msg, idx) => (
-                  <div
-                    key={idx}
-                    className="bg-gray-100 px-3 py-2 rounded-lg shadow-sm"
+          <div className="mb-4 border-b pb-2">
+            {/* Top Row - Ticket No + Actions */}
+            <div className="flex justify-between items-center w-full mb-3">
+              <div className="text-base font-bold text-green-600 bg-green-100 px-3 py-1 rounded-lg shadow-sm">
+                #{selectedTicket?.id || "—"}
+              </div>
+              {/* Action Buttons */}
+              <div className="flex items-center gap-3">
+                {/* Maximize / Minimize */}
+                <button
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 shadow-sm transition-all duration-200 hover:scale-105"
+                  title={isMaximized ? "Minimize" : "Maximize"}
+                  onClick={() => setIsMaximized((prev) => !prev)}
+                >
+                  {isMaximized ? (
+                    <svg
+                      className="w-5 h-5 text-gray-700"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M5 12h14M5 18h14" />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-5 h-5 text-gray-700"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      viewBox="0 0 24 24"
+                    >
+                      <rect x="5" y="5" width="14" height="14" rx="2" ry="2" />
+                    </svg>
+                  )}
+                </button>
+
+                {/* Ticket Actions */}
+                {userRole !== "user" && (
+                  <button
+                    className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 shadow-sm transition-all duration-200 hover:scale-105"
+                    title="Ticket actions"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedTicketId(selectedTicket.id);
+                      setIsTicketModalOpen(true);
+                    }}
                   >
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-blue-600 text-xs font-semibold truncate">
-                        {msg.sender}
-                      </span>
-                      <span className="text-[10px] text-gray-400">
-                        {new Date(msg.sentAt).toLocaleString()}
-                      </span>
-                    </div>
-                    <p className="text-gray-700 text-sm">{msg.message}</p>
-                  </div>
-                ))
-            )}
-          </div> */}
+                    <MoreVertical className="w-5 h-5 text-gray-700" />
+                  </button>
+                )}
+
+                {/* Attachments */}
+                <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 shadow-sm transition-all duration-200 hover:scale-105">
+                  <TicketAttachmentButton ticket={selectedTicket} />
+                </div>
+
+                {/* Close Button */}
+                <button
+                  onClick={() => setSelectedTicket(null)}
+                  aria-label="Close"
+                  className="w-10 h-10 flex items-center justify-center rounded-full bg-red-600 hover:bg-red-700 shadow-sm transition-all duration-200 hover:scale-105"
+                >
+                  <span className="text-white text-lg font-bold">&times;</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Bottom Row - Title + Description */}
+            <div className="w-full">
+              <h2 className="text-sm font-semibold text-gray-800">
+                {selectedTicket.title}
+              </h2>
+              <p className="text-xs text-gray-500 mt-1">
+                {selectedTicket.description}
+              </p>
+            </div>
+          </div>
 
           <div className="flex flex-col gap-2 mb-4 max-h-[320px] overflow-y-auto pr-1">
             {selectedTicket.messages.filter((msg) => {

@@ -10,12 +10,29 @@ export default function LocationAssignmentTable() {
   const [searchResults, setSearchResults] = useState({});
   const [searchInputs, setSearchInputs] = useState({});
 
+  // done by rupa
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const res = await getAllAssignments();
+  //       console.log(res.data);
+  //       setAssignments(res.data || []);
+  //     } catch (error) {
+  //       console.error("Failed to load assignments:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await getAllAssignments();
-        // console.log("Assignment data:", res.data);
-        setAssignments(res.data || []);
+        // Filter out finance department
+        const filteredData = (res.data || []).filter(
+          (item) => item.ticketDepartment !== "FINANCE"
+        );
+        setAssignments(filteredData);
       } catch (error) {
         console.error("Failed to load assignments:", error);
       }
