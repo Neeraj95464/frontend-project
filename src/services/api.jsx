@@ -39,7 +39,7 @@ import { toast } from "react-toastify";
 // Base API URL
 // const API_URL = "http://localhost:7355/api";
 const API_URL =
-  "https://brakes-cancelled-transmitted-reporting.trycloudflare.com/api";
+  "https://firmware-seller-forget-wound.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
