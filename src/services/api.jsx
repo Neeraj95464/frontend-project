@@ -39,7 +39,7 @@ import { toast } from "react-toastify";
 // Base API URL
 // const API_URL = "http://localhost:7355/api";
 const API_URL =
-  "https://https://bedroom-aluminum-sd-rows.trycloudflare.com/api";
+  "https://bedroom-aluminum-sd-rows.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
