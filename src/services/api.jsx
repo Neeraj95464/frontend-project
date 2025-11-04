@@ -37,9 +37,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Base API URL
-// const API_URL = "http://localhost:7355/api";
-const API_URL =
-  "https://pichunter-kelly-prisoner-patients.trycloudflare.com/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL =
+//   "https://pichunter-kelly-prisoner-patients.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -1329,6 +1329,21 @@ export const getLocationsBySite = async (siteId) => {
   } catch (error) {
     throw error;
   }
+};
+
+// Fetch filtered tickets with pagination and filters
+export const fetchFilteredTickets = (params) => {
+  // params is an object with optional keys: title, status, category, employeeId, locationId, assigneeId, createdAfter, createdBefore, page, size
+  return api.get("/user-assets/updated/filter", { params });
+};
+
+// Download filtered tickets Excel file
+export const downloadFilteredTickets = (params) => {
+  // params is an object with optional filter keys excluding pagination
+  return api.get("/user-assets/updated/download", {
+    params,
+    responseType: "blob", // important to handle binary file downloads
+  });
 };
 
 export const getAllAssigneeFeedbacks = () =>

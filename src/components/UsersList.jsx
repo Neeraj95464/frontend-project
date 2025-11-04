@@ -437,12 +437,12 @@ const UsersList = () => {
                         >
                           <Pencil size={16} />
                         </button>
-                        <button
+                        {/* <button
                           onClick={() => handleDelete(user.id)}
                           className="text-red-500 hover:text-red-700"
                         >
                           <Trash size={16} />
-                        </button>
+                        </button> */}
                       </TableCell>
                     </TableRow>
                   ))
