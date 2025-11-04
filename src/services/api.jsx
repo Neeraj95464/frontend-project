@@ -37,9 +37,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Base API URL
-const API_URL = "http://localhost:7355/api";
-// const API_URL =
-//   "https://pichunter-kelly-prisoner-patients.trycloudflare.com/api";
+// const API_URL = "http://localhost:7355/api";
+const API_URL = "https://couple-clients-utilities-que.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
