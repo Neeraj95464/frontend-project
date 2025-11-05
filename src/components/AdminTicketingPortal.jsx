@@ -2150,11 +2150,29 @@ export default function AdminTicketingPortal() {
     "GENERAL_HR_QUERIES",
   ];
 
+  // const predefinedMessages = [
+  //   "Thank you for your patience.",
+  //   "We are looking into your issue.",
+  //   "Can you please provide more details?",
+  //   "This ticket has been resolved.",
+  // ];
+
   const predefinedMessages = [
-    "Thank you for your patience.",
-    "We are looking into your issue.",
-    "Can you please provide more details?",
-    "This ticket has been resolved.",
+    "Dear Sir, thank you for your patience.",
+    "Dear Team, we are currently looking into your issue.",
+    "Dear User, could you please provide more details?",
+    "Dear Sir/Madam, this ticket has been resolved.",
+    "Dear Team, we appreciate your understanding and cooperation.",
+    "Dear User, our team is diligently investigating this matter.",
+    "Dear Sir, please let us know if you have any further questions.",
+    "Dear Team, thank you for bringing this important matter to our attention.",
+    "Dear User, we will update you as soon as possible.",
+    "Dear Sir/Madam, your feedback is highly valuable to us.",
+    "Dear Team, we are committed to resolving your issue promptly.",
+    "Dear User, thank you for working with us to find a solution.",
+    "Dear Sir, please rest assured that we are prioritizing your ticket.",
+    "Dear Team, feel free to reach out for any additional assistance.",
+    "Dear User, we sincerely apologize for any inconvenience caused.",
   ];
 
   const handleSelectPredefined = (msg) => {
@@ -2372,7 +2390,9 @@ export default function AdminTicketingPortal() {
 
         <Card className="shadow-xl border-0 bg-white rounded-2xl overflow-hidden">
           {/* Header Section */}
-          <div className="bg-gradient-to-r from-green-600 to-green-500 px-6 py-4">
+          {/* <div className="bg-gradient-to-r from-green-600 to-green-500 px-6 py-4"> */}
+
+          <div className="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
                 <h1 className="text-2xl font-bold text-white">
@@ -2383,21 +2403,29 @@ export default function AdminTicketingPortal() {
                 </p>
               </div>
               <div className="flex items-center gap-3">
+                {/* <Button
+                  onClick={() => setIsDialogOpen(true)}
+                  className="px-4 py-2 rounded-lg shadow-lg bg-white text-green-600 hover:bg-green-50 font-semibold transition-all duration-200 transform hover:scale-105"
+                >
+                  <span className="text-lg mr-2 text-black">+</span> New Ticket
+                </Button> */}
+
                 <Button
                   onClick={() => setIsDialogOpen(true)}
-                  className="bg-white text-green-600 hover:bg-green-50 font-semibold shadow-lg transition-all duration-200 transform hover:scale-105"
+                  className="px-4 py-2 rounded-lg shadow-lg bg-white text-green-600 hover:bg-green-50 font-semibold transition-all duration-200 transform hover:scale-105"
                 >
-                  <span className="text-lg mr-2">+</span> New Ticket
+                  <span className="text-lg mr-2 text-black">+</span>
+                  <span className="text-black">New Ticket</span>
                 </Button>
 
-                {(userRole === "ADMIN" || userRole === "HR_ADMIN") && (
+                {/* {(userRole === "ADMIN" || userRole === "HR_ADMIN") && (
                   <button
                     className="px-4 py-2 rounded-lg shadow-lg bg-white text-green-600 hover:bg-green-50 font-semibold transition-all duration-200 transform hover:scale-105"
                     onClick={() => navigate("/ticket/admin")}
                   >
                     Admin Portal
                   </button>
-                )}
+                )} */}
               </div>
             </div>
           </div>
@@ -2526,7 +2554,7 @@ export default function AdminTicketingPortal() {
 
                 {/* Row 2: Date filters, Search, and Actions */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4 items-end">
-                  <div>
+                  {/* <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">
                       Created After
                     </label>
@@ -2541,7 +2569,45 @@ export default function AdminTicketingPortal() {
                       }}
                       className="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all"
                     />
+                  </div> */}
+
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                      Created After
+                    </label>
+                    <input
+                      type="date"
+                      value={
+                        filters.createdAfter
+                          ? filters.createdAfter.substring(0, 10)
+                          : ""
+                      }
+                      onChange={(e) => {
+                        const val = e.target.value
+                          ? new Date(e.target.value).toISOString()
+                          : null;
+                        handleFilterChange("createdAfter", val);
+                      }}
+                      className="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all"
+                    />
                   </div>
+
+                  {/* <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                      Created Before
+                    </label>
+                    <input
+                      type="date"
+                      value={filters.createdBefore || ""}
+                      onChange={(e) => {
+                        const val = e.target.value
+                          ? new Date(e.target.value).toISOString()
+                          : null;
+                        handleFilterChange("createdBefore", val);
+                      }}
+                      className="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-white transition-all"
+                    />
+                  </div> */}
 
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1.5">
@@ -2549,7 +2615,11 @@ export default function AdminTicketingPortal() {
                     </label>
                     <input
                       type="date"
-                      value={filters.createdBefore || ""}
+                      value={
+                        filters.createdBefore
+                          ? filters.createdBefore.substring(0, 10)
+                          : ""
+                      }
                       onChange={(e) => {
                         const val = e.target.value
                           ? new Date(e.target.value).toISOString()
@@ -3126,7 +3196,7 @@ export default function AdminTicketingPortal() {
                   </>
                 )}
 
-                {showPredefined && (
+                {/* {showPredefined && (
                   <div className="absolute right-12 bottom-full mb-2 z-20 w-72 bg-white shadow-2xl border-2 border-gray-200 rounded-xl overflow-hidden">
                     <div className="bg-gradient-to-r from-green-600 to-green-500 px-3 py-2">
                       <h4 className="text-sm font-semibold text-white">
@@ -3142,6 +3212,27 @@ export default function AdminTicketingPortal() {
                         {msg}
                       </div>
                     ))}
+                  </div>
+                )} */}
+
+                {showPredefined && (
+                  <div className="absolute right-12 bottom-full mb-2 z-20 w-72 bg-white shadow-2xl border-2 border-gray-200 rounded-xl overflow-hidden">
+                    <div className="bg-gradient-to-r from-green-600 to-green-500 px-3 py-2">
+                      <h4 className="text-sm font-semibold text-white">
+                        Quick Replies
+                      </h4>
+                    </div>
+                    <div className="max-h-48 overflow-auto">
+                      {predefinedMessages.map((msg, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => handleSelectPredefined(msg)}
+                          className="px-3 py-2.5 hover:bg-green-50 cursor-pointer border-b last:border-b-0 text-sm text-gray-700 transition-colors"
+                        >
+                          {msg}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>

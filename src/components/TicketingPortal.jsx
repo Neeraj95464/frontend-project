@@ -80,10 +80,10 @@ export default function TicketingPortal() {
   };
 
   const predefinedMessages = [
-    "Thank you for your patience.",
-    "We are looking into your issue.",
-    "Can you please provide more details?",
-    "This ticket has been resolved.",
+    "Thank you for your patience. we are still actively working on your issue",
+    "Dear team, We are looking into your issue.",
+    "Dear team, Could you please provide more details?",
+    "Dear team, As solution has been provided will move to close the ticket.",
   ];
 
   const handlePredefinedSelect = (e) => {
