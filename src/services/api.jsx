@@ -1,45 +1,11 @@
-// import axios from "axios";
-// import { toast } from "react-toastify";
-
-// // Base API URL
-// // const API_URL = "http://103.211.37.123:7355/api";
-// const API_URL = "http://localhost:7355/api";
-// // const API_URL = "https://numerous-gem-accompanied-mac.trycloudflare.com/api";
-
-// // Create Axios instancecfc
-// const api = axios.create({
-//   baseURL: API_URL,
-//   headers: { "Content-Type": "application/json" },
-// });
-
-// // Attach token to every request
-// api.interceptors.request.use(
-//   (config) => {
-//     const storedUser = localStorage.getItem("user");
-//     if (storedUser) {
-//       const { token } = JSON.parse(storedUser) || {};
-//       if (token) {
-//         config.headers.Authorization = `Bearer ${token}`;
-//       }
-//     }
-//     return config;
-//   },
-//   (error) => Promise.reject(error)
-// );
-
-// export default api;
-
-// import { logoutAndRedirect } from "./utils/logoutAndRedirect";
-
-// utils/logoutAndRedirect.js
-
 import axios from "axios";
 import { toast } from "react-toastify";
 
 // Base API URL
 // const API_URL = "http://localhost:7355/api";
-const API_URL =
-  "https://musicians-pin-sunshine-reductions.trycloudflare.com/api";
+const API_URL = "https://mahavir-asset.duckdns.org:7355/api";
+// const API_URL =
+//   "https://musicians-pin-sunshine-reductions.trycloudflare.com/api";
 
 // Create Axios instance
 const api = axios.create({
