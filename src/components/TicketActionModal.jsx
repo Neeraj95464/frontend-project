@@ -107,6 +107,7 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
     { label: "CCTV", value: "CCTV" },
     { label: "Maintenance", value: "MAINTENANCE" },
     { label: "Focus", value: "FOCUS" },
+    { label: "Zoho Support", value: "ZOHO_SUPPORT" },
     // { label: "Admin", value: "ADMIN" },
     // { label: "Logistics", value: "LOGISTICS" },
     // { label: "Desktop", value: "DESKTOP" },

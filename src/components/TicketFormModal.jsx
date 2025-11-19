@@ -44,6 +44,7 @@ const TicketModal = ({ isOpen, onClose }) => {
     "EMAIL",
     "DMS",
     "WORKSHOP_DIAGNOSTIC_TOOLS",
+    "ZOHO_SUPPORT",
     "OTHER",
 
     "MAINTENANCE",
@@ -86,6 +87,7 @@ const TicketModal = ({ isOpen, onClose }) => {
     UPS: "Example: Battery backup failure",
     WEB_APPLICATION: "Example: App not loading, internal error",
     XENTRY: "Example: Login failed, functionality not working",
+    ZOHO_SUPPORT: "Example: Login failed, functionality not working",
   };
 
   const hrCategories = [
