@@ -1646,8 +1646,8 @@ export default function AdminTicketingPortal() {
           </div>
 
           {/* Filters Section */}
-          {/* <div className="border-b border-gray-200 bg-gray-50"> */}
-          <div className="border-b border-gray-200 bg-gray-50 w-1/2">
+          <div className="border-b border-gray-200 bg-gray-50">
+            {/* <div className="border-b border-gray-200 bg-gray-50 w-1/2"> */}
             <div className="px-6 py-4">
               <button
                 onClick={() => setShowFilters(!showFilters)}
