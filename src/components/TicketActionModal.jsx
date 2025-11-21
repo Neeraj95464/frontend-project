@@ -36,25 +36,25 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
   const ticketLocations = [
-    { value: 3, label: "Jubilee Hills" },
-    { value: 4, label: "Secundrabad" },
-    { value: 5, label: "Somajiguda" },
-    { value: 6, label: "Jubilee Hills" },
-    { value: 7, label: "Madhapur" },
+    // { value: 3, label: "Jubilee Hills" },
+    // { value: 4, label: "Secundrabad" },
+    // { value: 5, label: "Somajiguda" },
+    // { value: 6, label: "Jubilee Hills" },
+    // { value: 7, label: "Madhapur" },
     { value: 8, label: "Bantia-Skoda" },
     { value: 9, label: "Bhimavaram-Skoda" },
     { value: 10, label: "Bowenpally-Skoda" },
     { value: 11, label: "Corp-Jubilee Hills" },
-    { value: 12, label: "Guntur Skoda" },
+    // { value: 12, label: "Guntur Skoda" },
     { value: 13, label: "Guntur-Skoda" },
     { value: 14, label: "Jubilee Hills-Skoda" },
     { value: 15, label: "Kakinada-Skoda" },
-    { value: 16, label: "Kukatpally-Benelli" },
+    // { value: 16, label: "Kukatpally-Benelli" },
     { value: 17, label: "Nellore-Skoda" },
     { value: 18, label: "Rajahmundry-Isuzu" },
     { value: 19, label: "Rajahmundry-Skoda" },
     { value: 20, label: "Sanath Nagar Skoda" },
-    { value: 21, label: "Sanath Nagar-Skoda" },
+    // { value: 21, label: "Sanath Nagar-Skoda" },
     { value: 22, label: "Secunderabad-Skoda" },
     { value: 23, label: "Somajiguda-Skoda" },
     { value: 24, label: "Srikakulam-Skoda" },
@@ -63,38 +63,38 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
     { value: 27, label: "Vizag-Skoda" },
     { value: 28, label: "Warangal-Skoda" },
     { value: 29, label: "Bowenpally-MB" },
-    { value: 30, label: "Corp-Jubilee Hills" },
+    // { value: 30, label: "Corp-Jubilee Hills" },
     { value: 31, label: "Kondapur-MB" },
-    { value: 32, label: "Kukatpally-Benelli" },
+    // { value: 32, label: "Kukatpally-Benelli" },
     { value: 33, label: "Madhapur-MB" },
     { value: 34, label: "Stock Yard-MB" },
     { value: 35, label: "Vijayawada-MB" },
-    { value: 36, label: "Corp-Jubilee Hills" },
+    // { value: 36, label: "Corp-Jubilee Hills" },
     { value: 37, label: "Guntur-Benelli" },
     { value: 38, label: "Guntur-Isuzu" },
     { value: 39, label: "Karimnagar-Isuzu" },
     { value: 40, label: "Kukatpally-Benelli" },
     { value: 41, label: "Kukatpally-Isuzu" },
     { value: 42, label: "LB Nagar-Isuzu" },
-    { value: 43, label: "Madhapur-Isuzu" },
+    // { value: 43, label: "Madhapur-Isuzu" },
     { value: 44, label: "Nellore-Benelli" },
     { value: 45, label: "Pune-Benelli" },
     { value: 46, label: "Rajahmundry-Benelli" },
-    { value: 47, label: "Rajahmundry-Isuzu" },
+    // { value: 47, label: "Rajahmundry-Isuzu" },
     { value: 48, label: "Vijayawada-Benelli" },
     { value: 49, label: "Vijayawada-Isuzu" },
     { value: 50, label: "Vizag-Benelli" },
     { value: 51, label: "Vizag-Isuzu" },
-    { value: 52, label: "Vizag-Skoda" },
+    // { value: 52, label: "Vizag-Skoda" },
     { value: 53, label: "Vyttila-Benelli" },
-    { value: 54, label: "Corp-Jubilee Hills" },
+    // { value: 54, label: "Corp-Jubilee Hills" },
     { value: 55, label: "Nettoor - Coastal Star" },
     { value: 56, label: "Nettoor-MB" },
     { value: 57, label: "Trikkakara-MB" },
     { value: 58, label: "Trivandrum-MB" },
     { value: 59, label: "TVM-Chakkai-MB" },
     { value: 60, label: "TVM-Kochuvelli-MB" },
-    { value: 61, label: "Corp-Jubilee Hills" },
+    // { value: 61, label: "Corp-Jubilee Hills" },
     { value: 62, label: "Gundlapochampally" },
     { value: 63, label: "New Delhi" },
   ];
@@ -130,46 +130,6 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
     // { label: "Policy", value: "POLICY" },
     // { label: "Payslip", value: "PAYSLIP" },
   ];
-
-  // useEffect(() => {
-  //   const fetchTicket = async () => {
-  //     if (ticketId) {
-  //       try {
-  //         const data = await getTicketById(ticketId);
-  //         setTicket(data);
-  //         setTicketStatus(data.status);
-  //         setCcEmails(data.ccEmails || []);
-  //         setLocation(data.location?.id || "");
-  //         setAssignee(data.assignee?.employeeId || "");
-  //       } catch (error) {
-  //         console.error("Error fetching ticket:", error);
-  //       }
-  //     }
-  //   };
-
-  //   fetchTicket();
-  // }, [ticketId]);
-
-  // useEffect(() => {
-  //   const fetchTicket = async () => {
-  //     if (ticketId) {
-  //       try {
-  //         const data = await getTicketById(ticketId);
-  //         setTicket(data);
-  //         setTicketStatus(data.status);
-  //         setCategory(data.category); // ✅ Use data.category directly
-  //         setLocation(data.location?.id || ""); // ✅ Use ID, not name
-  //         // ✅ location ID for dropdown
-  //         setCcEmails(data.ccEmails || []);
-  //         setAssignee(data.assignee?.employeeId || "");
-  //       } catch (error) {
-  //         console.error("Error fetching ticket:", error);
-  //       }
-  //     }
-  //   };
-
-  //   fetchTicket();
-  // }, [ticketId]);
 
   useEffect(() => {
     getAssignees()
