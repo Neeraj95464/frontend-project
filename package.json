@@ -33,6 +33,7 @@
     "recharts": "^2.15.3",
     "sonner": "^2.0.3",
     "ui": "github:shadcn/ui",
+    "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
   "devDependencies": {

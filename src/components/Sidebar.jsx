@@ -65,6 +65,12 @@ const navItems = [
     to: "/updates",
     roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN"],
   },
+  {
+    label: "Bulk Imports",
+    icon: FiSettings,
+    to: "/bulk-imports",
+    roles: ["MANAGER", "ADMIN"],
+  },
 ];
 
 // Reusable nav link

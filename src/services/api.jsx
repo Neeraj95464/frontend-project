@@ -2,8 +2,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Base API URL
-// const API_URL = "http://localhost:7355/api";
-const API_URL = "https://mahavir-asset.duckdns.org:7355/api";
+const API_URL = "http://localhost:7355/api";
+// const API_URL = "https://mahavir-asset.duckdns.org:7355/api";
 
 // Create Axios instance
 const api = axios.create({
@@ -177,6 +177,11 @@ export const logoutUser = () => localStorage.removeItem("user");
 export const getContracts = async () => {
   const response = await api.get("/contracts");
   return response.data;
+};
+
+export const getEnums = async () => {
+  const response = await api.get("/enum/all");
+  return response.data; // { departments: [...], assetTypes: [...] }
 };
 
 export const createContract = async (contractData) => {
@@ -743,6 +748,26 @@ export const addAsset = async (assetData) => {
   } catch (error) {
     throw error;
   }
+};
+
+export const importAssets = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await api.post("/assets/import", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
+};
+
+export const importTickets = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await api.post("/tickets/import", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
 };
 
 // Upload asset documents

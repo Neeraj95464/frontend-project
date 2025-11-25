@@ -1,10 +1,10 @@
 import {
   getAssetByAssetTag,
   getSites,
-  getDepartments,
   getLocationsBySite,
   searchEmployees,
   assignAsset,
+  getEnums,
 } from "../services/api";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -21,10 +21,14 @@ const AssignAssetModal = ({ assetTag, isOpen, onClose }) => {
 
   const [sites, setSites] = useState([]);
   const [locations, setLocations] = useState([]);
-  const [departments, setDepartments] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const selectedSite = watch("siteId");
   const selectedLocation = watch("locationId");
+  const [departments, setDepartments] = useState([]);
+  const [assetTypes, setAssetTypes] = useState([]);
+
+  // local toggle: true = assign to location only; false = assign to user
+  const [assignToLocationOnly, setAssignToLocationOnly] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -32,16 +36,27 @@ const AssignAssetModal = ({ assetTag, isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const fetchEnums = async () => {
+      try {
+        const data = await getEnums();
+        setAssetTypes(data.assetTypes || []);
+        setDepartments(data.departments || []);
+      } catch (e) {
+        console.error("Failed to load enums", e);
+      }
+    };
+    fetchEnums();
+  }, []);
+
   const loadInitialData = async () => {
     try {
-      const [asset, sitesData, departmentsData] = await Promise.all([
+      const [asset, sitesData] = await Promise.all([
         getAssetByAssetTag(assetTag),
         getSites(),
-        getDepartments(),
       ]);
 
       setSites(sitesData);
-      setDepartments(departmentsData);
 
       if (asset.siteId) {
         setValue("siteId", asset.siteId);
@@ -73,24 +88,6 @@ const AssignAssetModal = ({ assetTag, isOpen, onClose }) => {
     }
   }, [selectedSite]);
 
-  // const handleSearchChange = async (e) => {
-  //   const query = e.target.value;
-  //   setSearchQuery(query);
-
-  //   if (!query) {
-  //     setMatchedEmployees([]);
-  //     setSelectedEmployee(null);
-  //     return;
-  //   }
-
-  //   try {
-  //     const employees = await searchEmployees(query);
-  //     setMatchedEmployees(employees);
-  //   } catch {
-  //     setMatchedEmployees([]);
-  //   }
-  // };
-
   const handleSearchChange = async (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -98,7 +95,7 @@ const AssignAssetModal = ({ assetTag, isOpen, onClose }) => {
     if (!query) {
       setMatchedEmployees([]);
       setSelectedEmployee(null);
-      setError(""); // ✅ Clear error when input is cleared
+      setError("");
       return;
     }
 
@@ -108,7 +105,7 @@ const AssignAssetModal = ({ assetTag, isOpen, onClose }) => {
       if (employees.length === 0) {
         setError("No employees found.");
       } else {
-        setError(""); // ✅ Clear error if employees are found
+        setError("");
       }
 
       setMatchedEmployees(employees);
@@ -134,15 +131,36 @@ const AssignAssetModal = ({ assetTag, isOpen, onClose }) => {
     setLoading(true);
     setError("");
 
-    if (!data.userId || !data.siteId || !data.locationId) {
-      setError("❌ User, Site, and Location are required.");
+    // validate common required fields
+    if (!data.siteId || !data.locationId) {
+      setError("❌ Site and Location are required.");
+      setLoading(false);
+      return;
+    }
+
+    // validate assignment mode
+    if (!assignToLocationOnly && !data.userId) {
+      setError("❌ User is required when assigning to person.");
+      setLoading(false);
+      return;
+    }
+    if (assignToLocationOnly && data.userId) {
+      setError(
+        "❌ Cannot assign to both user and location. Clear user or turn off location-only."
+      );
       setLoading(false);
       return;
     }
 
     const payload = {
       checkOutDate: new Date().toISOString(),
-      assignedTo: { id: data.userId },
+      // when assigning to user -> send user; when location-only -> send null
+      assignedTo: assignToLocationOnly
+        ? null
+        : data.userId
+        ? { id: data.userId }
+        : null,
+      assignedToLocation: assignToLocationOnly,
       site: { id: data.siteId },
       location: { id: data.locationId },
       department: data.department || null,
@@ -150,9 +168,17 @@ const AssignAssetModal = ({ assetTag, isOpen, onClose }) => {
     };
 
     try {
+      // console.log("payload data was ", payload);
       await assignAsset(assetTag, payload);
-      alert(`✅ Asset assigned successfully to User ${data.userId}`);
+      alert(
+        assignToLocationOnly
+          ? "✅ Asset assigned to location successfully"
+          : `✅ Asset assigned successfully to User ${data.username}`
+      );
       reset();
+      setSelectedEmployee(null);
+      setSearchQuery("");
+      setAssignToLocationOnly(false);
       onClose();
     } catch (err) {
       setError(`❌ ${err}`);
@@ -168,52 +194,80 @@ const AssignAssetModal = ({ assetTag, isOpen, onClose }) => {
       <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto">
         <h2 className="text-xl font-semibold mb-4">Check Out Asset</h2>
         {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        {/* Toggle assign mode */}
+        <div className="mb-3 flex items-center space-x-2">
+          <input
+            id="assignToLocationOnly"
+            type="checkbox"
+            checked={assignToLocationOnly}
+            onChange={(e) => {
+              setAssignToLocationOnly(e.target.checked);
+              if (e.target.checked) {
+                // clear user selection when switching to location-only
+                setSelectedEmployee(null);
+                setSearchQuery("");
+                setValue("userId", "");
+              }
+            }}
+          />
+          <label htmlFor="assignToLocationOnly" className="text-sm">
+            Assign to Location Only (no user)
+          </label>
+        </div>
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="flex items-center">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchChange}
-              placeholder="Search employee..."
-              className="border p-2 w-full rounded"
-            />
-            <button
-              type="button"
-              className="ml-2 bg-blue-500 p-2 rounded text-white"
-              onClick={() => navigate("/create-user")}
-            >
-              <Plus size={16} />
-            </button>
-          </div>
+          {/* User search only when not location-only */}
+          {!assignToLocationOnly && (
+            <>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  placeholder="Search employee..."
+                  className="border p-2 w-full rounded"
+                />
+                <button
+                  type="button"
+                  className="ml-2 bg-blue-500 p-2 rounded text-white"
+                  onClick={() => navigate("/create-user")}
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
 
-          {/* Matching Employees List */}
-          {matchedEmployees.length > 0 && (
-            <div className="mt-2 p-2 border border-gray-300 rounded bg-white shadow-md">
-              <p className="text-sm text-green-600 font-semibold">
-                Matching Employees:
-              </p>
-              <ul className="list-none">
-                {matchedEmployees.map((employee) => (
-                  <li
-                    key={employee.id}
-                    onClick={() => handleSelectEmployee(employee)}
-                    className="p-2 hover:bg-gray-100 cursor-pointer rounded"
-                  >
-                    {employee.employeeId} - {employee.username}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-          {/* Selected Employee Display */}
-          {selectedEmployee && (
-            <p className="text-sm text-blue-600 mt-2">
-              Selected Employee: {selectedEmployee.id} -{" "}
-              {selectedEmployee.username}
-            </p>
+              {matchedEmployees.length > 0 && (
+                <div className="mt-2 p-2 border border-gray-300 rounded bg-white shadow-md">
+                  <p className="text-sm text-green-600 font-semibold">
+                    Matching Employees:
+                  </p>
+                  <ul className="list-none">
+                    {matchedEmployees.map((employee) => (
+                      <li
+                        key={employee.id}
+                        onClick={() => handleSelectEmployee(employee)}
+                        className="p-2 hover:bg-gray-100 cursor-pointer rounded"
+                      >
+                        {employee.employeeId} - {employee.username}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {selectedEmployee && (
+                <p className="text-sm text-blue-600 mt-2">
+                  Selected Employee: {selectedEmployee.id} -{" "}
+                  {selectedEmployee.username}
+                </p>
+              )}
+
+              {/* hidden userId for form data */}
+              <input type="hidden" {...register("userId")} />
+            </>
           )}
 
-          <input type="hidden" {...register("userId", { required: true })} />
           <div>
             <label className="block text-sm font-medium">Site:</label>
             <select

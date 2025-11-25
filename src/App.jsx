@@ -36,6 +36,7 @@ import UsersList from "./components/UsersList";
 import VendorListPage from "./components/VendorListPage";
 import Reports from "./components/reports";
 import Settings from "./components/settings";
+import BulkImportPage from "./pages/BulkImportPage";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,6 +108,14 @@ const App = () => {
                 element={
                   <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
                     <AddAsset />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/bulk-imports"
+                element={
+                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                    <BulkImportPage />
                   </PrivateRoute>
                 }
               />
