@@ -2,8 +2,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // Base API URL
-const API_URL = "http://localhost:7355/api";
-// const API_URL = "https://mahavir-asset.duckdns.org:7355/api";
+// const API_URL = "http://localhost:7355/api";
+const API_URL = "https://mahavir-asset.duckdns.org:7355/api";
 
 // Create Axios instance
 const api = axios.create({
