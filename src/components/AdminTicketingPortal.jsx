@@ -2816,259 +2816,6 @@ export default function AdminTicketingPortal() {
               </button>
             </div>
 
-            {/* {showFilters && (
-              <div className="px-6 pb-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 mb-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Status
-                    </label>
-                    <select
-                      value={filters.status || ""}
-                      onChange={(e) =>
-                        handleFilterChange("status", e.target.value || null)
-                      }
-                      className="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all"
-                    >
-                      <option value="">All Status</option>
-                      <option value="OPEN">Open</option>
-                      <option value="WAITING">Waiting</option>
-                      <option value="CLOSED">Closed</option>
-                      <option value="UNASSIGNED">Unassigned</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Assignee
-                    </label>
-                    <select
-                      value={filters.assigneeId || ""}
-                      onChange={(e) =>
-                        handleFilterChange("assigneeId", e.target.value || null)
-                      }
-                      className="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all"
-                    >
-                      <option value="">All Assignees</option>
-                      {assignees.map(({ employeeId, name }) => (
-                        <option key={employeeId} value={employeeId}>
-                          {name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Site
-                    </label>
-                    <select
-                      value={filters.siteIdLocationId || ""}
-                      onChange={(e) =>
-                        handleFilterChange(
-                          "siteIdLocationId",
-                          e.target.value || null
-                        )
-                      }
-                      className="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all"
-                    >
-                      <option value="">All Sites</option>
-                      {sites.map(({ siteId, name }) => (
-                        <option key={siteId} value={siteId}>
-                          {name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Location
-                    </label>
-                    <select
-                      value={filters.locationId || ""}
-                      onChange={(e) =>
-                        handleFilterChange("locationId", e.target.value || null)
-                      }
-                      className="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all"
-                    >
-                      <option value="">All Locations</option>
-                      {locations.map((loc) => (
-                        <option key={loc.id} value={loc.id}>
-                          {loc.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Category
-                    </label>
-                    <select
-                      value={filters.category || ""}
-                      onChange={(e) =>
-                        handleFilterChange("category", e.target.value || null)
-                      }
-                      className="w-full p-2.5 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all"
-                    >
-                      <option value="">All Categories</option>
-                      {(userRole === "HR_ADMIN"
-                        ? hrCategories
-                        : itCategories
-                      ).map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-xs font-semibold text-gray-600 mb-2">
-                    Ticket Age
-                  </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <button
-                      onClick={() => handleAgeFilter("0-7")}
-                      className={`px-4 py-2.5 rounded-lg font-semibold transition-all shadow-sm ${
-                        selectedAgeFilter === "0-7"
-                          ? "bg-blue-600 text-white shadow-md"
-                          : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50 hover:border-blue-400"
-                      }`}
-                    >
-                      0-7 Days
-                    </button>
-                    <button
-                      onClick={() => handleAgeFilter("8-15")}
-                      className={`px-4 py-2.5 rounded-lg font-semibold transition-all shadow-sm ${
-                        selectedAgeFilter === "8-15"
-                          ? "bg-blue-600 text-white shadow-md"
-                          : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50 hover:border-blue-400"
-                      }`}
-                    >
-                      8-15 Days
-                    </button>
-                    <button
-                      onClick={() => handleAgeFilter("16-30")}
-                      className={`px-4 py-2.5 rounded-lg font-semibold transition-all shadow-sm ${
-                        selectedAgeFilter === "16-30"
-                          ? "bg-blue-600 text-white shadow-md"
-                          : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50 hover:border-blue-400"
-                      }`}
-                    >
-                      16-30 Days
-                    </button>
-                    <button
-                      onClick={() => handleAgeFilter("31+")}
-                      className={`px-4 py-2.5 rounded-lg font-semibold transition-all shadow-sm ${
-                        selectedAgeFilter === "31+"
-                          ? "bg-blue-600 text-white shadow-md"
-                          : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50 hover:border-blue-400"
-                      }`}
-                    >
-                      31+ Days
-                    </button>
-                  </div>
-                  {selectedAgeFilter && (
-                    <button
-                      onClick={() => {
-                        setSelectedAgeFilter(null);
-                        setFilters((prev) => ({
-                          ...prev,
-                          createdAfter: null,
-                          createdBefore: null,
-                        }));
-                      }}
-                      className="mt-3 text-sm text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      ✕ Clear Age Filter
-                    </button>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
-                      Search
-                    </label>
-                    <form onSubmit={handleSearchSubmit} className="relative">
-                      <input
-                        type="text"
-                        placeholder="Search tickets..."
-                        className="w-full p-2.5 pl-10 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all"
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                      />
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={2}
-                        stroke="currentColor"
-                        className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                        />
-                      </svg>
-                    </form>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={handleDownloadTickets}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg transition-all"
-                      disabled={loading}
-                    >
-                      📥 Download
-                    </Button>
-                  </div>
-
-                  <div className="flex items-center justify-between gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2 shadow-sm">
-                    <button
-                      onClick={() => {
-                        const newPage = Math.max(page - 1, 0);
-                        setPage(newPage);
-                        fetchTicketsWithFilters(newPage);
-                      }}
-                      disabled={page === 0}
-                      className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold"
-                    >
-                      ←
-                    </button>
-
-                    <span className="text-xs text-gray-700 font-medium whitespace-nowrap">
-                      {page + 1} / {paginationInfo.totalPages}
-                    </span>
-
-                    <button
-                      onClick={() => {
-                        const newPage =
-                          page + 1 < paginationInfo.totalPages
-                            ? page + 1
-                            : page;
-                        setPage(newPage);
-                        fetchTicketsWithFilters(newPage);
-                      }}
-                      disabled={paginationInfo.last}
-                      className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold"
-                    >
-                      →
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-3 text-sm text-gray-600">
-                  <span className="font-medium">Total Results:</span>{" "}
-                  {paginationInfo.totalElements}
-                </div>
-              </div>
-            )} */}
-
             {showFilters && (
               <div className="px-6 pb-4">
                 {/* Main Filter Row */}
@@ -3597,7 +3344,7 @@ export default function AdminTicketingPortal() {
       </div>
 
       {/* Ticket Detail Sidebar */}
-      {selectedTicket && (
+      {/* {selectedTicket && (
         <div
           className={`fixed top-[64px] right-0 h-[calc(100%-64px)] bg-white border-l-2 border-blue-500 shadow-2xl overflow-y-auto z-40 transition-all duration-300 ease-in-out ${
             isMaximized ? "w-full md:w-full" : "w-full md:w-[400px]"
@@ -3610,6 +3357,81 @@ export default function AdminTicketingPortal() {
                   {selectedTicket.title}
                 </h2>
                 <p className="text-sm text-blue-100 mt-1 line-clamp-2">
+                  {selectedTicket.description}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  className="p-2 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-sm transition-all duration-200"
+                  title={isMaximized ? "Minimize" : "Maximize"}
+                  onClick={() => setIsMaximized((prev) => !prev)}
+                >
+                  {isMaximized ? (
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 12h14M5 18h14"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      viewBox="0 0 24 24"
+                    >
+                      <rect x="5" y="5" width="14" height="14" rx="2" ry="2" />
+                    </svg>
+                  )}
+                </button>
+
+                <button
+                  className="p-2 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-sm transition-all duration-200"
+                  title="Ticket actions"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedTicketId(selectedTicket.id);
+                    setIsTicketModalOpen(true);
+                  }}
+                >
+                  <MoreVertical className="w-5 h-5 text-white" />
+                </button>
+
+                <TicketAttachmentButton ticket={selectedTicket} />
+
+                <button
+                  onClick={() => setSelectedTicket(null)}
+                  aria-label="Close"
+                  className="p-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-all duration-200 transform hover:scale-110"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div> */}
+
+      {selectedTicket && (
+        <div
+          className={`fixed top-[64px] right-0 h-[calc(100%-64px)] bg-white border-l-2 border-blue-500 shadow-2xl overflow-y-auto z-40 transition-all duration-300 ease-in-out ${
+            isMaximized ? "w-full md:w-full" : "w-full md:w-[400px]"
+          }`}
+        >
+          <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-blue-500 px-4 py-3 shadow-lg z-10">
+            <div className="flex items-start justify-between">
+              <div className="flex-1 pr-2">
+                <h2 className="text-lg font-bold text-white">
+                  {selectedTicket.title}
+                </h2>
+                <p className="text-sm text-blue-100 mt-1 whitespace-pre-wrap break-words">
                   {selectedTicket.description}
                 </p>
               </div>
