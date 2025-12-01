@@ -554,6 +554,23 @@ export const getAllTickets = ({ page = 0, size = 10, status }) => {
   });
 };
 
+export const getAssetCodes = async (assetTag) => {
+  try {
+    const qrUrl = `/api/assets/${assetTag}/qr`;
+    const barcodeUrl = `/api/assets/${assetTag}/barcode`;
+
+    // We do not fetch binary here — only URLs for Print component
+    return {
+      assetTag,
+      qrUrl,
+      barcodeUrl,
+    };
+  } catch (error) {
+    console.error("Error fetching QR/Barcode for:", assetTag, error);
+    throw error;
+  }
+};
+
 export const assignLocation = async (payload) => {
   return api.post(`user-assets/location-assignments`, payload);
 };

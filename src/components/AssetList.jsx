@@ -1,9 +1,10 @@
-import {
+import api, {
   deleteAsset,
   fetchAssets,
   exportAssetsExcel,
   getSites,
   getLocationsBySite,
+  getAssetCodes,
 } from "../services/api";
 import React, { useState, useEffect } from "react";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
@@ -192,6 +193,21 @@ const AssetList = () => {
     }
   };
 
+  const handlePrintAllTags = async () => {
+    try {
+      // Wait for all API requests
+      const tagList = await Promise.all(
+        assets.map((asset) => getAssetCodes(asset.assetTag))
+      );
+
+      navigate("/print/tags", {
+        state: { tags: tagList },
+      });
+    } catch (error) {
+      console.error("Error generating print tags", error);
+    }
+  };
+
   const handleEdit = (assetTag) => {
     navigate(`/asset/${assetTag}`);
   };
@@ -214,143 +230,6 @@ const AssetList = () => {
 
   return (
     <div className="pt-16 lg:ml-48">
-      {/* === Filter Controls === */}
-      {/* <div className="flex gap-4 mb-4 flex-wrap">
-        <select
-          value={selectedStatus}
-          onChange={(e) => {
-            setCurrentPage(0);
-            setSelectedStatus(e.target.value);
-          }}
-          className="border px-2 py-1 rounded"
-        >
-          <option value="">All Status</option>
-          <option value="AVAILABLE">Available</option>
-          
-          <option value="CHECKED_OUT">CHECKED OUT</option>
-          <option value="IN_REPAIR">IN REPAIR</option>
-          <option value="LOST">LOST </option>
-          <option value="DISPOSED">DISPOSED</option>
-        </select>
-        <select
-          value={selectedType}
-          onChange={(e) => {
-            setCurrentPage(0);
-            setSelectedType(e.target.value);
-          }}
-          className="border px-2 py-1 rounded"
-        >
-          <option value="">All Types</option>
-          <option value="LAPTOP">Laptop</option>
-          <option value="DESKTOP">Desktop</option>
-          <option value="SERVER">Server</option>
-        </select>
-        <select
-          value={selectedDepartment}
-          onChange={(e) => {
-            setCurrentPage(0);
-            setSelectedDepartment(e.target.value);
-          }}
-          className="border px-2 py-1 rounded"
-        >
-          <option value="">All Departments</option>
-          <option value="IT">IT</option>
-          <option value="HR">HR</option>
-          <option value="FINANCE">Finance</option>
-        </select>
-        
-        <select
-          value={selectedSite}
-          onChange={(e) => {
-            setCurrentPage(0);
-            setSelectedSite(e.target.value);
-          }}
-          className="border px-2 py-1 rounded"
-        >
-          <option value="">All Sites</option>
-          {sites?.map((site) => (
-            <option key={site.id} value={site.id}>
-              {site.name}
-            </option>
-          ))}
-        </select>
-        
-        <select
-          value={selectedLocation}
-          onChange={(e) => {
-            setCurrentPage(0);
-            setSelectedLocation(e.target.value);
-          }}
-          className="border px-2 py-1 rounded"
-          disabled={!locations.length}
-        >
-          <option value="">All Locations</option>
-          {locations.map((location) => (
-            <option key={location.id} value={location.id}>
-              {location.name}
-            </option>
-          ))}
-        </select>
-      
-        <input
-          type="text"
-          placeholder="Search keyword..."
-          value={searchKeyword}
-          onChange={(e) => {
-            setCurrentPage(0);
-            setSearchKeyword(e.target.value);
-          }}
-          className="border px-2 py-1 rounded"
-        />
-        
-        <button
-          onClick={() =>
-            exportAssetsExcel({
-              status: selectedStatus,
-              type: selectedType,
-              department: selectedDepartment,
-              createdBy,
-              siteId: selectedSite,
-              locationId: selectedLocation,
-              purchaseStart: purchaseStartDate,
-              purchaseEnd: purchaseEndDate,
-              createdStart: createdStartDateTime,
-              createdEnd: createdEndDateTime,
-              keyword: searchKeyword,
-            })
-          }
-          className="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600"
-        >
-          📥 Download Excel
-        </button>
-        
-        <div className="mb-4 gap-2 flex items-center">
-          <button
-            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 0))}
-            disabled={currentPage === 0}
-            className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-          >
-            &lt;
-          </button>
-
-          <span className="text-sm text-gray-700">
-            <strong>{currentPage + 1}</strong> of{" "}
-            <strong>{paginationInfo.totalPages}</strong> Total:{" "}
-            <strong>{paginationInfo.totalElements}</strong>
-          </span>
-
-          <button
-            onClick={() =>
-              setCurrentPage((prev) => (!paginationInfo.last ? prev + 1 : prev))
-            }
-            disabled={paginationInfo.last}
-            className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-          >
-            &gt;
-          </button>
-        </div>
-      </div> */}
-
       <div className="flex flex-wrap items-center gap-2 mb-4 text-sm">
         {/* Status */}
         <select
@@ -487,14 +366,6 @@ const AssetList = () => {
             &lt;
           </button>
 
-          {/* Range display */}
-          {/* <span className="text-sm text-gray-700">
-            {paginationInfo.totalElements === 0
-              ? "0 - 0 of 0"
-              : `${currentPage * pageSize + 1} - ${
-                  currentPage * pageSize + assets.length
-                } of ${paginationInfo.totalElements}`}
-          </span> */}
           <span className="text-sm text-gray-700">
             {paginationInfo.totalElements === 0
               ? "0 of 0   Total: 0"
@@ -520,6 +391,19 @@ const AssetList = () => {
             &gt;
           </button>
         </div>
+        {/* <button
+          onClick={() => navigate("/print/tags")}
+          className="px-3 py-1 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700"
+        >
+          🖨️ Print Tags
+        </button> */}
+
+        <button
+          onClick={handlePrintAllTags}
+          className="px-3 py-1 bg-purple-600 text-white rounded shadow-sm hover:bg-purple-700"
+        >
+          🖨️ Print All Tags
+        </button>
       </div>
 
       {/* === Data Table === */}
@@ -558,7 +442,10 @@ const AssetList = () => {
 
           <tbody className="divide-y divide-gray-200">
             {assets.map((asset) => (
-              <tr key={asset.id} className="hover:bg-gray-50 transition-colors">
+              <tr
+                key={asset.assetTag}
+                className="hover:bg-gray-50 transition-colors"
+              >
                 <td className="px-3 py-2 border border-gray-300">
                   <button
                     onClick={() => handleEdit(asset.assetTag)}

@@ -22,6 +22,7 @@ import Login from "./components/Login";
 import MobileMenu from "./components/MobileMenu";
 import NormalUserAsset from "./components/NormalUserAsset";
 import NotFound from "./components/NotFound";
+import PrintAssetTags from "./components/PrintAssetTags";
 import PrivateRoute from "./components/PrivateRoute";
 import Profile from "./components/Profile";
 import Register from "./components/Register";
@@ -37,6 +38,7 @@ import VendorListPage from "./components/VendorListPage";
 import Reports from "./components/reports";
 import Settings from "./components/settings";
 import BulkImportPage from "./pages/BulkImportPage";
+import PrintPage from "./pages/PrintPage";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,6 +65,9 @@ const App = () => {
               {/* Public Route */}
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              {/* <Route path="/print/tags" element={<PrintAssetTags />} /> */}
+              <Route path="/print-tags" element={<PrintPage />} />
+
               {/* Protected Routes */}
               <Route
                 path="/"

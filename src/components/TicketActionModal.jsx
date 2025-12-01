@@ -5,6 +5,7 @@ import {
   updateTicketLocation,
   updateTicketCcEmail,
   getAssignees,
+  hasRole,
   updateTicketDueDate,
   changeTicketEmployeeIfSame,
   getEmployees,
@@ -30,7 +31,7 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
   const { register, setValue } = useForm();
   const [category, setCategory] = useState("");
   const [employees, setEmployees] = useState([]);
-
+  const [userRole, setUserRole] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [matchedEmployees, setMatchedEmployees] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -99,7 +100,7 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
     { value: 63, label: "New Delhi" },
   ];
 
-  const ticketCategories = [
+  const itTicketCategories = [
     { label: "Hardware", value: "HARDWARE" },
     { label: "Software", value: "SOFTWARE" },
     { label: "Network", value: "NETWORK" },
@@ -130,6 +131,34 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
     // { label: "Policy", value: "POLICY" },
     // { label: "Payslip", value: "PAYSLIP" },
   ];
+
+  // const hrTicketCategories = [
+  //   "PAYROLL",
+  //   "RECRUITMENT",
+  //   "HR_OPERATIONS",
+  //   "GENERAL_HR_QUERIES",
+  // ];
+
+  const hrTicketCategories = [
+    { value: "PAYROLL", label: "Payroll" },
+    { value: "RECRUITMENT", label: "Recruitment" },
+    { value: "HR_OPERATIONS", label: "HR Operations" },
+    { value: "GENERAL_HR_QUERIES", label: "General HR Queries" },
+  ];
+
+  useEffect(() => {
+    let role = "user";
+    if (hasRole("ADMIN")) {
+      role = "ADMIN";
+    }
+    if (hasRole("HR_ADMIN")) {
+      role = "HR_ADMIN";
+    }
+    setUserRole(role);
+  }, []);
+
+  const ticketCategories =
+    userRole === "HR_ADMIN" ? hrTicketCategories : itTicketCategories;
 
   useEffect(() => {
     getAssignees()
@@ -422,7 +451,7 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
             </div>
 
             {/* Category */}
-            <div>
+            {/* <div>
               <label className="block mb-1 font-medium">Category</label>
               <select
                 value={category}
@@ -433,6 +462,27 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
                 <option value="" disabled>
                   Select Category
                 </option>
+                {ticketCategories.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div> */}
+
+            <div>
+              <label className="block mb-1 font-medium">Category</label>
+
+              <select
+                value={category}
+                onChange={(e) => handleCategoryChange(e.target.value)}
+                disabled={isUpdating}
+                className="w-full border rounded-md px-2 py-1"
+              >
+                <option value="" disabled>
+                  Select Category
+                </option>
+
                 {ticketCategories.map((cat) => (
                   <option key={cat.value} value={cat.value}>
                     {cat.label}
