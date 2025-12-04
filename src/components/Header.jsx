@@ -45,19 +45,19 @@ const Header = ({ onMenuClick }) => {
       <div className="flex items-center space-x-2 md:space-x-4">
         {hasAdminAccess && (
           <>
-            <Link
+            {/* <Link
               to="/add-asset"
               className="bg-green-500 px-3 py-2 rounded-lg text-sm md:text-base hover:bg-green-600 transition"
             >
               Add Asset
-            </Link>
-            <Link
+            </Link> */}
+            {/* <Link
               to="/assets"
               className="bg-gray-700 px-3 py-2 rounded-lg text-sm md:text-base hover:bg-gray-600 transition"
             >
               List of Assets
-            </Link>
-            <form
+            </Link> */}
+            {/* <form
               onSubmit={handleSearch}
               className="hidden sm:flex items-center bg-gray-700 text-gray-300 rounded-lg overflow-hidden border border-gray-600"
             >
@@ -69,7 +69,7 @@ const Header = ({ onMenuClick }) => {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
               />
-            </form>
+            </form> */}
           </>
         )}
 
