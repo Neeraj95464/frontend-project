@@ -71,6 +71,13 @@ const navItems = [
     to: "/bulk-imports",
     roles: ["MANAGER", "ADMIN"],
   },
+
+  {
+    label: "CUG MANAGE",
+    icon: FiSettings,
+    to: "/cug-sim",
+    roles: ["MANAGER", "ADMIN"],
+  },
 ];
 
 // Reusable nav link

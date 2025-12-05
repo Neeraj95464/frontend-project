@@ -756,7 +756,7 @@ export default function AdminTicketingPortal() {
                             {ticket.locationName}
                           </td>
 
-                          <td className="px-4 py-3 text-sm">
+                          {/* <td className="px-4 py-3 text-sm">
                             {userRole !== "user" ? (
                               <button
                                 onClick={(e) => {
@@ -772,9 +772,27 @@ export default function AdminTicketingPortal() {
                                 {ticket.assignee?.username || "Unassigned"}
                               </span>
                             )}
-                          </td>
+                          </td> */}
 
                           <td className="px-4 py-3 text-sm">
+                            {userRole !== "user" ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedUser(ticket.assignee?.employeeId);
+                                }}
+                                className="text-blue-600 hover:text-blue-800 font-medium hover:underline whitespace-nowrap"
+                              >
+                                {ticket.assignee?.username || "Unassigned"}
+                              </button>
+                            ) : (
+                              <span className="text-gray-700 whitespace-nowrap">
+                                {ticket.assignee?.username || "Unassigned"}
+                              </span>
+                            )}
+                          </td>
+
+                          {/* <td className="px-4 py-3 text-sm">
                             {userRole !== "user" ? (
                               <button
                                 onClick={(e) => {
@@ -787,6 +805,24 @@ export default function AdminTicketingPortal() {
                               </button>
                             ) : (
                               <span className="text-gray-700">
+                                {ticket.employee?.username || "Unassigned"}
+                              </span>
+                            )}
+                          </td> */}
+
+                          <td className="px-4 py-3 text-sm">
+                            {userRole !== "user" ? (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedUser(ticket.employee?.employeeId);
+                                }}
+                                className="text-blue-600 hover:text-blue-800 font-medium hover:underline whitespace-nowrap"
+                              >
+                                {ticket.employee?.username || "Unassigned"}
+                              </button>
+                            ) : (
+                              <span className="text-gray-700 whitespace-nowrap">
                                 {ticket.employee?.username || "Unassigned"}
                               </span>
                             )}

@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // Components
 import AddAsset from "./components/AddAsset";
+import AddCugSim from "./components/AddCugSim";
 import AdminTicketingPortal from "./components/AdminTicketingPortal";
 import AssetFormModal from "./components/AssetFormModal";
 import AssetList from "./components/AssetList";
@@ -38,6 +39,8 @@ import VendorListPage from "./components/VendorListPage";
 import Reports from "./components/reports";
 import Settings from "./components/settings";
 import BulkImportPage from "./pages/BulkImportPage";
+import CugSimDetails from "./pages/CugSimDetails";
+import CugSimList from "./pages/CugSimList";
 import PrintPage from "./pages/PrintPage";
 
 const App = () => {
@@ -104,6 +107,33 @@ const App = () => {
                 element={
                   <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
                     <AssetList />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/cug-sim"
+                element={
+                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "IT"]}>
+                    <CugSimList />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/cug-sim/add"
+                element={
+                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "IT"]}>
+                    <AddCugSim />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/cug-sim/:id"
+                element={
+                  <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "IT"]}>
+                    <CugSimDetails />
                   </PrivateRoute>
                 }
               />

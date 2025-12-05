@@ -1422,3 +1422,53 @@ export const fetchTopTicketReporters = () =>
 
 export const fetchStatusOverTime = () =>
   api.get(`/user-assets/tickets/stats/status-over-time`);
+
+//<-- ======================================================-->
+
+// import api from "./api";
+
+export const fetchSimCards = async (filters, page = 0, size = 10) => {
+  const params = new URLSearchParams();
+
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      params.append(key, value);
+    }
+  });
+
+  params.append("page", page);
+  params.append("size", size);
+
+  const response = await api.get(`/sim-cards/filter?${params.toString()}`);
+  return response.data;
+};
+
+export const getSimDetails = async (id) => {
+  const response = await api.get(`/sim-cards/${id}`);
+  return response.data;
+};
+
+export const assignSim = async (id, employeeId) => {
+  const response = await api.post(`/sim-cards/${id}/assign`, {
+    employeeId: employeeId,
+    performedBy: "CURRENT_USER_ID", // optional
+    note: "", // optional
+  });
+
+  return response.data;
+};
+
+export const unassignSim = async (id) => {
+  const response = await api.post(`/sim-cards/${id}/unassign`);
+  return response.data;
+};
+
+export const fetchSimHistory = async (id) => {
+  const response = await api.get(`/sim-cards/${id}/history`);
+  return response.data;
+};
+
+export const createSimCard = async (payload) => {
+  const response = await api.post("/sim-cards", payload);
+  return response.data;
+};
