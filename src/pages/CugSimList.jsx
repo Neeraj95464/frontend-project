@@ -1,192 +1,4 @@
-// import { fetchSimCards } from "../services/api";
-// import { useEffect, useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-
-// export default function CugSimList() {
-//   const navigate = useNavigate();
-
-//   const [filters, setFilters] = useState({
-//     phoneNumber: "",
-//     provider: "",
-//     status: "",
-//     employeeId: "",
-//     search: "",
-//     siteId: "",
-//     locationId: "",
-//   });
-
-//   const [sims, setSims] = useState([]);
-//   const [page, setPage] = useState(0);
-//   const [size] = useState(10);
-//   const [totalPages, setTotalPages] = useState(0);
-
-//   // -------------------- LOAD DATA --------------------
-//   const loadData = async () => {
-//     const response = await fetchSimCards(filters, page, size);
-//     setSims(response.content);
-//     setTotalPages(response.totalPages);
-//   };
-
-//   // -------------------- AUTO FILTERING (DEBOUNCED) --------------------
-//   useEffect(() => {
-//     const delay = setTimeout(() => {
-//       setPage(0); // reset to first page when filters change
-//       loadData();
-//     }, 400); // 400ms debounce (smooth UI)
-
-//     return () => clearTimeout(delay);
-//   }, [
-//     filters.phoneNumber,
-//     filters.provider,
-//     filters.status,
-//     filters.employeeId,
-//     filters.search,
-//     filters.siteId,
-//     filters.locationId,
-//   ]);
-
-//   // -------------------- PAGE CHANGE --------------------
-//   useEffect(() => {
-//     loadData();
-//   }, [page]);
-
-//   const handleAddSim = () => navigate("/cug-sim/add");
-
-//   return (
-//     <div className="lg:ml-40 pt-16">
-//       <h1 className="text-2xl font-semibold mb-4">CUG SIM Card Inventory</h1>
-
-//       {/* -------------------- FILTER BAR -------------------- */}
-//       <div className="grid grid-cols-7 gap-4 bg-white p-4 rounded shadow">
-//         <input
-//           placeholder="SIM Number"
-//           value={filters.phoneNumber}
-//           onChange={(e) =>
-//             setFilters({ ...filters, phoneNumber: e.target.value })
-//           }
-//           className="border p-2 rounded"
-//         />
-
-//         <select
-//           value={filters.provider}
-//           onChange={(e) => setFilters({ ...filters, provider: e.target.value })}
-//           className="border p-2 rounded"
-//         >
-//           <option value="">Provider</option>
-//           <option value="AIRTEL">Airtel</option>
-//           <option value="VI">VI</option>
-//           <option value="JIO">Jio</option>
-//         </select>
-
-//         <select
-//           value={filters.status}
-//           onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-//           className="border p-2 rounded"
-//         >
-//           <option value="">SIM Status</option>
-//           <option value="ACTIVE">Active</option>
-//           <option value="INACTIVE">Inactive</option>
-//           <option value="SUSPENDED">Suspended</option>
-//         </select>
-
-//         <input
-//           placeholder="Assigned Employee"
-//           value={filters.employeeId}
-//           onChange={(e) =>
-//             setFilters({ ...filters, employeeId: e.target.value })
-//           }
-//           className="border p-2 rounded"
-//         />
-
-//         <input
-//           placeholder="Search anything"
-//           value={filters.search}
-//           onChange={(e) => setFilters({ ...filters, search: e.target.value })}
-//           className="border p-2 rounded"
-//         />
-
-//         {/* ADD SIM BUTTON */}
-//         <button
-//           onClick={handleAddSim}
-//           className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-medium shadow-md"
-//         >
-//           + Add SIM
-//         </button>
-//       </div>
-
-//       {/* -------------------- TABLE -------------------- */}
-//       <div className="mt-6 bg-white p-4 rounded shadow">
-//         <table className="w-full text-left">
-//           <thead>
-//             <tr className="border-b">
-//               <th className="p-2">Mobile Number</th>
-//               <th className="p-2">Provider</th>
-//               <th className="p-2">Assigned To</th>
-//               <th className="p-2">Status</th>
-//               <th className="p-2">Actions</th>
-//             </tr>
-//           </thead>
-
-//           <tbody>
-//             {sims.map((sim) => (
-//               <tr key={sim.id} className="border-b hover:bg-gray-100">
-//                 <td className="p-2 text-blue-600 underline">
-//                   <Link to={`/cug-sim/${sim.id}`}>{sim.phoneNumber}</Link>
-//                 </td>
-
-//                 <td className="p-2">{sim.provider}</td>
-//                 <td className="p-2">{sim.assignedUserName || "Unassigned"}</td>
-//                 <td className="p-2">{sim.status}</td>
-
-//                 <td className="p-2">
-//                   <Link
-//                     to={`/cug-sim/${sim.id}`}
-//                     className="text-blue-500 underline"
-//                   >
-//                     View
-//                   </Link>
-//                 </td>
-//               </tr>
-//             ))}
-
-//             {sims.length === 0 && (
-//               <tr>
-//                 <td colSpan={5} className="text-center p-4">
-//                   No SIM cards found.
-//                 </td>
-//               </tr>
-//             )}
-//           </tbody>
-//         </table>
-//       </div>
-
-//       {/* -------------------- PAGINATION -------------------- */}
-//       <div className="flex justify-center mt-4 gap-3">
-//         <button
-//           disabled={page === 0}
-//           onClick={() => setPage(page - 1)}
-//           className="p-2 border rounded disabled:opacity-40"
-//         >
-//           Prev
-//         </button>
-
-//         <span className="p-2">
-//           Page {page + 1} of {totalPages}
-//         </span>
-
-//         <button
-//           disabled={page + 1 >= totalPages}
-//           onClick={() => setPage(page + 1)}
-//           className="p-2 border rounded disabled:opacity-40"
-//         >
-//           Next
-//         </button>
-//       </div>
-//     </div>
-//   );
-// }
-
-import { fetchSimCards } from "../services/api";
+import { fetchSimCards, fetchSites, getLocationsBySite } from "../services/api";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -207,12 +19,43 @@ export default function CugSimList() {
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [sites, setSites] = useState([]);
+  const [locations, setLocations] = useState([]);
 
   const loadData = async () => {
     const response = await fetchSimCards(filters, page, size);
     setSims(response.content);
     setTotalPages(response.totalPages);
   };
+
+  useEffect(() => {
+    fetchSites()
+      .then((res) => {
+        const formatted = res.data.map((site) => ({
+          siteId: site.id,
+          name: site.name,
+        }));
+        setSites(formatted);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch sites", err);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (filters.siteId) {
+      getLocationsBySite(filters.siteId)
+        .then((locations) => {
+          setLocations(locations);
+        })
+        .catch((err) => {
+          console.error("Error fetching locations", err);
+        });
+    } else {
+      setLocations([]);
+      setFilters((prev) => ({ ...prev, locationId: "" }));
+    }
+  }, [filters.siteId]);
 
   useEffect(() => {
     const delay = setTimeout(() => {
@@ -235,6 +78,28 @@ export default function CugSimList() {
   }, [page]);
 
   const handleAddSim = () => navigate("/cug-sim/add");
+
+  // const handleFilterChange = (key, value) => {
+  //   // setFilters({ ...filters, [key]: value });
+
+  //   setFilters((prev) => ({ ...prev, [key]: value }));
+  //   setPage(0); // Reset to first page on filter change
+  // };
+
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => {
+      const newFilters = { ...prev, [key]: value };
+
+      // ✅ CRITICAL: Reset location when site changes
+      if (key === "siteId") {
+        newFilters.locationId = ""; // Reset BEFORE API call
+        setLocations([]); // Clear locations immediately
+      }
+
+      return newFilters;
+    });
+    setPage(0);
+  };
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -297,51 +162,73 @@ export default function CugSimList() {
         </button>
       </div>
 
-      {/* Filter Bar */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-8 gap-2">
           <input
-            placeholder="SIM Number"
+            placeholder="SIM #"
             value={filters.phoneNumber}
-            onChange={(e) =>
-              setFilters({ ...filters, phoneNumber: e.target.value })
-            }
-            className="border border-gray-200 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            onChange={(e) => handleFilterChange("phoneNumber", e.target.value)}
+            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
           />
           <select
             value={filters.provider}
-            onChange={(e) =>
-              setFilters({ ...filters, provider: e.target.value })
-            }
-            className="border border-gray-200 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+            onChange={(e) => handleFilterChange("provider", e.target.value)}
+            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
           >
-            <option value="">All Providers</option>
+            <option value="">Provider</option>
             <option value="AIRTEL">Airtel</option>
             <option value="VI">VI</option>
             <option value="JIO">Jio</option>
           </select>
           <select
             value={filters.status}
-            onChange={(e) => setFilters({ ...filters, status: e.target.value })}
-            className="border border-gray-200 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+            onChange={(e) => handleFilterChange("status", e.target.value)}
+            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
           >
-            <option value="">All Status</option>
+            <option value="">Status</option>
             <option value="ACTIVE">Active</option>
             <option value="INACTIVE">Inactive</option>
             <option value="SUSPENDED">Suspended</option>
           </select>
           <input
-            placeholder="Assigned Employee"
+            placeholder="Emp ID"
             value={filters.employeeId}
-            onChange={(e) =>
-              setFilters({ ...filters, employeeId: e.target.value })
-            }
-            className="border border-gray-200 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            onChange={(e) => handleFilterChange("employeeId", e.target.value)}
+            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
           />
+          <select
+            value={filters.siteId || ""}
+            onChange={(e) =>
+              handleFilterChange("siteId", e.target.value || null)
+            }
+            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+          >
+            <option value="">Site</option>
+            {sites.map(({ siteId, name }) => (
+              <option key={siteId} value={siteId}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <select
+            value={filters.locationId || ""}
+            onChange={(e) =>
+              handleFilterChange("locationId", e.target.value || null)
+            }
+            disabled={!filters.siteId}
+            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white disabled:bg-gray-50 disabled:cursor-not-allowed"
+          >
+            <option value="">Location</option>
+            {locations.map((loc) => (
+              <option key={loc.id} value={loc.id}>
+                {loc.name}
+              </option>
+            ))}
+          </select>
           <div className="relative">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              className="h-3 w-3 absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -354,13 +241,34 @@ export default function CugSimList() {
               />
             </svg>
             <input
-              placeholder="Search..."
+              placeholder="Search"
               value={filters.search}
-              onChange={(e) =>
-                setFilters({ ...filters, search: e.target.value })
-              }
-              className="w-full border border-gray-200 pl-9 pr-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+              onChange={(e) => handleFilterChange("search", e.target.value)}
+              className="w-full border border-gray-200 pl-7 pr-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
             />
+          </div>
+          <div className="flex items-center gap-1 h-full">
+            {totalPages > 0 && (
+              <div className="flex items-center gap-1">
+                <button
+                  disabled={page === 0}
+                  onClick={() => setPage(page - 1)}
+                  className="px-2 py-1 text-xs border border-gray-200 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+                >
+                  ←
+                </button>
+                <span className="px-2 py-1 text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded">
+                  {page + 1}/{totalPages}
+                </span>
+                <button
+                  disabled={page + 1 >= totalPages}
+                  onClick={() => setPage(page + 1)}
+                  className="px-2 py-1 text-xs border border-gray-200 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+                >
+                  →
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -375,6 +283,12 @@ export default function CugSimList() {
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                 Provider
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                Site
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
+                Location
               </th>
               <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase">
                 Assigned To
@@ -400,6 +314,16 @@ export default function CugSimList() {
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700">
                   {sim.provider}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-700">
+                  {sim.siteName || (
+                    <span className="text-gray-400 italic">N/A</span>
+                  )}
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-700">
+                  {sim.locationName || (
+                    <span className="text-gray-400 italic">N/A</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700">
                   {sim.assignedUserName || (
@@ -477,7 +401,7 @@ export default function CugSimList() {
               to={`/cug-sim/${sim.id}`}
               className="block bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
             >
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-blue-600 font-semibold">
                   {sim.phoneNumber}
                 </span>
@@ -489,13 +413,35 @@ export default function CugSimList() {
                   {sim.status}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-500">{sim.provider}</span>
-                <span className="text-gray-700">
-                  {sim.assignedUserName || (
-                    <span className="text-gray-400 italic">Unassigned</span>
-                  )}
-                </span>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Provider:</span>
+                  <span className="text-gray-700">{sim.provider}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Site:</span>
+                  <span className="text-gray-700">
+                    {sim.siteName || (
+                      <span className="text-gray-400 italic">N/A</span>
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Location:</span>
+                  <span className="text-gray-700">
+                    {sim.locationName || (
+                      <span className="text-gray-400 italic">N/A</span>
+                    )}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-500">Assigned To:</span>
+                  <span className="text-gray-700">
+                    {sim.assignedUserName || (
+                      <span className="text-gray-400 italic">Unassigned</span>
+                    )}
+                  </span>
+                </div>
               </div>
             </Link>
           ))
@@ -519,29 +465,6 @@ export default function CugSimList() {
           </div>
         )}
       </div>
-
-      {/* Pagination */}
-      {totalPages > 0 && (
-        <div className="flex items-center justify-center gap-2 mt-6">
-          <button
-            disabled={page === 0}
-            onClick={() => setPage(page - 1)}
-            className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-          >
-            ← Prev
-          </button>
-          <span className="px-3 py-1.5 text-sm text-gray-600 bg-white border border-gray-200 rounded-lg">
-            {page + 1} / {totalPages}
-          </span>
-          <button
-            disabled={page + 1 >= totalPages}
-            onClick={() => setPage(page + 1)}
-            className="px-3 py-1.5 text-sm border border-gray-200 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-          >
-            Next →
-          </button>
-        </div>
-      )}
     </div>
   );
 }

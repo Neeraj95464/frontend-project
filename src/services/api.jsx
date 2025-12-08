@@ -1439,22 +1439,14 @@ export const fetchSimCards = async (filters, page = 0, size = 10) => {
   params.append("page", page);
   params.append("size", size);
 
+  // console.log("sending data are ", params.toString());
+
   const response = await api.get(`/sim-cards/filter?${params.toString()}`);
   return response.data;
 };
 
 export const getSimDetails = async (id) => {
   const response = await api.get(`/sim-cards/${id}`);
-  return response.data;
-};
-
-export const assignSim = async (id, employeeId) => {
-  const response = await api.post(`/sim-cards/${id}/assign`, {
-    employeeId: employeeId,
-    performedBy: "CURRENT_USER_ID", // optional
-    note: "", // optional
-  });
-
   return response.data;
 };
 
@@ -1471,4 +1463,99 @@ export const fetchSimHistory = async (id) => {
 export const createSimCard = async (payload) => {
   const response = await api.post("/sim-cards", payload);
   return response.data;
+};
+
+// Update SIM status
+export const updateSimStatus = async (simId, status) => {
+  const response = await api.put(`/sim/${simId}/status`, null, {
+    params: { status },
+  });
+  return response.data;
+};
+
+// Update SIM info
+export const updateSimInfo = async (simId, data) => {
+  const response = await api.put(`/sim/${simId}`, data);
+  return response.data;
+};
+
+// Upload attachment
+export const uploadSimAttachment = async (simId, formData) => {
+  const response = await api.post(`/sim-cards/attachments/${simId}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return response.data;
+};
+
+// Delete attachment
+export const deleteSimAttachment = async (simId, attachmentId) => {
+  const response = await api.delete(
+    `/sim/attachments/${simId}/${attachmentId}`
+  );
+  return response.data;
+};
+
+// Download attachment
+// export const downloadSimAttachment = async (simId, attachmentId) => {
+//   const response = await api.get(
+//     `/sim/attachments/${simId}/${attachmentId}/download`,
+//     {
+//       responseType: "blob",
+//     }
+//   );
+//   return response.data;
+// };
+
+export const fetchSimAttachments = async (simId) => {
+  const response = await api.get(`/sim-cards/attachments/${simId}`);
+  // console.log("Attachments are received ", response.data);
+  return response.data;
+};
+
+export const importSimExcel = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post("/sim-cards/excel", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  console.log("data are ", response.data);
+
+  return response.data;
+};
+
+// Update assignSim to include note
+// export const assignSim = async (id, { employeeId, note }) => {
+//   const response = await api.post(`/sim-cards/${id}/assign`, null, {
+//     params: { employeeId, note },
+//   });
+//   return response.data;
+// };
+
+export const assignSim = async (id, { employeeId, performedBy, note }) => {
+  const response = await api.post(`/sim-cards/${id}/assign`, {
+    employeeId,
+    performedBy,
+    note,
+  });
+
+  return response.data;
+};
+
+export const downloadSimAttachment = async (attachmentId, fileName) => {
+  const response = await api.get(
+    `/sim-cards/attachments/download/${attachmentId}`,
+    { responseType: "blob" }
+  );
+
+  const blob = new Blob([response.data]);
+  const url = window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
 };

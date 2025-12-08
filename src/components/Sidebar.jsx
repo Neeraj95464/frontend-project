@@ -73,7 +73,7 @@ const navItems = [
   },
 
   {
-    label: "CUG MANAGE",
+    label: "Sim Asset",
     icon: FiSettings,
     to: "/cug-sim",
     roles: ["MANAGER", "ADMIN"],
