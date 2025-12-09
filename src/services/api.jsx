@@ -1559,3 +1559,15 @@ export const downloadSimAttachment = async (attachmentId, fileName) => {
   link.click();
   link.remove();
 };
+
+export const uploadOnboardingExcel = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post("/onboarding/employees/bulk", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  console.log("response data are ", response.data);
+  return response.data;
+};

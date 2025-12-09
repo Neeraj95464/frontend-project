@@ -78,6 +78,13 @@ const navItems = [
     to: "/cug-sim",
     roles: ["MANAGER", "ADMIN"],
   },
+
+  {
+    label: "Onboarding",
+    icon: FiSettings,
+    to: "/onboarding",
+    roles: ["HR_ADMIN"],
+  },
 ];
 
 // Reusable nav link

@@ -41,6 +41,7 @@ import Settings from "./components/settings";
 import BulkImportPage from "./pages/BulkImportPage";
 import CugSimDetails from "./pages/CugSimDetails";
 import CugSimList from "./pages/CugSimList";
+import EmployeeOnboardingPage from "./pages/EmployeeOnboardingPage";
 import PrintPage from "./pages/PrintPage";
 
 const App = () => {
@@ -286,6 +287,15 @@ const App = () => {
                     allowedRoles={["USER", "ADMIN", "MANAGER", "HR_ADMIN"]}
                   >
                     <NormalUserAsset />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/onboarding"
+                element={
+                  <PrivateRoute allowedRoles={["HR_ADMIN"]}>
+                    <EmployeeOnboardingPage />
                   </PrivateRoute>
                 }
               />
