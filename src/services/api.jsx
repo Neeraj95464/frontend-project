@@ -855,7 +855,7 @@ export const createTicket = async (ticketData, attachment) => {
     "ticket",
     new Blob([JSON.stringify(ticketData)], { type: "application/json" })
   );
-  console.log("sending ticket data are ", formData);
+  // console.log("sending ticket data are ", formData);
 
   // Add the file if it exists
   if (attachment) {
@@ -1288,7 +1288,9 @@ export const fetchUserByUsername = async (username) => {
 
 export const updateEmployee = async (employeeId, employeeData) => {
   try {
+    console.log("updating user ", employeeData);
     const response = await api.put(`/users/${employeeId}`, employeeData);
+    console.log("data received ", response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -1520,7 +1522,7 @@ export const importSimExcel = async (file) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-  console.log("data are ", response.data);
+  // console.log("data are ", response.data);
 
   return response.data;
 };
@@ -1568,6 +1570,25 @@ export const uploadOnboardingExcel = async (file) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-  console.log("response data are ", response.data);
+  // console.log("response data are ", response.data);
   return response.data;
+};
+
+export const getMyAssets = async () => {
+  const response = await api.get(`assets/user/my-asset`, {
+    withCredentials: true, // if you use cookie-based auth
+  });
+  // console.log("data are ", response.data);
+  return response.data; // List<AssetDTO>
+};
+
+export const resetUserPasswordByEmpId = async (employeeId) => {
+  const res = await api.post(
+    `/users/reset-password/${employeeId}`,
+    {},
+    {
+      withCredentials: true, // if you use cookies/JWT interceptor
+    }
+  );
+  return res.data;
 };

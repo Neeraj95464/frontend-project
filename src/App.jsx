@@ -21,6 +21,7 @@ import EditUser from "./components/EditUser";
 import Header from "./components/Header";
 import Login from "./components/Login";
 import MobileMenu from "./components/MobileMenu";
+import MyAssetsPage from "./components/MyAssetsPage";
 import NormalUserAsset from "./components/NormalUserAsset";
 import NotFound from "./components/NotFound";
 import PrintAssetTags from "./components/PrintAssetTags";
@@ -117,6 +118,17 @@ const App = () => {
                 element={
                   <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "IT"]}>
                     <CugSimList />
+                  </PrivateRoute>
+                }
+              />
+
+              <Route
+                path="/myassets"
+                element={
+                  <PrivateRoute
+                    allowedRoles={["ADMIN", "MANAGER", "IT", "USER"]}
+                  >
+                    <MyAssetsPage />
                   </PrivateRoute>
                 }
               />

@@ -1,14 +1,7 @@
 import { forwardRef } from "react";
 
 const SimAcknowledgementPDF = forwardRef(
-  (
-    {
-      simData,
-      employeeData,
-      companyName = "Adishwar Auto Diagnostics Pvt Ltd",
-    },
-    ref
-  ) => {
+  ({ simData, employeeData, companyName = "MAHAVIR GROUP" }, ref) => {
     const formatDate = (dateString) => {
       if (!dateString) return "_______________";
       const date = new Date(dateString);
@@ -58,8 +51,12 @@ const SimAcknowledgementPDF = forwardRef(
           <div className="grid grid-cols-2 gap-x-8 gap-y-2">
             <div className="flex">
               <span className="font-semibold w-36">Employee ID</span>
-              <span>: {employeeData?.employeeId || "_______________"}</span>
+              <span>
+                :{" "}
+                {(employeeData?.employeeId || "_______________").toUpperCase()}
+              </span>
             </div>
+
             <div className="flex">
               <span className="font-semibold w-36">Date</span>
               <span>: {formatDate(simData?.assignedAt)}</span>

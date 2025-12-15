@@ -85,6 +85,12 @@ const navItems = [
     to: "/onboarding",
     roles: ["HR_ADMIN"],
   },
+  {
+    label: "My Assets",
+    icon: FiSettings,
+    to: "/myassets",
+    roles: ["HR_ADMIN", "USER", "ADMIN"],
+  },
 ];
 
 // Reusable nav link

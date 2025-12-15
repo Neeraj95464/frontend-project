@@ -301,13 +301,13 @@ export default function AddCugSim() {
         >
           {/* --- Input Component --- */}
           {[
-            {
-              label: "SIM Tag",
-              name: "simTag",
-              type: "text",
-              placeholder: "SIM-001",
-              required: true,
-            },
+            // {
+            //   label: "SIM Tag",
+            //   name: "simTag",
+            //   type: "text",
+            //   placeholder: "SIM-001",
+            //   required: true,
+            // },
             {
               label: "Phone Number",
               name: "phoneNumber",
