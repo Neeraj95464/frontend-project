@@ -10,6 +10,8 @@ import {
   deleteSimAttachment,
   downloadSimAttachment,
   fetchSimAttachments,
+  fetchSites,
+  getLocationsBySite,
 } from "../services/api";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -27,8 +29,63 @@ export default function CugSimDetails() {
   const [uploading, setUploading] = useState(false);
   const [uploadNote, setUploadNote] = useState("");
   const [selectedFile, setSelectedFile] = useState(null);
-  // const [selectedFile, setSelectedFile] = useState(null);
+  const [sites, setSites] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [attachments, setAttachments] = useState([]);
+  // Add these useEffects for edit modal
+  const [editLocations, setEditLocations] = useState([]);
+
+  // Fetch sites for edit modal (reuse your existing sites)
+  useEffect(() => {
+    fetchSites()
+      .then((res) => {
+        const formatted = res.data.map((site) => ({
+          siteId: site.id,
+          name: site.name,
+        }));
+        setSites(formatted);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch sites", err);
+      });
+  }, []);
+
+  // Load locations when edit site changes
+  // useEffect(() => {
+  //   if (editFormData.siteId) {
+  //     getLocationsBySite(editFormData.siteId)
+  //       .then((locations) => {
+  //         setEditLocations(locations);
+  //       })
+  //       .catch((err) => {
+  //         console.error("Error fetching locations", err);
+  //       });
+  //   } else {
+  //     setEditLocations([]);
+  //     setEditFormData((prev) => ({ ...prev, locationId: "" }));
+  //   }
+  // }, [editFormData.siteId]);
+
+  useEffect(() => {
+    if (editFormData.siteName) {
+      // Find siteId from siteName for API call
+      const selectedSite = sites.find(
+        (site) => site.name === editFormData.siteName
+      );
+      if (selectedSite) {
+        getLocationsBySite(selectedSite.siteId)
+          .then((locations) => {
+            setEditLocations(locations);
+          })
+          .catch((err) => {
+            console.error("Error fetching locations", err);
+          });
+      }
+    } else {
+      setEditLocations([]);
+      setEditFormData((prev) => ({ ...prev, locationName: "" }));
+    }
+  }, [editFormData.siteName]);
 
   useEffect(() => {
     loadAttachments();
@@ -124,6 +181,7 @@ export default function CugSimDetails() {
 
   const handleUpdateSimInfo = async () => {
     try {
+      // console.log("update request are ", editFormData);
       await updateSimInfo(id, editFormData);
       toast.success("SIM information updated successfully!");
       setIsEditModalOpen(false);
@@ -941,6 +999,142 @@ export default function CugSimDetails() {
       </div>
 
       {/* Edit SIM Info Modal */}
+      {/* {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Edit SIM Information
+              </h2>
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <EditField
+                  label="Phone Number"
+                  value={editFormData.phoneNumber}
+                  onChange={(v) =>
+                    setEditFormData({ ...editFormData, phoneNumber: v })
+                  }
+                />
+                <EditField
+                  label="ICCID"
+                  value={editFormData.iccid}
+                  onChange={(v) =>
+                    setEditFormData({ ...editFormData, iccid: v })
+                  }
+                />
+                <EditField
+                  label="IMSI"
+                  value={editFormData.imsi}
+                  onChange={(v) =>
+                    setEditFormData({ ...editFormData, imsi: v })
+                  }
+                />
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    Provider
+                  </label>
+                  <select
+                    value={editFormData.provider || ""}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        provider: e.target.value,
+                      })
+                    }
+                    className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  >
+                    <option value="">Select Provider</option>
+                    <option value="AIRTEL">Airtel</option>
+                    <option value="VI">Vi</option>
+                    <option value="JIO">Jio</option>
+                    <option value="BSNL">BSNL</option>
+                  </select>
+                </div>
+                <EditField
+                  label="Purchase From"
+                  value={editFormData.purchaseFrom}
+                  onChange={(v) =>
+                    setEditFormData({ ...editFormData, purchaseFrom: v })
+                  }
+                />
+                <EditField
+                  label="Cost"
+                  value={editFormData.cost}
+                  onChange={(v) =>
+                    setEditFormData({ ...editFormData, cost: v })
+                  }
+                  type="number"
+                />
+                <EditField
+                  label="Purchase Date"
+                  value={editFormData.purchaseDate?.split("T")[0]}
+                  onChange={(v) =>
+                    setEditFormData({ ...editFormData, purchaseDate: v })
+                  }
+                  type="date"
+                />
+                <EditField
+                  label="Activated At"
+                  value={editFormData.activatedAt?.split("T")[0]}
+                  onChange={(v) =>
+                    setEditFormData({ ...editFormData, activatedAt: v })
+                  }
+                  type="date"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  Note
+                </label>
+                <textarea
+                  value={editFormData.note || ""}
+                  onChange={(e) =>
+                    setEditFormData({ ...editFormData, note: e.target.value })
+                  }
+                  rows={3}
+                  className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                  placeholder="Add a note..."
+                />
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 sticky bottom-0 bg-white">
+              <button
+                onClick={() => setIsEditModalOpen(false)}
+                className="px-6 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateSimInfo}
+                className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium hover:from-blue-700 hover:to-indigo-700"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )} */}
+
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -1012,6 +1206,103 @@ export default function CugSimDetails() {
                     <option value="BSNL">BSNL</option>
                   </select>
                 </div>
+
+                {/* ✅ NEW: Site & Location Fields */}
+                {/* <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    Site
+                  </label>
+                  <select
+                    value={editFormData.siteId || ""}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        siteId: e.target.value || null,
+                        locationId: "", // Reset location when site changes
+                      })
+                    }
+                    className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  >
+                    <option value="">Select Site</option>
+                    {sites.map(({ siteId, name }) => (
+                      <option key={siteId} value={siteId}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    Location
+                  </label>
+                  <select
+                    value={editFormData.locationId || ""}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        locationId: e.target.value || null,
+                      })
+                    }
+                    disabled={!editFormData.siteId}
+                    className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select Location</option>
+                    {editLocations.map((loc) => (
+                      <option key={loc.id} value={loc.id}>
+                        {loc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div> */}
+
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    Site
+                  </label>
+                  <select
+                    value={editFormData.siteName || ""}
+                    onChange={(e) => {
+                      const selectedSiteName = e.target.value;
+                      setEditFormData({
+                        ...editFormData,
+                        siteName: selectedSiteName || null,
+                        locationName: "", // Reset location when site changes
+                      });
+                    }}
+                    className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+                  >
+                    <option value="">Select Site</option>
+                    {sites.map(({ siteId, name }) => (
+                      <option key={siteId} value={name}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                    Location
+                  </label>
+                  <select
+                    value={editFormData.locationName || ""}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        locationName: e.target.value || null,
+                      })
+                    }
+                    disabled={!editFormData.siteName}
+                    className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none disabled:bg-gray-50 disabled:cursor-not-allowed"
+                  >
+                    <option value="">Select Location</option>
+                    {editLocations.map((loc) => (
+                      <option key={loc.id} value={loc.name}>
+                        {loc.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <EditField
                   label="Purchase From"
                   value={editFormData.purchaseFrom}

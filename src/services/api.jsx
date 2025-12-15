@@ -1477,7 +1477,7 @@ export const updateSimStatus = async (simId, status) => {
 
 // Update SIM info
 export const updateSimInfo = async (simId, data) => {
-  const response = await api.put(`/sim/${simId}`, data);
+  const response = await api.put(`/sim-cards/${simId}`, data);
   return response.data;
 };
 
