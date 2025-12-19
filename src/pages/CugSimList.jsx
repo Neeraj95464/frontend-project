@@ -1,4 +1,9 @@
-import { fetchSimCards, fetchSites, getLocationsBySite } from "../services/api";
+import {
+  fetchSimCards,
+  fetchSites,
+  getLocationsBySite,
+  downloadSimExcel,
+} from "../services/api";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -19,13 +24,16 @@ export default function CugSimList() {
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [sites, setSites] = useState([]);
   const [locations, setLocations] = useState([]);
 
   const loadData = async () => {
     const response = await fetchSimCards(filters, page, size);
+    // console.log("response was ", response);
     setSims(response.content);
     setTotalPages(response.totalPages);
+    setTotalElements(response.totalElements);
   };
 
   useEffect(() => {
@@ -76,6 +84,37 @@ export default function CugSimList() {
   useEffect(() => {
     loadData();
   }, [page]);
+
+  const handleDownloadExcel = async () => {
+    try {
+      const res = await downloadSimExcel(filters);
+
+      const blob = new Blob([res.data], {
+        type:
+          res.headers["content-type"] ||
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+
+      // try to get filename from Content-Disposition, otherwise fallback
+      const disposition = res.headers["content-disposition"];
+      let filename = "cug_sims.xlsx";
+      if (disposition && disposition.includes("filename=")) {
+        filename = disposition.split("filename=")[1].replace(/"/g, "");
+      }
+      link.download = filename;
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Failed to download Excel", err);
+    }
+  };
 
   const handleAddSim = () => navigate("/cug-sim/add");
 
@@ -162,46 +201,59 @@ export default function CugSimList() {
         </button>
       </div>
 
-      <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100 mb-4">
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-8 gap-2">
+      <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-100 mb-4">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* SIM # */}
           <input
             placeholder="SIM #"
             value={filters.phoneNumber}
             onChange={(e) => handleFilterChange("phoneNumber", e.target.value)}
-            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
+            className="w-24 sm:w-28 md:w-32 border border-gray-200 px-2 py-1 rounded text-[11px] sm:text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
           />
+
+          {/* Provider */}
           <select
             value={filters.provider}
             onChange={(e) => handleFilterChange("provider", e.target.value)}
-            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+            className="w-24 sm:w-28 md:w-32 border border-gray-200 px-2 py-1 rounded text-[11px] sm:text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
           >
             <option value="">Provider</option>
             <option value="AIRTEL">Airtel</option>
             <option value="VI">VI</option>
             <option value="JIO">Jio</option>
           </select>
+
+          {/* Status */}
           <select
             value={filters.status}
             onChange={(e) => handleFilterChange("status", e.target.value)}
-            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+            className="w-28 sm:w-32 md:w-36 border border-gray-200 px-2 py-1 rounded text-[11px] sm:text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
           >
             <option value="">Status</option>
-            <option value="ACTIVE">Active</option>
-            <option value="INACTIVE">Inactive</option>
+            <option value="AVAILABLE">Available</option>
+            <option value="ASSIGNED">Assigned</option>
             <option value="SUSPENDED">Suspended</option>
+            <option value="LOST">Lost</option>
+            <option value="DEACTIVATED">Deactivated</option>
+            <option value="REPLACED">Replaced</option>
+            <option value="DISCARDED">Discarded</option>
           </select>
+
+          {/* Emp ID */}
           <input
             placeholder="Emp ID"
             value={filters.employeeId}
             onChange={(e) => handleFilterChange("employeeId", e.target.value)}
-            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
+            className="w-20 sm:w-24 md:w-28 border border-gray-200 px-2 py-1 rounded text-[11px] sm:text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
           />
+
+          {/* Site */}
           <select
             value={filters.siteId || ""}
             onChange={(e) =>
               handleFilterChange("siteId", e.target.value || null)
             }
-            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
+            className="w-28 sm:w-32 md:w-40 border border-gray-200 px-2 py-1 rounded text-[11px] sm:text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
           >
             <option value="">Site</option>
             {sites.map(({ siteId, name }) => (
@@ -210,13 +262,15 @@ export default function CugSimList() {
               </option>
             ))}
           </select>
+
+          {/* Location */}
           <select
             value={filters.locationId || ""}
             onChange={(e) =>
               handleFilterChange("locationId", e.target.value || null)
             }
             disabled={!filters.siteId}
-            className="border border-gray-200 px-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white disabled:bg-gray-50 disabled:cursor-not-allowed"
+            className="w-28 sm:w-32 md:w-40 border border-gray-200 px-2 py-1 rounded text-[11px] sm:text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white disabled:bg-gray-50 disabled:cursor-not-allowed"
           >
             <option value="">Location</option>
             {locations.map((loc) => (
@@ -225,7 +279,9 @@ export default function CugSimList() {
               </option>
             ))}
           </select>
-          <div className="relative">
+
+          {/* Search */}
+          <div className="relative flex-1 min-w-[120px] max-w-[180px]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-3 w-3 absolute left-2 top-1/2 -translate-y-1/2 text-gray-400"
@@ -244,26 +300,47 @@ export default function CugSimList() {
               placeholder="Search"
               value={filters.search}
               onChange={(e) => handleFilterChange("search", e.target.value)}
-              className="w-full border border-gray-200 pl-7 pr-2 py-1.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
+              className="w-full border border-gray-200 pl-7 pr-2 py-1 rounded text-[11px] sm:text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
             />
           </div>
-          <div className="flex items-center gap-1 h-full">
+
+          {/* Right side: Download + Pagination */}
+          <div className="flex items-center gap-2 ml-auto">
+            {/* Download Excel (icon button + text) */}
+            <button
+              type="button"
+              onClick={handleDownloadExcel}
+              className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] sm:text-xs bg-green-600 hover:bg-green-700 text-white rounded shadow-sm"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3.5 w-3.5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M3 14.5A1.5 1.5 0 014.5 13h2a.5.5 0 010 1h-2a.5.5 0 00-.5.5v1A1.5 1.5 0 005.5 17h9a1.5 1.5 0 001.5-1.5v-1a.5.5 0 00-.5-.5h-2a.5.5 0 010-1h2A1.5 1.5 0 0117 14.5v1A2.5 2.5 0 0114.5 18h-9A2.5 2.5 0 013 15.5v-1z" />
+                <path d="M10 2a.75.75 0 01.75.75v8.19l2.22-2.22a.75.75 0 111.06 1.06l-3.5 3.5a.75.75 0 01-1.06 0l-3.5-3.5a.75.75 0 111.06-1.06l2.22 2.22V2.75A.75.75 0 0110 2z" />
+              </svg>
+              <span className="hidden sm:inline">Excel</span>
+            </button>
+
+            {/* Pagination */}
             {totalPages > 0 && (
               <div className="flex items-center gap-1">
                 <button
                   disabled={page === 0}
                   onClick={() => setPage(page - 1)}
-                  className="px-2 py-1 text-xs border border-gray-200 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+                  className="px-2 py-1 text-[11px] sm:text-xs border border-gray-200 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
                 >
                   ←
                 </button>
-                <span className="px-2 py-1 text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded">
-                  {page + 1}/{totalPages}
+                <span className="px-2 py-1 text-[11px] sm:text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded">
+                  {page + 1}/{totalPages} ({totalElements})
                 </span>
                 <button
                   disabled={page + 1 >= totalPages}
                   onClick={() => setPage(page + 1)}
-                  className="px-2 py-1 text-xs border border-gray-200 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
+                  className="px-2 py-1 text-[11px] sm:text-xs border border-gray-200 rounded disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
                 >
                   →
                 </button>

@@ -146,8 +146,10 @@ export const getUserRoles = () => {
 };
 
 export const registerUser = async (userData) => {
+  console.log("user data are ", userData);
   const response = await api.post("/auth/register", userData);
 
+  console.log("response was ", response.data);
   return response.data;
 };
 
@@ -1086,6 +1088,42 @@ export const updateAssetStatusToRepair = async (
 
 // ================== USERS & EMPLOYEES ==================
 
+// paginated + filtered users
+export const fetchUsers = async (filters, page = 0, size = 10) => {
+  const params = {
+    employeeId: filters.employeeId || "",
+    username: filters.username || "",
+    role: filters.role || "",
+    department: filters.department || "",
+    siteId: filters.siteId || "",
+    locationId: filters.locationId || "",
+    search: filters.search || "",
+    page,
+    size,
+  };
+
+  const res = await api.get("/users/filter", { params });
+  return res.data;
+};
+
+// Excel download for current filters (no pagination)
+export const downloadUsersExcel = async (filters) => {
+  const params = {
+    employeeId: filters.employeeId || "",
+    username: filters.username || "",
+    role: filters.role || "",
+    department: filters.department || "",
+    siteId: filters.siteId || "",
+    locationId: filters.locationId || "",
+    search: filters.search || "",
+  };
+
+  return api.get("/users/filter/export", {
+    params,
+    responseType: "blob",
+  });
+};
+
 export const getEmployees = async (page = 0, size = 10) => {
   try {
     const response = await api.get(`/users`, {
@@ -1447,6 +1485,24 @@ export const fetchSimCards = async (filters, page = 0, size = 10) => {
   return response.data;
 };
 
+export const downloadSimExcel = async (filters) => {
+  const params = {
+    phoneNumber: filters.phoneNumber || "",
+    provider: filters.provider || "",
+    status: filters.status || "",
+    employeeId: filters.employeeId || "",
+    siteId: filters.siteId || "",
+    locationId: filters.locationId || "",
+    search: filters.search || "",
+    // add createdAfter / createdBefore here if you later expose them in UI
+  };
+
+  return api.get("/sim-cards/filter/export", {
+    params,
+    responseType: "blob", // required for file download
+  });
+};
+
 export const getSimDetails = async (id) => {
   const response = await api.get(`/sim-cards/${id}`);
   return response.data;
@@ -1526,14 +1582,6 @@ export const importSimExcel = async (file) => {
 
   return response.data;
 };
-
-// Update assignSim to include note
-// export const assignSim = async (id, { employeeId, note }) => {
-//   const response = await api.post(`/sim-cards/${id}/assign`, null, {
-//     params: { employeeId, note },
-//   });
-//   return response.data;
-// };
 
 export const assignSim = async (id, { employeeId, performedBy, note }) => {
   const response = await api.post(`/sim-cards/${id}/assign`, {

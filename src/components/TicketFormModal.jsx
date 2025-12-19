@@ -38,6 +38,7 @@ const TicketModal = ({ isOpen, onClose }) => {
     "SOFTWARE",
     "NETWORK",
     "PRINTER",
+    "CUG_SIM",
     "UPS",
     "CCTV",
     "FOCUS",

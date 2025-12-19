@@ -33,19 +33,6 @@ const UsersList = () => {
     fetchUsers(page);
   }, [page]);
 
-  // const fetchUsers = async (pageNumber) => {
-  //   try {
-  //     const data = await getEmployees(pageNumber);
-  //     setUsers(data?.content || []);
-  //     setPaginationInfo({
-  //       totalPages: data?.totalPages || 1,
-  //       last: data?.last,
-  //     });
-  //   } catch (error) {
-  //     console.error("Error loading users:", error);
-  //   }
-  // };
-
   const fetchUsers = async (customPage = page) => {
     try {
       const res = await getEmployees(customPage); // Or use getEmployees({ page: customPage, size }) if your API supports it
