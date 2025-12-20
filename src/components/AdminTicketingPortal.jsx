@@ -92,6 +92,7 @@ export default function AdminTicketingPortal() {
     "OTHER",
     "MAINTENANCE",
     "NEW_PROJECT",
+    "CUG_SIM",
   ];
 
   const hrCategories = [
