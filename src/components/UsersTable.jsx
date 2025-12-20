@@ -821,7 +821,7 @@
 import { Pencil } from "lucide-react";
 
 const UsersTable = ({ users, onEdit, onSerialClick }) => {
-  console.log("users are ", users);
+  // console.log("users are ", users);
 
   return (
     <div className="w-full border rounded-lg overflow-hidden">

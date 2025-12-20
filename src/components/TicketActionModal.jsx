@@ -106,6 +106,7 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
     { label: "Network", value: "NETWORK" },
     { label: "Other", value: "OTHER" },
     { label: "CCTV", value: "CCTV" },
+    { label: "CUG SIM", value: "CUG_SIM" },
     { label: "Maintenance", value: "MAINTENANCE" },
     { label: "Focus", value: "FOCUS" },
     { label: "Zoho Support", value: "ZOHO_SUPPORT" },
