@@ -1363,6 +1363,8 @@ export const getSites = async () => {
 export const fetchSites = () => api.get("/sites/all");
 export const addSite = (siteData) => api.post("/sites", siteData);
 
+export const updateLocation = (id, data) => api.put(`/locations/${id}`, data);
+
 // --- Locations ---
 export const addLocation = (locationData) =>
   api.post("sites/location", locationData);

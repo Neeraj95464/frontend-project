@@ -93,6 +93,7 @@ export default function AdminTicketingPortal() {
     "MAINTENANCE",
     "NEW_PROJECT",
     "CUG_SIM",
+    "ZOHO_SUPPORT",
   ];
 
   const hrCategories = [
