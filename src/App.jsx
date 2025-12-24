@@ -422,7 +422,13 @@ const App = () => {
                   path="/myassets"
                   element={
                     <PrivateRoute
-                      allowedRoles={["ADMIN", "MANAGER", "IT", "USER"]}
+                      allowedRoles={[
+                        "ADMIN",
+                        "MANAGER",
+                        "HR_ADMIN",
+                        "IT",
+                        "USER",
+                      ]}
                     >
                       <MyAssetsPage />
                     </PrivateRoute>

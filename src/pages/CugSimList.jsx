@@ -1,3 +1,4 @@
+import UserDetailsModal from "../components/UserDetailsModal";
 import {
   fetchSimCards,
   fetchSites,
@@ -9,6 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function CugSimList() {
   const navigate = useNavigate();
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const [filters, setFilters] = useState({
     phoneNumber: "",
@@ -402,11 +404,35 @@ export default function CugSimList() {
                     <span className="text-gray-400 italic">N/A</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-700">
+                {/* <td className="px-4 py-3 text-sm text-gray-700">
                   {sim.assignedUserName || (
                     <span className="text-gray-400 italic">Unassigned</span>
                   )}
+                </td> */}
+                {/* <td className="px-4 py-3 text-sm text-gray-700"></td>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedUser(sim.assignedUserId);
+                  }}
+                  className="hover:underline truncate"
+                >
+                  {sim.assignedUserName || "Unassigned"}
+                </button>
+                </td> */}
+
+                <td className="px-4 py-3 text-sm text-blue-600">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedUser(sim.assignedUserId);
+                    }}
+                    className="hover:underline truncate"
+                  >
+                    {sim.assignedUserName || "Unassigned"}
+                  </button>
                 </td>
+
                 <td className="px-4 py-3">
                   <span
                     className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadge(
@@ -542,6 +568,14 @@ export default function CugSimList() {
           </div>
         )}
       </div>
+
+      {selectedUser && (
+        <UserDetailsModal
+          query={selectedUser}
+          isOpen={!!selectedUser}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </div>
   );
 }
