@@ -1,3 +1,4 @@
+import AssetDetails from "../pages/AssetDetails";
 import {
   getAssetByAssetTag,
   getAssetHistory,
@@ -7,7 +8,6 @@ import {
   uploadAssetDocuments,
   getChildAssetsByParent,
 } from "../services/api";
-import AssetDetails from "./AssetDetails";
 import React, { useEffect, useState } from "react";
 import { FaSpinner, FaCamera, FaFileAlt } from "react-icons/fa";
 import { useParams } from "react-router-dom";

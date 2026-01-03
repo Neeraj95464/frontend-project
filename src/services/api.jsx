@@ -146,10 +146,9 @@ export const getUserRoles = () => {
 };
 
 export const registerUser = async (userData) => {
-  console.log("user data are ", userData);
   const response = await api.post("/auth/register", userData);
 
-  console.log("response was ", response.data);
+  // console.log("response was ", response.data);
   return response.data;
 };
 
@@ -722,15 +721,34 @@ export const uploadAssetPhoto = async (id, files) => {
   }
 };
 
-export const createChildAsset = async (assetTag, childAsset) => {
+// export const createChildAsset = async (assetTag, childAsset) => {
+//   try {
+//     const response = await api.post(
+//       `/child-assets/create/${assetTag}`,
+//       childAsset
+//     );
+//     return response.data; // Return the created child asset
+//   } catch (error) {
+//     console.error("Error creating child asset:", error);
+//     throw new Error("Failed to create child asset");
+//   }
+// };
+
+// ✅ Updated: Single POST body, no path param
+export const createChildAsset = async (childAssetData) => {
   try {
     const response = await api.post(
-      `/child-assets/create/${assetTag}`,
-      childAsset
+      "/child-assets/create/child",
+      childAssetData
     );
-    return response.data; // Return the created child asset
+    return response.data; // Returns ChildAssetDTO
   } catch (error) {
     console.error("Error creating child asset:", error);
+
+    // Better error message from backend
+    if (error.response?.data?.message) {
+      throw new Error(error.response.data.message);
+    }
     throw new Error("Failed to create child asset");
   }
 };
@@ -1641,4 +1659,38 @@ export const resetUserPasswordByEmpId = async (employeeId) => {
     }
   );
   return res.data;
+};
+
+// ✅ CORRECT - Direct payload as 2nd parameter
+export const reportAssetIssue = async (asset) => {
+  console.log("asset data are ", asset);
+
+  return api.post("/user-assets/report-asset", {
+    assetTag: asset.assetTag,
+    assetType: asset.assetType,
+    description: `User reports asset ${asset.assetTag} (${asset.assetType}) is not assigned correctly.`,
+  });
+};
+
+export const fetchChildAssets = (filters) => {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  });
+
+  return api.get(`/child-assets/filter?${params}`);
+};
+
+export const downloadChildAssetsExcel = (filters) => {
+  const params = new URLSearchParams();
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value !== null && value !== undefined && value !== "") {
+      params.append(key, value);
+    }
+  });
+  return api.get(`/child-assets/filter/export?${params}`, {
+    responseType: "blob",
+  });
 };

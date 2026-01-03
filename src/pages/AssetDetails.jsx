@@ -1,7 +1,9 @@
 import AssignAssetModal from "../components/AssignAssetModel";
+import CheckInModal from "../components/CheckInModal";
 import ChildAssetForm from "../components/ChildAssetForm";
 import ReserveAssetModal from "../components/ReserveAssetModal";
 import UserDetailsModal from "../components/UserDetailsModal";
+import { generatePolicyPdf } from "../components/generatePolicyPdf";
 import {
   disposeAsset,
   markAssetAsLost,
@@ -11,8 +13,6 @@ import {
   getEmployees,
   searchEmployees,
 } from "../services/api";
-import CheckInModal from "./CheckInModal";
-import { generatePolicyPdf } from "./generatePolicyPdf";
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";

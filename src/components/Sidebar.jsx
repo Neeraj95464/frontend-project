@@ -42,6 +42,12 @@ const navItems = [
     roles: ["ADMIN", "MANAGER"],
   },
   {
+    label: "Child Assets",
+    icon: FiSettings,
+    to: "/child-assets",
+    roles: ["MANAGER", "ADMIN"],
+  },
+  {
     label: "Reports",
     icon: FiBarChart2,
     to: "/reports",

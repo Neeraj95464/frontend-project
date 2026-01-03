@@ -246,6 +246,7 @@ const AssetList = () => {
           <option value="IN_REPAIR">In Repair</option>
           <option value="LOST">Lost</option>
           <option value="DISPOSED">Disposed</option>
+          <option value="DELETED">Deleted</option>
         </select>
 
         {/* Type */}
