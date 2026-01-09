@@ -112,7 +112,9 @@ const App = () => {
                 <Route
                   path="/assets"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                    <PrivateRoute
+                      allowedRoles={["ADMIN", "MANAGER", "EXECUTIVE"]}
+                    >
                       <AssetList />
                     </PrivateRoute>
                   }
@@ -121,7 +123,9 @@ const App = () => {
                 <Route
                   path="/child-assets"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                    <PrivateRoute
+                      allowedRoles={["ADMIN", "MANAGER", "EXECUTIVE"]}
+                    >
                       <ChildAssetsPage />
                     </PrivateRoute>
                   }
@@ -146,6 +150,7 @@ const App = () => {
                         "HR_ADMIN",
                         "IT",
                         "USER",
+                        "EXECUTIVE",
                       ]}
                     >
                       <MyAssetsPage />
@@ -174,7 +179,9 @@ const App = () => {
                 <Route
                   path="/add-asset"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                    <PrivateRoute
+                      allowedRoles={["ADMIN", "MANAGER", "EXECUTIVE"]}
+                    >
                       <AddAsset />
                     </PrivateRoute>
                   }
@@ -310,7 +317,13 @@ const App = () => {
                   path="/ticket"
                   element={
                     <PrivateRoute
-                      allowedRoles={["ADMIN", "MANAGER", "USER", "HR_ADMIN"]}
+                      allowedRoles={[
+                        "ADMIN",
+                        "MANAGER",
+                        "USER",
+                        "HR_ADMIN",
+                        "EXECUTIVE",
+                      ]}
                     >
                       <TicketingPortal />
                     </PrivateRoute>
@@ -332,7 +345,13 @@ const App = () => {
                   path="/user-assets"
                   element={
                     <PrivateRoute
-                      allowedRoles={["USER", "ADMIN", "MANAGER", "HR_ADMIN"]}
+                      allowedRoles={[
+                        "USER",
+                        "ADMIN",
+                        "MANAGER",
+                        "HR_ADMIN",
+                        "EXECUTIVE",
+                      ]}
                     >
                       <NormalUserAsset />
                     </PrivateRoute>
@@ -351,7 +370,9 @@ const App = () => {
                 <Route
                   path="/create-user"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                    <PrivateRoute
+                      allowedRoles={["ADMIN", "MANAGER", "EXECUTIVE"]}
+                    >
                       <CreateUser />
                     </PrivateRoute>
                   }
@@ -361,7 +382,12 @@ const App = () => {
                   path="/edit-user/:userId"
                   element={
                     <PrivateRoute
-                      allowedRoles={["ADMIN", "MANAGER", "HR_ADMIN"]}
+                      allowedRoles={[
+                        "ADMIN",
+                        "MANAGER",
+                        "HR_ADMIN",
+                        "EXECUTIVE",
+                      ]}
                     >
                       <EditUser />
                     </PrivateRoute>
@@ -372,7 +398,12 @@ const App = () => {
                   path="/users"
                   element={
                     <PrivateRoute
-                      allowedRoles={["ADMIN", "MANAGER", "HR_ADMIN"]}
+                      allowedRoles={[
+                        "ADMIN",
+                        "MANAGER",
+                        "HR_ADMIN",
+                        "EXECUTIVE",
+                      ]}
                     >
                       <UsersPage />
                     </PrivateRoute>

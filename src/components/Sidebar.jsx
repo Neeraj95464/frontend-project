@@ -19,15 +19,15 @@ const navItems = [
     label: "Dashboard",
     icon: FiHome,
     to: "/",
-    roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN"],
+    roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN", "EXECUTIVE"],
     exact: true,
   },
   {
     label: "My Tickets",
     icon: FiUsers,
     to: "/ticket",
-    roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN"],
-    exact: true,
+    roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN", "EXECUTIVE"],
+    // exact: true,
   },
   {
     label: "Admin Tickets",
@@ -39,13 +39,13 @@ const navItems = [
     label: "Assets",
     icon: FiBox,
     to: "/assets",
-    roles: ["ADMIN", "MANAGER"],
+    roles: ["ADMIN", "MANAGER", "EXECUTIVE"],
   },
   {
     label: "Child Assets",
     icon: FiSettings,
     to: "/child-assets",
-    roles: ["MANAGER", "ADMIN"],
+    roles: ["MANAGER", "ADMIN", "EXECUTIVE"],
   },
   {
     label: "Reports",
@@ -57,7 +57,7 @@ const navItems = [
     label: "Users",
     icon: FiUsers,
     to: "/users",
-    roles: ["ADMIN", "MANAGER", "HR_ADMIN"],
+    roles: ["ADMIN", "MANAGER", "HR_ADMIN", "EXECUTIVE"],
   },
   {
     label: "Settings",
@@ -102,7 +102,7 @@ const navItems = [
     label: "My Assets",
     icon: FiSettings,
     to: "/myassets",
-    roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN"],
+    roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN", "EXECUTIVE"],
   },
 ];
 

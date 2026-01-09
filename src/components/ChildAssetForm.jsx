@@ -224,10 +224,10 @@ const ChildAssetForm = ({ assetTag: propAssetTag, onClose, onSuccess }) => {
     }
 
     // ✅ Validate asset tag if provided
-    if (!assetTag?.trim()) {
-      setError("Parent asset tag is required when creating child asset.");
-      return;
-    }
+    // if (!assetTag?.trim()) {
+    //   setError("Parent asset tag is required when creating child asset.");
+    //   return;
+    // }
 
     setLoading(true);
 
@@ -325,34 +325,21 @@ const ChildAssetForm = ({ assetTag: propAssetTag, onClose, onSuccess }) => {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* ✅ Parent Asset Tag Field - Smart Behavior */}
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center justify-between">
-              Parent Asset Tag <span className="text-red-500">*</span>
-              {isAssetTagEditable && (
-                <span className="text-xs text-gray-500 bg-gray-50 px-2 py-0.5 rounded">
-                  Required
-                </span>
-              )}
-            </label>
-            <div className="relative">
-              <input
-                id="assetTag"
-                type="text"
-                value={assetTag}
-                onChange={handleChange}
-                placeholder="Enter parent asset tag (e.g. MGIT---)"
-                className={`w-full px-4 py-3 pr-12 border rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 font-mono tracking-wide ${
-                  isAssetTagEditable
-                    ? "border-gray-300 bg-white shadow-sm hover:shadow-md"
-                    : "border-gray-300 bg-gray-50 cursor-not-allowed border-dashed shadow-sm"
-                }`}
-                disabled={!isAssetTagEditable}
-                required
-              />
-              {assetTag && !isAssetTagEditable && (
+          {/* ✅ Parent Asset Tag - ONLY shown when parent provided */}
+          {propAssetTag ? (
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Parent Asset Tag
+              </label>
+              <div className="relative">
+                <input
+                  id="assetTag"
+                  type="text"
+                  value={propAssetTag}
+                  className="w-full px-4 py-3 border border-gray-300 bg-gray-50 cursor-not-allowed rounded-xl font-mono tracking-wide shadow-sm"
+                  readOnly
+                />
                 <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
                   <svg
                     className="w-5 h-5 text-green-500"
@@ -366,20 +353,13 @@ const ChildAssetForm = ({ assetTag: propAssetTag, onClose, onSuccess }) => {
                     />
                   </svg>
                 </div>
-              )}
+              </div>
+              <p className="mt-2 text-xs text-green-600 font-medium">
+                This child asset will be linked to parent:{" "}
+                <strong>{propAssetTag}</strong>
+              </p>
             </div>
-            <p
-              className={`mt-2 text-xs ${
-                isAssetTagEditable
-                  ? "text-gray-600"
-                  : "text-green-600 font-medium"
-              }`}
-            >
-              {isAssetTagEditable
-                ? "Enter the parent asset tag this child belongs to (standalone assets also supported)"
-                : `This child asset will be linked to parent: ${assetTag}`}
-            </p>
-          </div>
+          ) : null}
 
           {/* Core Asset Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -396,7 +376,7 @@ const ChildAssetForm = ({ assetTag: propAssetTag, onClose, onSuccess }) => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g. Wireless Mouse, USB Cable"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                 required
                 disabled={loading}
               />
@@ -415,7 +395,7 @@ const ChildAssetForm = ({ assetTag: propAssetTag, onClose, onSuccess }) => {
                 value={formData.warranty}
                 onChange={handleChange}
                 placeholder="e.g. 12 months, 2 years"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                 required
                 disabled={loading}
               />
@@ -436,7 +416,7 @@ const ChildAssetForm = ({ assetTag: propAssetTag, onClose, onSuccess }) => {
                 value={formData.purchaseFrom}
                 onChange={handleChange}
                 placeholder="e.g. Amazon, Local Vendor"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                 required
                 disabled={loading}
               />
@@ -455,7 +435,7 @@ const ChildAssetForm = ({ assetTag: propAssetTag, onClose, onSuccess }) => {
                 value={formData.childAssetNote}
                 onChange={handleChange}
                 placeholder="Additional details"
-                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 shadow-sm"
                 required
                 disabled={loading}
               />

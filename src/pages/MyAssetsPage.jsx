@@ -57,7 +57,7 @@ const MyAssetsPage = () => {
         <div className="flex justify-between items-start mb-6">
           <div>
             <h1 className="text-2xl font-semibold text-blue-700">
-              My Assigned Assets
+              My IT Assets
             </h1>
             <p className="text-sm text-gray-500">
               Devices and SIMs currently mapped to your account.
