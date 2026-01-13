@@ -935,20 +935,60 @@ export const changeTicketEmployeeIfSame = async (ticketId, newEmployeeId) => {
 //   }
 // };
 
+// export const getTickets = async ({
+//   status = "OPEN",
+//   page = 0,
+//   size = 10,
+//   employeeId = "ALL", // New optional param
+// }) => {
+//   try {
+//     const response = await api.get(`${API_URL}/user-assets/tickets`, {
+//       params: { status, page, size, employeeId }, // Include employeeId
+//     });
+//     // console.log("response tickets are ", response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching tickets:", error);
+//     throw error;
+//   }
+// };
+
 export const getTickets = async ({
-  status = "OPEN",
+  title,
+  status,
+  category,
+  employeeId = "ALL",
+  locationId,
+  assigneeId,
+  createdAfter,
+  createdBefore,
+  search,
+  siteIdLocationId,
   page = 0,
   size = 10,
-  employeeId = "ALL", // New optional param
-}) => {
+} = {}) => {
   try {
+    const params = {
+      page,
+      size,
+      employeeId,
+      ...(title && { title }),
+      ...(status && { status }),
+      ...(category && { category }),
+      ...(locationId && { locationId }),
+      ...(assigneeId && { assigneeId }),
+      ...(createdAfter && { createdAfter }),
+      ...(createdBefore && { createdBefore }),
+      ...(search && { search }),
+      ...(siteIdLocationId && { siteIdLocationId }),
+    };
+
     const response = await api.get(`${API_URL}/user-assets/tickets`, {
-      params: { status, page, size, employeeId }, // Include employeeId
+      params,
     });
-    // console.log("response tickets are ", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching tickets:", error);
+    console.error("Error filtering tickets:", error);
     throw error;
   }
 };
@@ -1174,44 +1214,6 @@ export const fetchUserById = async (userId) => {
   }
 };
 
-// export const searchEmployees = async (query) => {
-//   try {
-//     const params = new URLSearchParams();
-
-//     if (/^\d+$/.test(query)) {
-//       console.log("Detected numeric input, assuming phoneNumber:", query);
-//       params.append("phoneNumber", query);
-//     } else if (query.includes("@")) {
-//       console.log("Detected email input:", query);
-//       params.append("email", query);
-//     } else if (
-//       query.startsWith("mv") ||
-//       query.startsWith("aw") ||
-//       query.startsWith("jb")
-//     ) {
-//       console.log("Detected employeeId format:", query);
-//       params.append("employeeId", query);
-//     } else {
-//       console.log("Detected username format:", query);
-//       params.append("username", query);
-//     }
-
-//     const apiUrl = `/users/search?${params.toString()}`;
-//     console.log("Generated API URL:", apiUrl); // ✅ Log API call
-
-//     const response = await api.get(apiUrl);
-
-//     // ✅ Fix: Extract 'content' from paginated response
-//     return response.data?.content ?? [];
-//   } catch (error) {
-//     console.error(
-//       "Error searching employees:",
-//       error?.response?.data || error.message
-//     );
-//     return [];
-//   }
-// };
-
 export const searchEmployees = async (query) => {
   try {
     const params = new URLSearchParams();
@@ -1406,6 +1408,14 @@ export const fetchFilteredTickets = (params) => {
 export const downloadFilteredTickets = (params) => {
   // params is an object with optional filter keys excluding pagination
   return api.get("/user-assets/updated/download", {
+    params,
+    responseType: "blob", // important to handle binary file downloads
+  });
+};
+
+export const downloadUserTickets = (params) => {
+  // params is an object with optional filter keys excluding pagination
+  return api.get("/user-assets/users/tickets/download", {
     params,
     responseType: "blob", // important to handle binary file downloads
   });

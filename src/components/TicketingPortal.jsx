@@ -5,13 +5,25 @@ import {
   hasRole,
   updateTicketStatus,
   searchTickets,
+  getAssignees,
+  fetchSites,
+  downloadUserTickets,
+  getLocationsBySite,
 } from "../services/api";
 import TicketActionModal from "./TicketActionModal";
 import TicketAttachmentButton from "./TicketAttachmentButton";
 import TicketModal from "./TicketFormModal";
 import { Button, Card } from "./ui";
-import { format, formatDistanceToNow, parseISO, isBefore } from "date-fns";
-import { MoreVertical } from "lucide-react";
+import {
+  format,
+  formatDistanceToNow,
+  parseISO,
+  isBefore,
+  subDays,
+} from "date-fns";
+import dayjs from "dayjs";
+import { MoreVertical, Filter, X } from "lucide-react";
+import React from "react";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -24,7 +36,10 @@ export default function TicketingPortal() {
   const [selectedTicketId, setSelectedTicketId] = useState(null);
   const [isTicketModalOpen, setIsTicketModalOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [assignees, setAssignees] = useState([]);
   const [isMaximized, setIsMaximized] = useState(false);
+  const [sites, setSites] = useState([]);
+  const [locations, setLocations] = React.useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [messageType, setMessageType] = useState("PUBLIC_RESPONSE");
   const [ticketStatus, setTicketStatus] = useState("");
@@ -35,7 +50,8 @@ export default function TicketingPortal() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
-
+  const [showFilters, setShowFilters] = useState(true);
+  const [selectedAgeFilter, setSelectedAgeFilter] = useState(null);
   const [textareaRows, setTextareaRows] = useState(3);
   const textareaRef = useRef(null);
 
@@ -51,38 +67,139 @@ export default function TicketingPortal() {
   const [isSending, setIsSending] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const handleStatusChange = (e) => {
-    const status = e.target.value;
-    setSelectedStatus(status);
-    fetchTickets(status);
-  };
+  const [filters, setFilters] = useState({
+    title: "",
+    status: "OPEN",
+    category: null,
+    employeeId: null,
+    locationId: null,
+    siteIdLocationId: null,
+    search: null,
+    assigneeId: null,
+    createdAfter: null,
+    createdBefore: null,
+  });
 
-  const fetchTickets = async (status = selectedStatus, customPage = page) => {
+  const itCategories = [
+    "HARDWARE",
+    "SOFTWARE",
+    "NETWORK",
+    "PRINTER",
+    "UPS",
+    "CCTV",
+    "FOCUS",
+    "EMAIL",
+    "DMS",
+    "WORKSHOP_DIAGNOSTIC_TOOLS",
+    "OTHER",
+    "MAINTENANCE",
+    "NEW_PROJECT",
+    "CUG_SIM",
+    "ZOHO_SUPPORT",
+  ];
+
+  const hrCategories = [
+    "PAYROLL",
+    "RECRUITMENT",
+    "HR_OPERATIONS",
+    "GENERAL_HR_QUERIES",
+  ];
+
+  const handleDownloadTickets = async () => {
     try {
-      const res = await getTickets({ page: customPage, size, status });
+      const params = { ...filters };
+      // Remove pagination params for download
+      delete params.page;
+      delete params.size;
 
-      const {
-        content = [],
-        page: pageNumber,
-        size: pageSize,
-        totalElements,
-        totalPages,
-        last,
-      } = res || {};
+      // Remove null/undefined values
+      Object.keys(params).forEach(
+        (key) => params[key] == null && delete params[key]
+      );
 
-      setFilteredTickets(content);
-      setPaginationInfo({ totalElements, totalPages, last });
-      setPage(pageNumber);
-      setSize(pageSize);
+      const response = await downloadUserTickets(params);
+
+      // Create blob and download
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute(
+        "download",
+        `tickets_${dayjs().format("YYYY-MM-DD")}.xlsx`
+      );
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast.success("Tickets downloaded successfully");
     } catch (error) {
-      console.error("Error fetching tickets:", error);
+      console.error("Error downloading tickets:", error);
+      toast.error("Failed to download tickets");
     }
   };
 
-  // Refresh ticket list function - can be called from anywhere
-  const refreshTicketList = () => {
-    fetchTickets(selectedStatus, page);
-  };
+  useEffect(() => {
+    fetchSites()
+      .then((res) => {
+        const formatted = res.data.map((site) => ({
+          siteId: site.id,
+          name: site.name,
+        }));
+        setSites(formatted);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch sites", err);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (filters.siteIdLocationId) {
+      getLocationsBySite(filters.siteIdLocationId)
+        .then((locations) => {
+          setLocations(locations);
+        })
+        .catch((err) => {
+          console.error("Error fetching locations", err);
+        });
+    } else {
+      setLocations([]);
+    }
+  }, [filters.siteIdLocationId]);
+
+  // const fetchTickets = async (filters = {}, customPage = page) => {
+  //   try {
+  //     const res = await getTickets({
+  //       ...filters,
+  //       page: customPage,
+  //       size,
+  //       employeeId: "ALL", // Default as per your backend
+  //     });
+
+  //     const {
+  //       content = [], // Your PaginatedResponse list
+  //       page: pageNumber,
+  //       size: pageSize,
+  //       totalElements,
+  //       totalPages,
+  //       last,
+  //     } = res || {};
+
+  //     setFilteredTickets(content);
+  //     setPaginationInfo({ totalElements, totalPages, last });
+  //     setPage(pageNumber);
+  //     setSize(pageSize);
+  //   } catch (error) {
+  //     console.error("Error fetching tickets:", error);
+  //   }
+  // };
+
+  // const refreshTicketList = () => {
+  //   fetchTickets(selectedStatus, page);
+  // };
 
   const predefinedMessages = [
     "Thank you for your patience. we are still actively working on your issue",
@@ -207,7 +324,7 @@ export default function TicketingPortal() {
         last,
       } = res || {};
 
-      console.log("Fetched content:", content);
+      // console.log("Fetched content:", content);
 
       setFilteredTickets(content);
       setPaginationInfo({
@@ -221,6 +338,95 @@ export default function TicketingPortal() {
       setLoading(false);
     }
   };
+
+  // const fetchTicketsWithFilters = async (customPage = page) => {
+  //   setLoading(true);
+  //   try {
+  //     const params = {
+  //       ...filters,
+  //       page: customPage,
+  //       size,
+  //     };
+
+  //     // Remove null/undefined values
+  //     Object.keys(params).forEach(
+  //       (key) => params[key] == null && delete params[key]
+  //     );
+
+  //     const res = await getTickets(params);
+
+  //     const {
+  //       content = [],
+  //       page: pageNumber,
+  //       size: pageSize,
+  //       totalElements,
+  //       totalPages,
+  //       last,
+  //     } = res?.content || {};
+
+  //     console.log("res data are ", res);
+
+  //     setFilteredTickets(content);
+  //     setPaginationInfo({ totalElements, totalPages, last });
+  //     setPage(pageNumber);
+  //     setSize(pageSize);
+  //   } catch (error) {
+  //     console.error("Error fetching tickets:", error);
+  //     toast.error("Failed to fetch tickets");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const fetchTicketsWithFilters = async (customPage = page) => {
+    setLoading(true);
+    try {
+      const params = {
+        ...filters,
+        page: customPage,
+        size,
+        employeeId: "ALL", // ✅ Always include
+      };
+
+      // Remove null/undefined values
+      Object.keys(params).forEach(
+        (key) => params[key] == null && delete params[key]
+      );
+
+      // console.log("🔍 API params:", params); // DEBUG
+
+      const res = await getTickets(params); // ✅ FIXED: filterTickets
+
+      // console.log("📦 Full response:", res); // DEBUG
+
+      // ✅ FIXED: Direct destructuring from res (not res.content)
+      const {
+        content = [],
+        page: pageNumber,
+        size: pageSize,
+        totalElements,
+        totalPages,
+        last,
+      } = res || {};
+
+      // console.log("✅ Extracted content length:", content.length); // DEBUG
+
+      // ✅ FIXED: All state updates work now
+      setFilteredTickets(content);
+      setPaginationInfo({ totalElements, totalPages, last });
+      setPage(pageNumber);
+      setSize(pageSize);
+    } catch (error) {
+      console.error("❌ Error fetching tickets:", error);
+      toast.error("Failed to fetch tickets");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTicketsWithFilters(0);
+  }, [filters]);
 
   // Handle closing the TicketActionModal and refresh list
   const handleTicketActionModalClose = () => {
@@ -237,6 +443,42 @@ export default function TicketingPortal() {
     refreshTicketList();
   };
 
+  const handleAgeFilter = (ageRange) => {
+    const now = new Date();
+    let createdAfter = null;
+    let createdBefore = null;
+
+    switch (ageRange) {
+      case "0-7":
+        createdAfter = subDays(now, 7).toISOString();
+        createdBefore = now.toISOString();
+        break;
+      case "8-15":
+        createdAfter = subDays(now, 15).toISOString();
+        createdBefore = subDays(now, 8).toISOString();
+        break;
+      case "16-30":
+        createdAfter = subDays(now, 30).toISOString();
+        createdBefore = subDays(now, 16).toISOString();
+        break;
+      case "31+":
+        createdAfter = null;
+        createdBefore = subDays(now, 31).toISOString();
+        break;
+      default:
+        createdAfter = null;
+        createdBefore = null;
+    }
+
+    setSelectedAgeFilter(ageRange);
+    setFilters((prev) => ({
+      ...prev,
+      createdAfter,
+      createdBefore,
+    }));
+    setPage(0);
+  };
+
   // Handle closing the chat panel
   const handleCloseChatPanel = () => {
     setSelectedTicket(null);
@@ -244,8 +486,14 @@ export default function TicketingPortal() {
     refreshTicketList();
   };
 
+  // Handle filter changes
+  const handleFilterChange = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+    setPage(0); // Reset to first page on filter change
+  };
+
   useEffect(() => {
-    fetchTickets();
+    // fetchTickets();
 
     let role = "user";
     if (hasRole("ADMIN") || hasRole("HR_ADMIN") || hasRole("EXECUTIVE")) {
@@ -264,94 +512,243 @@ export default function TicketingPortal() {
           className="z-50"
         />
         <Card>
-          {/* Top action buttons container */}
-          <div className="flex flex-wrap sm:flex-nowrap gap-2 items-center mb-4 overflow-x-auto">
-            <Button
-              onClick={() => setIsDialogOpen(true)}
-              className="bg-green-600 whitespace-nowrap"
-            >
-              + Create Ticket
-            </Button>
-
-            {userRole === "ADMIN" && (
+          <div className="border-b border-gray-200 bg-gray-50">
+            <div className="flex gap-3 px-6 py-4 items-center">
               <button
-                className="px-4 py-2 rounded-lg shadow-md bg-green-600 text-white hover:bg-green-700 focus:ring-2 focus:ring-blue-400 whitespace-nowrap"
-                onClick={() => navigate("/ticket/admin")}
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all font-medium border border-gray-200"
               >
-                Admin Tickets
+                <Filter className="w-4 h-4" />
+                {showFilters ? "Hide" : "Filters"}
               </button>
+
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                className="px-3 py-1.5 text-xs bg-green-600 hover:bg-green-700 h-auto whitespace-nowrap rounded-lg"
+                size="sm"
+              >
+                + Create
+              </Button>
+
+              {/* Pagination */}
+              <div className="flex-shrink-0 flex items-center gap-1.5 bg-white border border-gray-300 rounded-md px-2 py-1 shadow-sm">
+                <button
+                  onClick={() => {
+                    const newPage = Math.max(page - 1, 0);
+                    setPage(newPage);
+                    fetchTicketsWithFilters(newPage);
+                  }}
+                  disabled={page === 0}
+                  className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold"
+                >
+                  ←
+                </button>
+
+                <span className="text-xs text-gray-700 font-medium whitespace-nowrap">
+                  {page + 1}/{paginationInfo.totalPages}
+                </span>
+
+                <button
+                  onClick={() => {
+                    const newPage =
+                      page + 1 < paginationInfo.totalPages ? page + 1 : page;
+                    setPage(newPage);
+                    fetchTicketsWithFilters(newPage);
+                  }}
+                  disabled={paginationInfo.last}
+                  className="px-2 py-0.5 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold"
+                >
+                  →
+                </button>
+              </div>
+
+              {/* Total Results */}
+              <div className="flex-shrink-0 text-xs text-gray-600 font-medium whitespace-nowrap px-2">
+                Total: {paginationInfo.totalElements}
+              </div>
+
+              {/* Download Button */}
+              <Button
+                onClick={handleDownloadTickets}
+                className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md font-semibold shadow-sm transition-all"
+                disabled={loading}
+              >
+                📥
+              </Button>
+            </div>
+
+            {showFilters && (
+              <div className="px-6 pb-4">
+                {/* Main Filter Row */}
+                <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-2">
+                  {/* Status Filter */}
+                  <div className="flex-shrink-0">
+                    <select
+                      value={filters.status || ""}
+                      onChange={(e) =>
+                        handleFilterChange("status", e.target.value || null)
+                      }
+                      className="text-xs p-1.5 pr-6 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all min-w-[100px]"
+                    >
+                      <option value="">All Status</option>
+                      <option value="OPEN">Open</option>
+                      <option value="WAITING">Waiting</option>
+                      <option value="CLOSED">Closed</option>
+                      <option value="UNASSIGNED">Unassigned</option>
+                    </select>
+                  </div>
+
+                  {/* Site Filter */}
+                  <div className="flex-shrink-0">
+                    <select
+                      value={filters.siteIdLocationId || ""}
+                      onChange={(e) =>
+                        handleFilterChange(
+                          "siteIdLocationId",
+                          e.target.value || null
+                        )
+                      }
+                      className="text-xs p-1.5 pr-6 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all min-w-[100px]"
+                    >
+                      <option value="">All Sites</option>
+                      {sites.map(({ siteId, name }) => (
+                        <option key={siteId} value={siteId}>
+                          {name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Location Filter */}
+                  <div className="flex-shrink-0">
+                    <select
+                      value={filters.locationId || ""}
+                      onChange={(e) =>
+                        handleFilterChange("locationId", e.target.value || null)
+                      }
+                      className="text-xs p-1.5 pr-6 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all min-w-[120px]"
+                    >
+                      <option value="">All Locations</option>
+                      {locations.map((loc) => (
+                        <option key={loc.id} value={loc.id}>
+                          {loc.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Category Filter */}
+                  <div className="flex-shrink-0">
+                    <select
+                      value={filters.category || ""}
+                      onChange={(e) =>
+                        handleFilterChange("category", e.target.value || null)
+                      }
+                      className="text-xs p-1.5 pr-6 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all min-w-[120px]"
+                    >
+                      <option value="">All Categories</option>
+                      {(userRole === "HR_ADMIN"
+                        ? hrCategories
+                        : itCategories
+                      ).map((cat) => (
+                        <option key={cat} value={cat}>
+                          {cat}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Age Filter Buttons */}
+                  <button
+                    onClick={() => handleAgeFilter("0-7")}
+                    className={`flex-shrink-0 px-2.5 py-1.5 text-xs rounded-md font-semibold transition-all ${
+                      selectedAgeFilter === "0-7"
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50"
+                    }`}
+                  >
+                    0-7d
+                  </button>
+                  <button
+                    onClick={() => handleAgeFilter("8-15")}
+                    className={`flex-shrink-0 px-2.5 py-1.5 text-xs rounded-md font-semibold transition-all ${
+                      selectedAgeFilter === "8-15"
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50"
+                    }`}
+                  >
+                    8-15d
+                  </button>
+                  <button
+                    onClick={() => handleAgeFilter("16-30")}
+                    className={`flex-shrink-0 px-2.5 py-1.5 text-xs rounded-md font-semibold transition-all ${
+                      selectedAgeFilter === "16-30"
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50"
+                    }`}
+                  >
+                    16-30d
+                  </button>
+                  <button
+                    onClick={() => handleAgeFilter("31+")}
+                    className={`flex-shrink-0 px-2.5 py-1.5 text-xs rounded-md font-semibold transition-all ${
+                      selectedAgeFilter === "31+"
+                        ? "bg-blue-600 text-white shadow-md"
+                        : "bg-white text-gray-700 border border-gray-300 hover:bg-blue-50"
+                    }`}
+                  >
+                    31+d
+                  </button>
+
+                  {/* Clear Age Filter */}
+                  {selectedAgeFilter && (
+                    <button
+                      onClick={() => {
+                        setSelectedAgeFilter(null);
+                        setFilters((prev) => ({
+                          ...prev,
+                          createdAfter: null,
+                          createdBefore: null,
+                        }));
+                      }}
+                      className="flex-shrink-0 text-xs text-red-600 hover:text-red-800 font-medium px-2"
+                    >
+                      ✕
+                    </button>
+                  )}
+
+                  {/* Divider */}
+                  <div className="w-px h-8 bg-gray-300 flex-shrink-0 mx-1"></div>
+
+                  {/* Search Input */}
+                  <div className="flex-shrink-0 min-w-[180px]">
+                    <form onSubmit={handleSearchSubmit} className="relative">
+                      <input
+                        type="text"
+                        placeholder="Search..."
+                        className="w-full text-xs p-1.5 pl-7 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                      />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                        stroke="currentColor"
+                        className="w-3.5 h-3.5 text-gray-400 absolute left-2 top-1/2 -translate-y-1/2"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
+                        />
+                      </svg>
+                    </form>
+                  </div>
+                </div>
+              </div>
             )}
-
-            <div className="min-w-[150px]">
-              <select
-                value={selectedStatus}
-                onChange={handleStatusChange}
-                className="w-full p-2 border rounded-md shadow-sm focus:ring focus:ring-blue-300"
-              >
-                <option value="OPEN">Open</option>
-                <option value="WAITING">Waiting</option>
-                <option value="CLOSED">Closed</option>
-                <option value="UNASSIGNED">Unassigned</option>
-              </select>
-            </div>
-
-            <form
-              onSubmit={handleSearchSubmit}
-              className="flex items-center gap-2 px-3 py-2 border rounded-md shadow-sm bg-white focus-within:ring-2 focus-within:ring-green-500"
-            >
-              <svg
-                className="w-5 h-5 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z"
-                />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search Tickets..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="bg-transparent focus:outline-none text-sm text-gray-800 w-full placeholder-gray-500"
-              />
-            </form>
-
-            {/* Pagination Controls */}
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => {
-                  const newPage = Math.max(page - 1, 0);
-                  setPage(newPage);
-                  fetchTickets(selectedStatus, newPage);
-                }}
-                disabled={page === 0}
-                className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-              >
-                &lt;
-              </button>
-              <span className="text-sm text-gray-700 whitespace-nowrap">
-                <strong>{page + 1}</strong> of{" "}
-                <strong>{paginationInfo.totalPages}</strong> Total:{" "}
-                <strong>{paginationInfo.totalElements}</strong>
-              </span>
-              <button
-                onClick={() => {
-                  const newPage =
-                    page + 1 < paginationInfo.totalPages ? page + 1 : page;
-                  setPage(newPage);
-                  fetchTickets(selectedStatus, newPage);
-                }}
-                disabled={paginationInfo.last}
-                className="px-3 py-1 border rounded bg-gray-100 hover:bg-gray-200 disabled:opacity-50"
-              >
-                &gt;
-              </button>
-            </div>
           </div>
 
           {/* Table Container */}
