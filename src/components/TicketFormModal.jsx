@@ -347,7 +347,6 @@ const TicketModal = ({ isOpen, onClose }) => {
         location,
         ticketDepartment,
       };
-      console.log("ticket data are ", ticketData);
 
       await createTicket(ticketData, attachment);
 

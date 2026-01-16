@@ -67,69 +67,6 @@ api.interceptors.response.use(
 
 export default api;
 
-// import axios from "axios";
-// import { toast } from "react-toastify";
-
-// const API_URL = "http://localhost:7355/api";
-
-// // Axios instance
-// const api = axios.create({
-//   baseURL: API_URL,
-//   headers: { "Content-Type": "application/json" },
-// });
-
-// // Manual token expiry check (based on iat + 24 hrs)
-// function isTokenExpiredByIat(token) {
-//   try {
-//     const payload = JSON.parse(atob(token.split(".")[1]));
-//     const issuedAt = payload.iat * 1000; // in milliseconds
-//     const now = Date.now();
-//     const expiryByIat = issuedAt + 24 * 60 * 60 * 1000; // 24 hours in ms
-//     return now > expiryByIat;
-//   } catch (error) {
-//     console.error("Invalid token decoding");
-//     return true; // treat as expired on error
-//   }
-// }
-
-// // Interceptor for attaching token and checking expiry
-// api.interceptors.request.use(
-//   (config) => {
-//     const storedUser = localStorage.getItem("user");
-
-//     if (storedUser) {
-//       const { token } = JSON.parse(storedUser);
-
-//       if (token) {
-//         if (isTokenExpiredByIat(token)) {
-//           console.warn("Token expired (based on iat)");
-//           // Let component handle it via a rejected promise
-//           throw new axios.Cancel("Token expired based on iat");
-//         }
-
-//         config.headers.Authorization = `Bearer ${token}`;
-//       }
-//     }
-
-//     return config;
-//   },
-//   (error) => Promise.reject(error)
-// );
-
-// // Response error handler (don't auto-logout here)
-// api.interceptors.response.use(
-//   (response) => response,
-//   (error) => {
-//     if (!axios.isCancel(error) && error.response?.status === 401) {
-//       toast.error("Unauthorized request");
-//     }
-
-//     return Promise.reject(error);
-//   }
-// );
-
-// export default api;
-
 // ================== AUTHENTICATION ==================
 
 export const getUserRoles = () => {
@@ -862,10 +799,6 @@ export const addMessageToTicket = async (ticketId, messageDTO) => {
     throw error;
   }
 };
-
-// export const createTicket = async (ticketData) => {
-//   return await api.post(`${API_URL}/user-assets/tickets`, ticketData);
-// };
 
 export const createTicket = async (ticketData, attachment) => {
   const formData = new FormData();

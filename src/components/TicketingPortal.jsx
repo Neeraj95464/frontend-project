@@ -170,37 +170,6 @@ export default function TicketingPortal() {
     }
   }, [filters.siteIdLocationId]);
 
-  // const fetchTickets = async (filters = {}, customPage = page) => {
-  //   try {
-  //     const res = await getTickets({
-  //       ...filters,
-  //       page: customPage,
-  //       size,
-  //       employeeId: "ALL", // Default as per your backend
-  //     });
-
-  //     const {
-  //       content = [], // Your PaginatedResponse list
-  //       page: pageNumber,
-  //       size: pageSize,
-  //       totalElements,
-  //       totalPages,
-  //       last,
-  //     } = res || {};
-
-  //     setFilteredTickets(content);
-  //     setPaginationInfo({ totalElements, totalPages, last });
-  //     setPage(pageNumber);
-  //     setSize(pageSize);
-  //   } catch (error) {
-  //     console.error("Error fetching tickets:", error);
-  //   }
-  // };
-
-  // const refreshTicketList = () => {
-  //   fetchTickets(selectedStatus, page);
-  // };
-
   const predefinedMessages = [
     "Thank you for your patience. we are still actively working on your issue",
     "Dear team, We are looking into your issue.",
@@ -302,6 +271,10 @@ export default function TicketingPortal() {
     }
   };
 
+  const refreshTicketList = async () => {
+    await fetchTicketsWithFilters(page);
+  };
+
   const handleSearchSubmit = async (e) => {
     e.preventDefault();
 
@@ -338,45 +311,6 @@ export default function TicketingPortal() {
       setLoading(false);
     }
   };
-
-  // const fetchTicketsWithFilters = async (customPage = page) => {
-  //   setLoading(true);
-  //   try {
-  //     const params = {
-  //       ...filters,
-  //       page: customPage,
-  //       size,
-  //     };
-
-  //     // Remove null/undefined values
-  //     Object.keys(params).forEach(
-  //       (key) => params[key] == null && delete params[key]
-  //     );
-
-  //     const res = await getTickets(params);
-
-  //     const {
-  //       content = [],
-  //       page: pageNumber,
-  //       size: pageSize,
-  //       totalElements,
-  //       totalPages,
-  //       last,
-  //     } = res?.content || {};
-
-  //     console.log("res data are ", res);
-
-  //     setFilteredTickets(content);
-  //     setPaginationInfo({ totalElements, totalPages, last });
-  //     setPage(pageNumber);
-  //     setSize(pageSize);
-  //   } catch (error) {
-  //     console.error("Error fetching tickets:", error);
-  //     toast.error("Failed to fetch tickets");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const fetchTicketsWithFilters = async (customPage = page) => {
     setLoading(true);
@@ -783,16 +717,6 @@ export default function TicketingPortal() {
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {filteredTickets.map((ticket) => (
-                      // <tr
-                      //   key={ticket.id}
-                      //   className="hover:bg-gray-50 transition cursor-pointer"
-                      //   onClick={() => setSelectedTicket(ticket)}
-                      //   onDoubleClick={() => {
-                      //     setIsTicketModalOpen(true);
-                      //     setSelectedTicketId(ticket.id);
-                      //   }}
-                      // >
-
                       <tr
                         key={ticket.id}
                         className="hover:bg-gray-50 transition cursor-pointer"
