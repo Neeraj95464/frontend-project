@@ -271,14 +271,6 @@ const TicketModal = ({ isOpen, onClose }) => {
     }
   };
 
-  // const selectAsset = (selectedAsset) => {
-  //   setAsset(selectedAsset.assetTag);
-  //   setSelectedAsset(selectedAsset.assetTag);
-  //   setAssetSearchQuery(`${selectedAsset.name} (${selectedAsset.assetTag})`);
-  //   setMatchedAssets([]);
-  //   setAssetError("");
-  // };
-
   const selectAsset = (asset) => {
     setSelectedAsset(asset.assetTag); // updates <select> value
     setAssetSearchQuery(`${asset.name} (${asset.assetTag})`);
@@ -290,32 +282,6 @@ const TicketModal = ({ isOpen, onClose }) => {
     setAsset(e.target.value);
     setSelectedAsset(e.target.value);
   };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (loading) return; // prevent double submission
-
-  //   setLoading(true); // block button
-  //   try {
-  //     await createTicket({
-  //       title,
-  //       description,
-  //       category,
-  //       employee,
-  //       assetTag: selectedAsset,
-  //       location,
-  //       ticketDepartment,
-  //     });
-
-  //     alert("Ticket created successfully!");
-  //     onClose();
-  //   } catch (error) {
-  //     console.error("Error creating ticket: ", error);
-  //   } finally {
-  //     setLoading(false); // re-enable button after API call
-  //   }
-  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -49,7 +49,7 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 // Optional: handle 401 errors
@@ -62,7 +62,7 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;
@@ -97,7 +97,9 @@ export const hasRole = (role) => {
 
 export const loginUser = async (employeeId, password) => {
   try {
+    // console.log("going for login " + employeeId, password);
     const response = await api.post("/auth/login", { employeeId, password });
+    // console.log("Backend response was ", response);
     if (response.data.token) {
       localStorage.setItem("user", JSON.stringify(response.data));
     }
@@ -106,6 +108,40 @@ export const loginUser = async (employeeId, password) => {
     throw error.response?.data || error.message;
   }
 };
+
+// export const loginUser = async (employeeId, password) => {
+//   try {
+//     console.log("Login attempt:", { employeeId, password: "***" });
+
+//     const response = await api.post("/auth/login", { employeeId, password });
+
+//     console.log("✅ Login SUCCESS:", response.status, response.data);
+
+//     if (response.data.token) {
+//       localStorage.setItem("user", JSON.stringify(response.data));
+//       toast.success("Login successful!");
+//     }
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("❌ Login FAILED:", {
+//       status: error.response?.status,
+//       data: error.response?.data,
+//       message: error.message,
+//     });
+
+//     // More specific error messages
+//     if (error.response?.status === 401) {
+//       toast.error("Invalid credentials");
+//     } else if (error.response?.status === 500) {
+//       toast.error("Server error - please try again");
+//     } else {
+//       toast.error(error.response?.data?.message || "Login failed");
+//     }
+
+//     throw error;
+//   }
+// };
 
 export const logoutUser = () => localStorage.removeItem("user");
 
@@ -170,7 +206,7 @@ export const getAllAssets = async (
   page = 0,
   size = 10,
   sortField = "id",
-  sortDirection = "asc"
+  sortDirection = "asc",
 ) => {
   try {
     const response = await api.get("/assets", {
@@ -193,33 +229,6 @@ export const getAllAssets = async (
     };
   }
 };
-
-// export const fetchAssets = async () => {
-//   const params = new URLSearchParams({
-//     status: selectedStatus || "",
-//     type: selectedType || "",
-//     department: selectedDept || "",
-//     createdBy: createdBy || "",
-//     siteId: selectedSite || "",
-//     locationId: selectedLocation || "",
-//     purchaseStart: purchaseStartDate || "",
-//     purchaseEnd: purchaseEndDate || "",
-//     createdStart: createdStartDateTime || "",
-//     createdEnd: createdEndDateTime || "",
-//     keyword: searchKeyword || "",
-//     page: currentPage,
-//     size: 10,
-//   });
-
-//   const res = await api.get(`/assets/filter?${params}`);
-//   const data = await res.json();
-//   setAssets(data.content);
-//   setPaginationInfo({
-//     totalPages: data.totalPages,
-//     totalElements: data.totalElements,
-//     last: data.last,
-//   });
-// };
 
 export const fetchAssets = async (filters) => {
   const params = new URLSearchParams();
@@ -261,12 +270,12 @@ export const exportAssetsExcel = async (filters) => {
       `/assets/filter/export?${params.toString()}`,
       {
         responseType: "blob", // important for file download
-      }
+      },
     );
 
     // Create blob link to download
     const url = window.URL.createObjectURL(
-      response.data instanceof Blob ? response.data : new Blob([response.data])
+      response.data instanceof Blob ? response.data : new Blob([response.data]),
     );
     const link = document.createElement("a");
     link.href = url;
@@ -334,7 +343,7 @@ export const getTicketsBySite = async (
   startDate,
   endDate,
   page = 0,
-  size = 50
+  size = 50,
 ) => {
   const params = {
     startDate,
@@ -366,7 +375,7 @@ export const getTicketsBySite = async (
 export const updateTicketStatus = async (ticketId, status) => {
   try {
     const response = await api.put(
-      `/user-assets/tickets/${ticketId}/status?status=${status}`
+      `/user-assets/tickets/${ticketId}/status?status=${status}`,
     );
 
     if (response.status !== 200) {
@@ -378,7 +387,7 @@ export const updateTicketStatus = async (ticketId, status) => {
   } catch (error) {
     console.error(
       "Error updating ticket status:",
-      error.response?.data || error.message
+      error.response?.data || error.message,
     );
     throw error;
   }
@@ -409,7 +418,7 @@ export const downloadAttachment = async (ticketId) => {
       `/user-assets/tickets/${ticketId}/attachment`,
       {
         responseType: "blob",
-      }
+      },
     );
 
     // ✅ Extract filename from headers
@@ -447,7 +456,7 @@ export const updateTicketCcEmail = async (ticketId, email, add) => {
       {
         email,
         add,
-      }
+      },
     );
     return response.data; // List of updated CC emails
   } catch (error) {
@@ -570,20 +579,6 @@ export const getAssetsByUser = async (query) => {
   }
 };
 
-// export const getAssetsByUser = async (empId) => {
-//   const res = await api.get(`/assets/user/${empId}`); // or use axios.get if axios is in use
-//   if (!res.ok) {
-//     throw new Error(`Failed to fetch assets, status code: ${res.status}`);
-//   }
-//   console.log()
-//   const data = await res.json();
-//   // Ensure data is the array you expect (List<AssetDTO>)
-//   if (!Array.isArray(data)) {
-//     throw new Error("Invalid data format from API");
-//   }
-//   return data;
-// };
-
 export const reserveAsset = async (assetTag, formData) => {
   try {
     const response = await api.put(`/assets/reserve/${assetTag}`, formData);
@@ -646,7 +641,7 @@ export const uploadAssetPhoto = async (id, files) => {
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" },
-      }
+      },
     );
 
     toast.success("Photo uploaded successfully!");
@@ -676,7 +671,7 @@ export const createChildAsset = async (childAssetData) => {
   try {
     const response = await api.post(
       "/child-assets/create/child",
-      childAssetData
+      childAssetData,
     );
     return response.data; // Returns ChildAssetDTO
   } catch (error) {
@@ -708,7 +703,7 @@ export const getAssetPhotos = async (assetTag) => {
   } catch (error) {
     console.error(
       "Error fetching asset photos:",
-      error.response?.data || error.message
+      error.response?.data || error.message,
     );
     return [];
   }
@@ -751,7 +746,7 @@ export const uploadAssetDocuments = async (assetTag, formData) => {
       formData,
       {
         headers: { "Content-Type": "multipart/form-data" }, // Required for file uploads
-      }
+      },
     );
     return response.data; // Return success message
   } catch (error) {
@@ -791,7 +786,7 @@ export const addMessageToTicket = async (ticketId, messageDTO) => {
   try {
     const response = await api.post(
       `/user-assets/tickets/${ticketId}/messages`,
-      messageDTO
+      messageDTO,
     );
     return response.data;
   } catch (error) {
@@ -806,7 +801,7 @@ export const createTicket = async (ticketData, attachment) => {
   // Add JSON ticket data as a Blob (with content-type application/json)
   formData.append(
     "ticket",
-    new Blob([JSON.stringify(ticketData)], { type: "application/json" })
+    new Blob([JSON.stringify(ticketData)], { type: "application/json" }),
   );
   // console.log("sending ticket data are ", formData);
 
@@ -846,7 +841,7 @@ export const changeTicketEmployeeIfSame = async (ticketId, newEmployeeId) => {
         params: {
           newEmployeeId,
         },
-      }
+      },
     );
     return response.data;
   } catch (error) {
@@ -940,7 +935,7 @@ export const markAssetAsInRepair = async (
   assetId,
   statusNote,
   userId,
-  markAsRepaired
+  markAsRepaired,
 ) => {
   try {
     const response = await api.put(
@@ -948,12 +943,12 @@ export const markAssetAsInRepair = async (
       null, // No request body, as all data is passed via query params
       {
         params: { userId, statusNote, markAsRepaired }, // ✅ Correctly passing params as per backend
-      }
+      },
     );
 
     // Show success toast
     toast.success(
-      response.data?.message || "✅ Asset marked as in repair successfully!"
+      response.data?.message || "✅ Asset marked as in repair successfully!",
     );
 
     return response.data;
@@ -974,7 +969,7 @@ export const markAssetAsInRepair = async (
 export const resetAssetStatus = async (
   assetId,
   statusNote,
-  modifiedBy = "Developer"
+  modifiedBy = "Developer",
 ) => {
   try {
     const response = await api.put(
@@ -982,7 +977,7 @@ export const resetAssetStatus = async (
       null, // No request body
       {
         params: { statusNote, modifiedBy }, // ✅ Passing `modifiedBy` dynamically
-      }
+      },
     );
 
     // Show success message
@@ -1003,7 +998,7 @@ export const resetAssetStatus = async (
 export const disposeAsset = async (
   assetId,
   statusNote,
-  modifiedBy = "Developer"
+  modifiedBy = "Developer",
 ) => {
   try {
     const response = await api.put(`/assets/dispose/${assetId}`, {
@@ -1027,7 +1022,7 @@ export const disposeAsset = async (
 export const markAssetAsLost = async (
   assetId,
   statusNote,
-  modifiedBy = "Developer"
+  modifiedBy = "Developer",
 ) => {
   try {
     const response = await api.put(`/assets/lost/${assetId}`, {
@@ -1036,7 +1031,7 @@ export const markAssetAsLost = async (
     });
 
     toast.success(
-      response.data.message || "✅ Asset marked as lost successfully!"
+      response.data.message || "✅ Asset marked as lost successfully!",
     );
 
     return response.data; // Returns full backend response
@@ -1055,7 +1050,7 @@ export const updateAssetStatusToRepair = async (
   assetId,
   userId,
   note,
-  markAsRepaired
+  markAsRepaired,
 ) => {
   try {
     const response = await axios.put(
@@ -1067,7 +1062,7 @@ export const updateAssetStatusToRepair = async (
           statusNote: note,
           markAsRepaired,
         },
-      }
+      },
     );
     toast.success(response.data || "✅ Asset status reset successfully!");
     return { success: true, message: response.data };
@@ -1175,7 +1170,7 @@ export const searchEmployees = async (query) => {
   } catch (error) {
     console.error(
       "Error searching employees:",
-      error?.response?.data || error.message
+      error?.response?.data || error.message,
     );
     return [];
   }
@@ -1373,13 +1368,13 @@ export const getAssignees = () => {
 export const getTicketsWithFeedback = async (
   employeeId,
   page = 0,
-  size = 20
+  size = 20,
 ) => {
   const params = new URLSearchParams({ page, size });
   if (employeeId) params.append("employeeId", employeeId);
 
   const response = await api.get(
-    `user-assets/tickets/feedbacks?${params.toString()}`
+    `user-assets/tickets/feedbacks?${params.toString()}`,
   );
   // console.log("res ", response.data);
   return response.data; // should be PaginatedResponse<TicketWithFeedbackDTO>
@@ -1414,7 +1409,7 @@ export const fetchLocationStats = () =>
 
 export const getAssigneeResolutionStats = async (employeeId) => {
   const response = await api.get(
-    `/user-assets/tickets/stats/resolution/assignee/${employeeId}`
+    `/user-assets/tickets/stats/resolution/assignee/${employeeId}`,
   );
 
   return response.data;
@@ -1511,7 +1506,7 @@ export const uploadSimAttachment = async (simId, formData) => {
 // Delete attachment
 export const deleteSimAttachment = async (simId, attachmentId) => {
   const response = await api.delete(
-    `/sim/attachments/${simId}/${attachmentId}`
+    `/sim/attachments/${simId}/${attachmentId}`,
   );
   return response.data;
 };
@@ -1559,7 +1554,7 @@ export const assignSim = async (id, { employeeId, performedBy, note }) => {
 export const downloadSimAttachment = async (attachmentId, fileName) => {
   const response = await api.get(
     `/sim-cards/attachments/download/${attachmentId}`,
-    { responseType: "blob" }
+    { responseType: "blob" },
   );
 
   const blob = new Blob([response.data]);
@@ -1599,7 +1594,7 @@ export const resetUserPasswordByEmpId = async (employeeId) => {
     {},
     {
       withCredentials: true, // if you use cookies/JWT interceptor
-    }
+    },
   );
   return res.data;
 };
@@ -1637,3 +1632,54 @@ export const downloadChildAssetsExcel = (filters) => {
     responseType: "blob",
   });
 };
+
+// export const updateChildAsset = async (childAssetTag, payload) => {
+//   const res = await api.patch(`child-assets/${childAssetTag}`, payload);
+//   return res.data;
+// };
+
+// // Get Asset History
+// export const getChildAssetHistory = async (childAssetTag) => {
+//   const res = await api.get(`child-assets/${childAssetTag}/history`);
+//   return res.data;
+// };
+
+// export const getChildAssetHistory = async (childAssetTag) => {
+//   const res = await api.get(`/api/child-assets/${childAssetTag}/history`);
+//   return res.data;
+// };
+
+// export const updateChildAsset = async (childAssetTag, payload) => {
+//   const res = await api.patch(`/api/child-assets/${childAssetTag}`, payload);
+//   return res.data;
+// };
+
+// Update Child Asset
+export const updateChildAsset = async (childAssetTag, payload) => {
+  const res = await api.patch(`/child-assets/${childAssetTag}`, payload);
+  return res.data;
+};
+
+// Get Child Asset by Tag
+export const getChildAssetByTag = async (childAssetTag) => {
+  const res = await api.get(`/child-assets/${childAssetTag}`);
+  return res.data;
+};
+
+// Get Asset History
+export const getChildAssetHistory = async (childAssetTag) => {
+  const res = await api.get(`/child-assets/${childAssetTag}/history`);
+  return res.data;
+};
+
+// Filter Child Assets
+// export const fetchChildAssets = (filters) => {
+//   const params = new URLSearchParams();
+//   Object.entries(filters).forEach(([key, value]) => {
+//     if (value !== null && value !== undefined && value !== "") {
+//       params.append(key, value);
+//     }
+//   });
+
+//   return api.get(`/child-assets/filter?${params.toString()}`);
+// };

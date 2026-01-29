@@ -97,44 +97,6 @@ const AssetList = () => {
     currentPage,
   ]);
 
-  // const loadAssets = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const data = await fetchAssets({
-  //       status: selectedStatus,
-  //       type: selectedType,
-  //       department: selectedDepartment,
-  //       createdBy,
-  //       siteId: selectedSite,
-  //       locationId: selectedLocation,
-  //       purchaseStart: purchaseStartDate,
-  //       purchaseEnd: purchaseEndDate,
-  //       createdStart: createdStartDateTime,
-  //       createdEnd: createdEndDateTime,
-  //       keyword: searchKeyword,
-  //       page: currentPage,
-  //       size: pageSize,
-  //     });
-
-  //     setAssets(data.content || []);
-  //     console.log(
-  //       "pagination info are ",
-  //       data.totalPages,
-  //       data.totalElements,
-  //       data.last
-  //     );
-  //     setPaginationInfo({
-  //       totalPages: data.totalPages,
-  //       totalElements: data.totalElements,
-  //       last: data.last,
-  //     });
-  //   } catch (err) {
-  //     console.error("Error fetching assets:", err);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const loadAssets = async (page = currentPage) => {
     setLoading(true);
     try {
@@ -197,7 +159,7 @@ const AssetList = () => {
     try {
       // Wait for all API requests
       const tagList = await Promise.all(
-        assets.map((asset) => getAssetCodes(asset.assetTag))
+        assets.map((asset) => getAssetCodes(asset.assetTag)),
       );
 
       navigate("/print/tags", {
@@ -414,6 +376,7 @@ const AssetList = () => {
             <tr>
               {[
                 "Asset Tag",
+                "Status",
                 "Name",
                 "Brand",
                 "Model",
@@ -423,7 +386,7 @@ const AssetList = () => {
                 "Description",
                 "Serial No.",
                 "Purchase Date",
-                "Status",
+
                 "Location",
                 "Assigned User",
                 "Status Note",
@@ -455,6 +418,19 @@ const AssetList = () => {
                     {asset.assetTag}
                   </button>
                 </td>
+                <td className="px-3 py-2 border border-gray-300">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      asset.status === "Available"
+                        ? "bg-green-100 text-green-700"
+                        : asset.status === "Assigned"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {asset.status}
+                  </span>
+                </td>
                 <td className="px-2 py-1 border max-w-[200px] truncate">
                   {asset.name}
                 </td>
@@ -485,19 +461,7 @@ const AssetList = () => {
                 <td className="px-3 py-2 border border-gray-300">
                   {asset.purchaseDate}
                 </td>
-                <td className="px-3 py-2 border border-gray-300">
-                  <span
-                    className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      asset.status === "Available"
-                        ? "bg-green-100 text-green-700"
-                        : asset.status === "Assigned"
-                        ? "bg-red-100 text-red-700"
-                        : "bg-gray-100 text-gray-700"
-                    }`}
-                  >
-                    {asset.status}
-                  </span>
-                </td>
+
                 <td className="px-2 py-1 border max-w-[200px] truncate">
                   {asset.locationName}
                 </td>
