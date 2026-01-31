@@ -1633,27 +1633,6 @@ export const downloadChildAssetsExcel = (filters) => {
   });
 };
 
-// export const updateChildAsset = async (childAssetTag, payload) => {
-//   const res = await api.patch(`child-assets/${childAssetTag}`, payload);
-//   return res.data;
-// };
-
-// // Get Asset History
-// export const getChildAssetHistory = async (childAssetTag) => {
-//   const res = await api.get(`child-assets/${childAssetTag}/history`);
-//   return res.data;
-// };
-
-// export const getChildAssetHistory = async (childAssetTag) => {
-//   const res = await api.get(`/api/child-assets/${childAssetTag}/history`);
-//   return res.data;
-// };
-
-// export const updateChildAsset = async (childAssetTag, payload) => {
-//   const res = await api.patch(`/api/child-assets/${childAssetTag}`, payload);
-//   return res.data;
-// };
-
 // Update Child Asset
 export const updateChildAsset = async (childAssetTag, payload) => {
   const res = await api.patch(`/child-assets/${childAssetTag}`, payload);
@@ -1672,14 +1651,14 @@ export const getChildAssetHistory = async (childAssetTag) => {
   return res.data;
 };
 
-// Filter Child Assets
-// export const fetchChildAssets = (filters) => {
-//   const params = new URLSearchParams();
-//   Object.entries(filters).forEach(([key, value]) => {
-//     if (value !== null && value !== undefined && value !== "") {
-//       params.append(key, value);
-//     }
-//   });
+// Verify OTP
+export const verifyAssetOtp = async (payload) => {
+  const res = await api.post(`/assets/asset-assignments/verify`, payload);
+  return res.data;
+};
 
-//   return api.get(`/child-assets/filter?${params.toString()}`);
-// };
+// Resend OTP
+export const resendAssetOtp = async (token) => {
+  const res = await api.post(`/assets/asset-assignments/resend-otp`, { token });
+  return res.data;
+};

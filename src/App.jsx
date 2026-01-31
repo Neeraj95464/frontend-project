@@ -37,6 +37,7 @@ import UsersList from "./components/UsersList";
 import VendorListPage from "./components/VendorListPage";
 import Reports from "./components/reports";
 import Settings from "./components/settings";
+import AssetAcceptance from "./pages/AssetAcceptance";
 import AssetList from "./pages/AssetList";
 import BulkImportPage from "./pages/BulkImportPage";
 import ChildAssetsPage from "./pages/ChildAssetsPage";
@@ -78,6 +79,10 @@ const App = () => {
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/print-tags" element={<PrintPage />} />
+                <Route
+                  path="/asset-acceptance/:token"
+                  element={<AssetAcceptance />}
+                />
 
                 {/* Protected Routes */}
                 <Route
