@@ -209,6 +209,7 @@ const AssetList = () => {
           <option value="LOST">Lost</option>
           <option value="DISPOSED">Disposed</option>
           <option value="DELETED">Deleted</option>
+          <option value="PENDING">UAP</option>
         </select>
 
         {/* Type */}
@@ -386,7 +387,6 @@ const AssetList = () => {
                 "Description",
                 "Serial No.",
                 "Purchase Date",
-
                 "Location",
                 "Assigned User",
                 "Status Note",

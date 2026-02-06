@@ -139,7 +139,15 @@ const App = () => {
                 <Route
                   path="/cug-sim"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER", "IT"]}>
+                    <PrivateRoute
+                      allowedRoles={[
+                        "ADMIN",
+                        "MANAGER",
+                        "IT",
+                        "EXECUTIVE",
+                        "HR_ADMIN",
+                      ]}
+                    >
                       <CugSimList />
                     </PrivateRoute>
                   }
