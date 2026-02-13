@@ -51,27 +51,11 @@ export default function CugSimDetails() {
       });
   }, []);
 
-  // Load locations when edit site changes
-  // useEffect(() => {
-  //   if (editFormData.siteId) {
-  //     getLocationsBySite(editFormData.siteId)
-  //       .then((locations) => {
-  //         setEditLocations(locations);
-  //       })
-  //       .catch((err) => {
-  //         console.error("Error fetching locations", err);
-  //       });
-  //   } else {
-  //     setEditLocations([]);
-  //     setEditFormData((prev) => ({ ...prev, locationId: "" }));
-  //   }
-  // }, [editFormData.siteId]);
-
   useEffect(() => {
     if (editFormData.siteName) {
       // Find siteId from siteName for API call
       const selectedSite = sites.find(
-        (site) => site.name === editFormData.siteName
+        (site) => site.name === editFormData.siteName,
       );
       if (selectedSite) {
         getLocationsBySite(selectedSite.siteId)
@@ -160,9 +144,27 @@ export default function CugSimDetails() {
     }
   };
 
+  // const handleUnassign = async () => {
+  //   try {
+  //     await unassignSim(id);
+  //     toast.success("SIM unassigned successfully!");
+  //     loadDetails();
+  //   } catch (error) {
+  //     toast.error("Failed to unassign SIM");
+  //   }
+  // };
+
   const handleUnassign = async () => {
+    const note = prompt("Please enter the reason for unassigning this SIM:");
+
+    // ❌ If user clicks Cancel or leaves empty
+    if (!note || note.trim() === "") {
+      toast.error("Unassign note is mandatory");
+      return;
+    }
+
     try {
-      await unassignSim(id);
+      await unassignSim(id, note.trim());
       toast.success("SIM unassigned successfully!");
       loadDetails();
     } catch (error) {
@@ -213,41 +215,6 @@ export default function CugSimDetails() {
       setUploading(false);
     }
   };
-
-  // const handleDeleteAttachment = async (attachmentId) => {
-  //   if (!window.confirm("Are you sure you want to delete this attachment?"))
-  //     return;
-  //   try {
-  //     await deleteSimAttachment(id, attachmentId);
-  //     toast.success("Attachment deleted!");
-  //     loadDetails();
-  //   } catch (error) {
-  //     toast.error("Failed to delete attachment");
-  //   }
-  // };
-
-  // const handleDownloadAttachment = async (attachmentId, fileName) => {
-  //   try {
-  //     const blob = await downloadSimAttachment(id, attachmentId);
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement("a");
-  //     a.href = url;
-  //     a.download = fileName;
-  //     a.click();
-  //     window.URL.revokeObjectURL(url);
-  //   } catch (error) {
-  //     toast.error("Failed to download file");
-  //   }
-  // };
-
-  // const formatDate = (dateString) => {
-  //   if (!dateString) return "---";
-  //   const date = new Date(dateString);
-  //   return date.toLocaleString("en-IN", {
-  //     dateStyle: "medium",
-  //     timeStyle: "short",
-  //   });
-  // };
 
   const formatDateOnly = (dateString) => {
     if (!dateString) return "---";
@@ -362,7 +329,7 @@ export default function CugSimDetails() {
           <div className="flex items-center gap-2">
             <span
               className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusBadgeColor(
-                sim.status
+                sim.status,
               )}`}
             >
               {sim.status}
@@ -623,7 +590,7 @@ export default function CugSimDetails() {
               Current Status:{" "}
               <span
                 className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(
-                  sim.status
+                  sim.status,
                 )}`}
               >
                 {sim.status}
@@ -637,7 +604,7 @@ export default function CugSimDetails() {
                     key={status}
                     onClick={() => handleStatusUpdate(status)}
                     className={`px-3 py-2 rounded-lg text-sm font-medium transition-all hover:shadow-md ${getStatusButtonColor(
-                      status
+                      status,
                     )}`}
                   >
                     {status}
@@ -732,121 +699,6 @@ export default function CugSimDetails() {
           </div>
         </div>
 
-        {/* Attachments List */}
-        {/* <div className="p-6">
-          {sim.attachments && sim.attachments.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {sim.attachments.map((attachment) => (
-                <div
-                  key={attachment.id}
-                  className="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="bg-blue-100 p-2 rounded-lg">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-blue-600"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                          />
-                        </svg>
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium text-gray-800 truncate">
-                          {attachment.fileName}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {formatDate(attachment.uploadedAt)}
-                        </p>
-                        {attachment.note && (
-                          <p className="text-xs text-gray-400 mt-1 truncate">
-                            {attachment.note}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      onClick={() =>
-                        handleDownloadAttachment(
-                          attachment.id,
-                          attachment.fileName
-                        )
-                      }
-                      className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                        />
-                      </svg>
-                      Download
-                    </button>
-                    <button
-                      onClick={() => handleDeleteAttachment(attachment.id)}
-                      className="bg-red-50 hover:bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-all"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-12 w-12 text-gray-300 mx-auto mb-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                />
-              </svg>
-              <p className="text-gray-500">No attachments yet</p>
-              <p className="text-gray-400 text-sm mt-1">
-                Upload files using the form above
-              </p>
-            </div>
-          )}
-        </div> */}
-
         <div className="p-6">
           {attachments && attachments.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -897,7 +749,7 @@ export default function CugSimDetails() {
                       onClick={() =>
                         handleDownloadAttachment(
                           attachment.id,
-                          attachment.fileName
+                          attachment.fileName,
                         )
                       }
                       className="flex-1 bg-green-50 hover:bg-green-100 text-green-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-1"
@@ -1018,7 +870,7 @@ export default function CugSimDetails() {
                   <td className="px-6 py-4">
                     <span
                       className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getEventBadgeColor(
-                        h.eventType
+                        h.eventType,
                       )}`}
                     >
                       {h.eventType}
@@ -1052,7 +904,7 @@ export default function CugSimDetails() {
                 <div className="flex items-center justify-between">
                   <span
                     className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getEventBadgeColor(
-                      h.eventType
+                      h.eventType,
                     )}`}
                   >
                     {h.eventType}
@@ -1077,143 +929,6 @@ export default function CugSimDetails() {
           )}
         </div>
       </div>
-
-      {/* Edit SIM Info Modal */}
-      {/* {isEditModalOpen && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between sticky top-0 bg-white">
-              <h2 className="text-lg font-semibold text-gray-800">
-                Edit SIM Information
-              </h2>
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <EditField
-                  label="Phone Number"
-                  value={editFormData.phoneNumber}
-                  onChange={(v) =>
-                    setEditFormData({ ...editFormData, phoneNumber: v })
-                  }
-                />
-                <EditField
-                  label="ICCID"
-                  value={editFormData.iccid}
-                  onChange={(v) =>
-                    setEditFormData({ ...editFormData, iccid: v })
-                  }
-                />
-                <EditField
-                  label="IMSI"
-                  value={editFormData.imsi}
-                  onChange={(v) =>
-                    setEditFormData({ ...editFormData, imsi: v })
-                  }
-                />
-                <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">
-                    Provider
-                  </label>
-                  <select
-                    value={editFormData.provider || ""}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        provider: e.target.value,
-                      })
-                    }
-                    className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-                  >
-                    <option value="">Select Provider</option>
-                    <option value="AIRTEL">Airtel</option>
-                    <option value="VI">Vi</option>
-                    <option value="JIO">Jio</option>
-                    <option value="BSNL">BSNL</option>
-                  </select>
-                </div>
-                <EditField
-                  label="Purchase From"
-                  value={editFormData.purchaseFrom}
-                  onChange={(v) =>
-                    setEditFormData({ ...editFormData, purchaseFrom: v })
-                  }
-                />
-                <EditField
-                  label="Cost"
-                  value={editFormData.cost}
-                  onChange={(v) =>
-                    setEditFormData({ ...editFormData, cost: v })
-                  }
-                  type="number"
-                />
-                <EditField
-                  label="Purchase Date"
-                  value={editFormData.purchaseDate?.split("T")[0]}
-                  onChange={(v) =>
-                    setEditFormData({ ...editFormData, purchaseDate: v })
-                  }
-                  type="date"
-                />
-                <EditField
-                  label="Activated At"
-                  value={editFormData.activatedAt?.split("T")[0]}
-                  onChange={(v) =>
-                    setEditFormData({ ...editFormData, activatedAt: v })
-                  }
-                  type="date"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">
-                  Note
-                </label>
-                <textarea
-                  value={editFormData.note || ""}
-                  onChange={(e) =>
-                    setEditFormData({ ...editFormData, note: e.target.value })
-                  }
-                  rows={3}
-                  className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none"
-                  placeholder="Add a note..."
-                />
-              </div>
-            </div>
-            <div className="px-6 py-4 border-t border-gray-100 flex justify-end gap-3 sticky bottom-0 bg-white">
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="px-6 py-2.5 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdateSimInfo}
-                className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium hover:from-blue-700 hover:to-indigo-700"
-              >
-                Save Changes
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
 
       {isEditModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">

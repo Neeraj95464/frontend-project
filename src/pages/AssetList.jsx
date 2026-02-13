@@ -378,7 +378,7 @@ const AssetList = () => {
               {[
                 "Asset Tag",
                 "Status",
-                "Name",
+                // "Name",
                 "Brand",
                 "Model",
                 "Department",
@@ -431,9 +431,9 @@ const AssetList = () => {
                     {asset.status}
                   </span>
                 </td>
-                <td className="px-2 py-1 border max-w-[200px] truncate">
+                {/* <td className="px-2 py-1 border max-w-[200px] truncate">
                   {asset.name}
-                </td>
+                </td> */}
                 <td className="px-3 py-2 border border-gray-300">
                   {asset.brand}
                 </td>

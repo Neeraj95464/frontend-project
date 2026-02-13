@@ -2,8 +2,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 // const API_URL = "http://localhost:7355/api";
-const API_URL = "https://mahavir-asset.duckdns.org:7355/api";
-
+// const API_URL = "https://mahavir-asset.duckdns.org:7355/api";
+const API_URL = "https://erp.mahavirgroup.co/api";
 // Create Axios instance
 const api = axios.create({
   baseURL: API_URL,
@@ -722,7 +722,7 @@ export const importAssets = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await api.post("/assets/import", formData, {
+  const res = await api.post("/assets/import/with-employees", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return res.data;
@@ -1466,8 +1466,15 @@ export const getSimDetails = async (id) => {
   return response.data;
 };
 
-export const unassignSim = async (id) => {
-  const response = await api.post(`/sim-cards/${id}/unassign`);
+// export const unassignSim = async (id) => {
+//   const response = await api.post(`/sim-cards/${id}/unassign`);
+//   return response.data;
+// };
+
+export const unassignSim = async (id, unAssignedNote) => {
+  const response = await api.post(`/sim-cards/${id}/unassign`, null, {
+    params: { unAssignedNote },
+  });
   return response.data;
 };
 

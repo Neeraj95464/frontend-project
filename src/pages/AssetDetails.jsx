@@ -120,7 +120,7 @@ const AssetDetails = ({ asset, assetPhotos }) => {
       let confirmRepair = false;
       if (asset?.status === "IN_REPAIR") {
         confirmRepair = window.confirm(
-          "This asset is already in repair. Mark as repaired?"
+          "This asset is already in repair. Mark as repaired?",
         );
         if (!confirmRepair) return;
       }
@@ -128,7 +128,7 @@ const AssetDetails = ({ asset, assetPhotos }) => {
         assetTag,
         note,
         1,
-        confirmRepair
+        confirmRepair,
       );
       toast.success(result.message || "Asset status updated!");
     } catch (error) {
@@ -143,7 +143,7 @@ const AssetDetails = ({ asset, assetPhotos }) => {
     { key: "assignedUserName", label: "User Name" },
   ];
   const AssetFields = [
-    { key: "name", label: "Asset Name" },
+    // { key: "name", label: "Asset Name" },
     { key: "assetTag", label: "Asset Tag" },
     { key: "serialNumber", label: "Serial Number" },
     { key: "brand", label: "Brand" },
