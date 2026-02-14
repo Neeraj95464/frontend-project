@@ -27,7 +27,7 @@ const navItems = [
     icon: FiUsers,
     to: "/ticket",
     roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN", "EXECUTIVE"],
-    // exact: true,
+    exact: true, // ✅ ADD THIS
   },
   {
     label: "Admin Tickets",

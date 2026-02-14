@@ -114,7 +114,7 @@ export default function TicketingPortal() {
 
       // Remove null/undefined values
       Object.keys(params).forEach(
-        (key) => params[key] == null && delete params[key]
+        (key) => params[key] == null && delete params[key],
       );
 
       const response = await downloadUserTickets(params);
@@ -128,7 +128,7 @@ export default function TicketingPortal() {
       link.href = url;
       link.setAttribute(
         "download",
-        `tickets_${dayjs().format("YYYY-MM-DD")}.xlsx`
+        `tickets_${dayjs().format("YYYY-MM-DD")}.xlsx`,
       );
       document.body.appendChild(link);
       link.click();
@@ -222,7 +222,7 @@ export default function TicketingPortal() {
 
       const savedMessage = await addMessageToTicket(
         selectedTicket.id,
-        messageDTO
+        messageDTO,
       );
 
       setNewMessage("");
@@ -255,8 +255,8 @@ export default function TicketingPortal() {
       await updateTicketStatus(ticketId, newStatus);
       setTickets((prevTickets) =>
         prevTickets.map((ticket) =>
-          ticket.id === ticketId ? { ...ticket, status: newStatus } : ticket
-        )
+          ticket.id === ticketId ? { ...ticket, status: newStatus } : ticket,
+        ),
       );
 
       // Refresh ticket list after status update
@@ -265,8 +265,8 @@ export default function TicketingPortal() {
       console.error("Failed to update status", error);
       setTickets((prevTickets) =>
         prevTickets.map((ticket) =>
-          ticket.id === ticketId ? { ...ticket, status: oldStatus } : ticket
-        )
+          ticket.id === ticketId ? { ...ticket, status: oldStatus } : ticket,
+        ),
       );
     }
   };
@@ -324,7 +324,7 @@ export default function TicketingPortal() {
 
       // Remove null/undefined values
       Object.keys(params).forEach(
-        (key) => params[key] == null && delete params[key]
+        (key) => params[key] == null && delete params[key],
       );
 
       // console.log("🔍 API params:", params); // DEBUG
@@ -438,16 +438,16 @@ export default function TicketingPortal() {
   }, []);
 
   return (
-    <div className="lg:ml-40 pt-16">
+    <div className="lg:ml-40 pt-16 py-0">
       <div>
         <TicketModal
           isOpen={isDialogOpen}
           onClose={handleCreateTicketModalClose}
           className="z-50"
         />
-        <Card>
-          <div className="border-b border-gray-200 bg-gray-50">
-            <div className="flex gap-3 px-6 py-4 items-center">
+        <Card className="py-0">
+          <div className="border-b border-gray-200 bg-gray-50 py-0">
+            <div className="flex gap-3 px-6 items-center py-0">
               <button
                 onClick={() => setShowFilters(!showFilters)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-all font-medium border border-gray-200"
@@ -507,7 +507,8 @@ export default function TicketingPortal() {
                 className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md font-semibold shadow-sm transition-all"
                 disabled={loading}
               >
-                📥
+                <span>📥</span>
+                <span>Download</span>
               </Button>
             </div>
 
@@ -539,7 +540,7 @@ export default function TicketingPortal() {
                       onChange={(e) =>
                         handleFilterChange(
                           "siteIdLocationId",
-                          e.target.value || null
+                          e.target.value || null,
                         )
                       }
                       className="text-xs p-1.5 pr-6 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all min-w-[100px]"
@@ -731,7 +732,7 @@ export default function TicketingPortal() {
                           else {
                             // toast.error("Admin access required to view ticket details");
                             console.log(
-                              "Admin role required to open ticket modal"
+                              "Admin role required to open ticket modal",
                             );
                           }
                         }}
@@ -809,14 +810,14 @@ export default function TicketingPortal() {
                             <>
                               {format(
                                 parseISO(ticket.firstRespondedAt.split(".")[0]),
-                                "d/M/yyyy"
+                                "d/M/yyyy",
                               )}{" "}
                               (
                               {formatDistanceToNow(
                                 parseISO(ticket.firstRespondedAt.split(".")[0]),
                                 {
                                   addSuffix: true,
-                                }
+                                },
                               )}
                               )
                             </>
@@ -830,7 +831,7 @@ export default function TicketingPortal() {
                             <>
                               {format(
                                 parseISO(ticket.dueDate.split(".")[0]),
-                                "d/M/yyyy"
+                                "d/M/yyyy",
                               )}{" "}
                               (
                               <span
@@ -844,11 +845,11 @@ export default function TicketingPortal() {
                                   parseISO(ticket.dueDate.split(".")[0]),
                                   {
                                     addSuffix: true,
-                                  }
+                                  },
                                 )}
                                 {isBefore(
                                   parseISO(ticket.dueDate),
-                                  new Date()
+                                  new Date(),
                                 ) && " – due date crossed"}
                               </span>
                               )
@@ -865,7 +866,7 @@ export default function TicketingPortal() {
                             <>
                               {format(
                                 parseISO(ticket.lastUpdated.split(".")[0]),
-                                "d/M/yyyy"
+                                "d/M/yyyy",
                               )}{" "}
                               (
                               <span className="text-blue-600">
@@ -873,7 +874,7 @@ export default function TicketingPortal() {
                                   parseISO(ticket.lastUpdated.split(".")[0]),
                                   {
                                     addSuffix: true,
-                                  }
+                                  },
                                 )}
                               </span>
                               )
@@ -890,7 +891,7 @@ export default function TicketingPortal() {
                             <>
                               {format(
                                 parseISO(ticket.closedAt.split(".")[0]),
-                                "d/M/yyyy"
+                                "d/M/yyyy",
                               )}{" "}
                               (
                               <span className="text-green-600">
@@ -898,7 +899,7 @@ export default function TicketingPortal() {
                                   parseISO(ticket.closedAt.split(".")[0]),
                                   {
                                     addSuffix: true,
-                                  }
+                                  },
                                 )}
                               </span>
                               )
@@ -933,7 +934,6 @@ export default function TicketingPortal() {
           )}
         </Card>
       </div>
-
       {/* Right Section - Message Panel */}
       {selectedTicket && (
         <div
@@ -1018,7 +1018,11 @@ export default function TicketingPortal() {
               <h2 className="text-sm font-semibold text-gray-800">
                 {selectedTicket.title}
               </h2>
-              <p className="text-xs text-gray-500 mt-1">
+              {/* <p className="text-xs text-gray-500 mt-1">
+                {selectedTicket.description}
+              </p> */}
+
+              <p className="text-xs text-gray-500 mt-1 whitespace-pre-wrap">
                 {selectedTicket.description}
               </p>
             </div>
@@ -1059,7 +1063,11 @@ export default function TicketingPortal() {
                         {new Date(msg.sentAt).toLocaleString()}
                       </span>
                     </div>
-                    <p className="text-gray-700 text-sm">{msg.message}</p>
+                    {/* <p className="text-gray-700 text-sm">{msg.message}</p> */}
+
+                    <p className="text-gray-700 text-sm whitespace-pre-wrap">
+                      {msg.message}
+                    </p>
                   </div>
                 ))
             )}
@@ -1096,7 +1104,7 @@ export default function TicketingPortal() {
                       setMessageType((prev) =>
                         prev === "PUBLIC_RESPONSE"
                           ? "INTERNAL_NOTE"
-                          : "PUBLIC_RESPONSE"
+                          : "PUBLIC_RESPONSE",
                       )
                     }
                     className={`absolute bottom-2 right-3 text-sm px-1.5 py-0.5 rounded-md ${
@@ -1162,7 +1170,7 @@ export default function TicketingPortal() {
                                 await handleAddMessage();
                                 await handleCloseTicket();
                                 toast.success(
-                                  "Message sent and ticket closed."
+                                  "Message sent and ticket closed.",
                                 );
                               } catch (err) {
                                 toast.error("Failed to send and close.");
