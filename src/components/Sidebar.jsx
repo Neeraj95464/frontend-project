@@ -92,10 +92,10 @@ const navItems = [
     roles: ["HR_ADMIN"],
   },
   // {
-  //   label: "My Assets",
+  //   label: "Soft & Lic",
   //   icon: FiSettings,
-  //   to: "/myassets",
-  //   roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN"],
+  //   to: "/softwareandlicences",
+  //   roles: ["ADMIN"],
   // },
 
   {
@@ -187,7 +187,7 @@ const Sidebar = () => {
                   <SidebarNavLink to="/vendors" icon={FiBox} label="Vendors" />
                   <SidebarNavLink to="/sites" icon={FiBox} label="Sites" />
                   <SidebarNavLink
-                    to="/contracts"
+                    to="/softwareandlicences"
                     icon={FiBox}
                     label="Contracts"
                   />

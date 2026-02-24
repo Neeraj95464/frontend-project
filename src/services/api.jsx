@@ -109,40 +109,6 @@ export const loginUser = async (employeeId, password) => {
   }
 };
 
-// export const loginUser = async (employeeId, password) => {
-//   try {
-//     console.log("Login attempt:", { employeeId, password: "***" });
-
-//     const response = await api.post("/auth/login", { employeeId, password });
-
-//     console.log("✅ Login SUCCESS:", response.status, response.data);
-
-//     if (response.data.token) {
-//       localStorage.setItem("user", JSON.stringify(response.data));
-//       toast.success("Login successful!");
-//     }
-
-//     return response.data;
-//   } catch (error) {
-//     console.error("❌ Login FAILED:", {
-//       status: error.response?.status,
-//       data: error.response?.data,
-//       message: error.message,
-//     });
-
-//     // More specific error messages
-//     if (error.response?.status === 401) {
-//       toast.error("Invalid credentials");
-//     } else if (error.response?.status === 500) {
-//       toast.error("Server error - please try again");
-//     } else {
-//       toast.error(error.response?.data?.message || "Login failed");
-//     }
-
-//     throw error;
-//   }
-// };
-
 export const logoutUser = () => localStorage.removeItem("user");
 
 //     ====================== Contracts ==================================
@@ -175,6 +141,7 @@ export const deleteContract = async (id) => {
 
 export const getVendors = async () => {
   const response = await api.get("/vendors");
+  // console.log("res", response.data);
   return response.data;
 };
 
@@ -1274,9 +1241,9 @@ export const fetchUserByUsername = async (username) => {
 
 export const updateEmployee = async (employeeId, employeeData) => {
   try {
-    console.log("updating user ", employeeData);
+    // console.log("updating user ", employeeData);
     const response = await api.put(`/users/${employeeId}`, employeeData);
-    console.log("data received ", response.data);
+    // console.log("data received ", response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -1608,7 +1575,7 @@ export const resetUserPasswordByEmpId = async (employeeId) => {
 
 // ✅ CORRECT - Direct payload as 2nd parameter
 export const reportAssetIssue = async (asset) => {
-  console.log("asset data are ", asset);
+  // console.log("asset data are ", asset);
 
   return api.post("/user-assets/report-asset", {
     assetTag: asset.assetTag,
@@ -1668,4 +1635,80 @@ export const verifyAssetOtp = async (payload) => {
 export const resendAssetOtp = async (token) => {
   const res = await api.post(`/assets/asset-assignments/resend-otp`, { token });
   return res.data;
+};
+
+export const resendAcknowledgement = async (assignmentId) => {
+  try {
+    const res = await api.post(
+      `/assets/asset-assignments/assignments/${assignmentId}/resend`,
+    );
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to resend acknowledgement.";
+  }
+};
+
+export const fetchFilteredLicenses = async (params) => {
+  try {
+    // console.log("data are ", params);
+    const res = await api.get(`/software-licenses/filter`, { params });
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to fetch filtered licenses.";
+  }
+};
+
+export const exportFilteredLicenses = async (filters) => {
+  const response = await api.get("/software-licenses/filter/export", {
+    params: filters,
+    responseType: "blob",
+  });
+
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "software_licenses.xlsx");
+  document.body.appendChild(link);
+  link.click();
+};
+
+// ✅ Create License
+export const createLicense = async (data) => {
+  try {
+    const res = await api.post("/software-licenses", data);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to create license.";
+  }
+};
+
+// ✅ Optional: Get By ID
+export const getLicenseById = async (id) => {
+  try {
+    const res = await api.get(`${API_BASE}/${id}`);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to fetch license details.";
+  }
+};
+
+// ✅ Optional: Update License
+export const updateLicense = async (id, data) => {
+  try {
+    console.log("data are ", data);
+    const res = await api.put(`/software-licenses/${id}`, data);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to update license.";
+  }
+};
+
+// ✅ Optional: Delete License
+export const deleteLicense = async (id) => {
+  try {
+    const res = await api.delete(`${API_BASE}/${id}`);
+    return res.data;
+  } catch (error) {
+    throw error.response?.data?.message || "Failed to delete license.";
+  }
 };

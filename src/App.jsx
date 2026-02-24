@@ -12,7 +12,6 @@ import AssetStatusPage from "./components/AssetStatusPage";
 import AssignAssetModal from "./components/AssignAssetModel";
 import CheckInModal from "./components/CheckInModal";
 import ContactUsSection from "./components/ContactUsSection";
-import ContractPage from "./components/ContractPage";
 import CreateUser from "./components/CreateUser";
 import Dashboard from "./components/Dashboard";
 import EditAsset from "./components/EditAsset";
@@ -46,6 +45,7 @@ import CugSimList from "./pages/CugSimList";
 import EmployeeOnboardingPage from "./pages/EmployeeOnboardingPage";
 import MyAssetsPage from "./pages/MyAssetsPage";
 import PrintPage from "./pages/PrintPage";
+import SoftwareLicensePage from "./pages/SoftwareLicensePage";
 import UsersPage from "./pages/UsersPage";
 
 const App = () => {
@@ -181,6 +181,15 @@ const App = () => {
                 />
 
                 <Route
+                  path="/softwareandlicences"
+                  element={
+                    <PrivateRoute allowedRoles={["ADMIN"]}>
+                      <SoftwareLicensePage />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
                   path="/cug-sim/:id"
                   element={
                     <PrivateRoute
@@ -270,15 +279,6 @@ const App = () => {
                   element={
                     <PrivateRoute>
                       <CheckInModal />
-                    </PrivateRoute>
-                  }
-                />
-
-                <Route
-                  path="/contracts"
-                  element={
-                    <PrivateRoute>
-                      <ContractPage />
                     </PrivateRoute>
                   }
                 />

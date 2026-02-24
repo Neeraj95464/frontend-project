@@ -2,6 +2,14 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+.input {
+  @apply w-full border p-2 mb-2 rounded-lg;
+}
+
+.filter-input {
+  @apply border p-2 rounded-lg;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
