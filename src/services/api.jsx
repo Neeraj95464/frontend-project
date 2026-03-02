@@ -1577,7 +1577,7 @@ export const resetUserPasswordByEmpId = async (employeeId) => {
   return res.data;
 };
 
-// ✅ CORRECT - Direct payload as 2nd parameter
+// ✅ CORRECT - Direct payload as 2nd parameter 
 export const reportAssetIssue = async (asset) => {
   // console.log("asset data are ", asset);
 
