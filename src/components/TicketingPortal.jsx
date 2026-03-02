@@ -189,14 +189,14 @@ export default function TicketingPortal() {
   const handleCloseTicket = async () => {
     setIsUpdating(true);
     try {
-      await updateTicketStatus(selectedTicket.id, "CLOSED");
-      setTicketStatus("CLOSED");
+      await updateTicketStatus(selectedTicket.id, "RESOLVED");
+      setTicketStatus("RESOLVED");
       toast.success("Status updated");
 
       // Update the selected ticket status locally
       setSelectedTicket((prev) => ({
         ...prev,
-        status: "CLOSED",
+        status: "RESOLVED",
       }));
 
       // Refresh the ticket list after closing
@@ -1227,7 +1227,7 @@ const handleStatusChange = async (ticketId, newStatus) => {
                                 await handleAddMessage();
                                 await handleCloseTicket();
                                 toast.success(
-                                  "Message sent and ticket closed.",
+                                  "Message sent and ticket resolved.",
                                 );
                               } catch (err) {
                                 toast.error("Failed to send and close.");

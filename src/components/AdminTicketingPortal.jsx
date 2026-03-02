@@ -215,7 +215,7 @@ export default function AdminTicketingPortal() {
   const handleCloseTicket = async () => {
     setIsUpdating(true);
     try {
-      await updateTicketStatus(selectedTicket.id, "CLOSED");
+      await updateTicketStatus(selectedTicket.id, "RESOLVED");
       toast.success("Status updated");
       fetchTicketsWithFilters(); // Refresh tickets
     } catch (error) {
@@ -1210,7 +1210,7 @@ export default function AdminTicketingPortal() {
                                 await handleAddMessage();
                                 await handleCloseTicket();
                                 toast.success(
-                                  "Message sent and ticket closed.",
+                                  "Message sent and ticket resolved.",
                                 );
                               } catch (err) {
                                 toast.error("Failed to send and close.");
