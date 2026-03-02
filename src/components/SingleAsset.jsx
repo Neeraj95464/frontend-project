@@ -157,7 +157,8 @@ const SingleAsset = () => {
   }
 
   return (
-    <div className="lg:ml-40 pt-16">
+    // <div className="lg:ml-40 pt-16">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen">
       {/* Asset Details */}
       <AssetDetails asset={asset} assetPhotos={assetPhotos} />
 

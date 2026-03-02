@@ -426,8 +426,8 @@ const TicketActionModal = ({ open, ticketId, onClose }) => {
               >
                 <option value="OPEN">Open</option>
                 <option value="WAITING">Waiting</option>
-                {/* <option value="RESOLVED">Resolved</option> */}
-                <option value="CLOSED">Closed</option>
+                <option value="RESOLVED">Resolved</option>
+                {/* <option value="CLOSED">Closed</option> */}
               </select>
             </div>
 

@@ -109,8 +109,11 @@ const ChildAssetsPage = () => {
   };
 
   return (
-    <div className="lg:ml-40 pt-20 px-4 sm:px-6 lg:px-8 pb-4 min-h-screen bg-gray-50 flex flex-col">
-      {/* ✅ HEADER: Add Button + Export + Pagination (Right Side Only) */}
+   
+   
+    // <div className="lg:ml-40 pt-20 px-4 sm:px-6 lg:px-8 pb-4 min-h-screen bg-gray-50 flex flex-col">
+      <div className="lg:ml-48 bg-gray-50 min-h-screen">
+    {/* ✅ HEADER: Add Button + Export + Pagination (Right Side Only) */}
       <div className="flex items-center justify-between mb-6 p-4 bg-white rounded-xl shadow-sm border border-gray-200">
         {/* <div className="flex items-center gap-3">
          

@@ -47,12 +47,13 @@ const TicketWithFeedbackTable = () => {
   };
 
   return (
-    <div className="lg:ml-40 pt-16 ">
+    // <div className="lg:ml-40 pt-16 ">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen">
       {/* Download Button */}
-      <div className="flex justify-end mb-4">
+      {/* <div className="flex justify-end mb-4">
         <p>Download This month tickets in excel </p>
         <DownloadButtonExcelTicket />
-      </div>
+      </div> */}
 
       {/* Filter Section */}
       <div className="flex flex-wrap gap-4 items-center mb-6 justify-between">

@@ -297,8 +297,9 @@ export default function CugSimDetails() {
   };
 
   return (
-    <div className="lg:ml-40 pt-20 px-4 sm:px-6 lg:px-8 pb-10 min-h-screen bg-gray-50">
-      {/* SIM Details Card */}
+    // <div className="lg:ml-40 pt-20 px-4 sm:px-6 lg:px-8 pb-10 min-h-screen bg-gray-50">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen"> 
+    {/* SIM Details Card */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-6">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
@@ -364,66 +365,7 @@ export default function CugSimDetails() {
           </div>
         </div>
 
-        {/* Details Grid */}
-        {/* <div className="p-4 sm:p-5">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-x-4 gap-y-3">
-            <DetailItem label="Provider" value={sim.provider} />
-            <DetailItem label="ICCID" value={sim.iccid} />
-            <DetailItem label="IMSI" value={sim.imsi} />
-            <DetailItem
-              label="Assigned To"
-              value={sim.assignedUserName}
-              placeholder="Unassigned"
-            />
-
-            <DetailItem
-              label="Assigned At"
-              value={formatDate(sim.assignedAt)}
-            />
-            <DetailItem
-              label="Activated"
-              value={formatDateOnly(sim.activatedAt)}
-            />
-            <DetailItem
-              label="Purchase Date"
-              value={formatDateOnly(sim.purchaseDate)}
-            />
-            <DetailItem label="Purchase From" value={sim.purchaseFrom} />
-            <DetailItem label="Cost" value={sim.cost ? `₹${sim.cost}` : null} />
-            <DetailItem label="Location" value={sim.locationName} />
-            <DetailItem label="Site" value={sim.siteName} />
-            <DetailItem label="Created By" value={sim.createdBy} />
-            <DetailItem label="Created At" value={formatDate(sim.createdAt)} />
-            <DetailItem
-              label="Ack Uploaded"
-              value={sim.assignmentUploaded ? "Yes" : "No"}
-              valueClass={
-                sim.assignmentUploaded ? "text-green-600" : "text-red-500"
-              }
-            />
-          </div>
-
-          
-          {sim.note && (
-            <div className="mt-3 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <p className="text-sm text-gray-700">{sim.note}</p>
-            </div>
-          )}
-        </div> */}
+       
 
         <div className="p-4 sm:p-5">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-x-4 gap-y-3">

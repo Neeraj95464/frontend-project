@@ -159,7 +159,8 @@ const Dashboard = () => {
   // USER DASHBOARD VIEW (uses MyAssetDTO)
   if (user && user.role === "USER") {
     return (
-      <div className="p-6 lg:ml-64 pt-20">
+      // <div className="p-6 lg:ml-64 pt-20">
+      <div className="lg:ml-48 bg-gray-50 min-h-screen">
         <div className="bg-white shadow-lg rounded-lg p-8 border border-blue-100">
           <h1 className="text-3xl font-semibold text-blue-700 flex items-center gap-2">
             👋 Hello, {user.username}
@@ -291,7 +292,8 @@ const Dashboard = () => {
   // HR_ADMIN DASHBOARD VIEW (Ticket Chart Only)
   if (user && user.role === "HR_ADMIN") {
     return (
-      <div className="lg:ml-40 pt-16">
+      // <div className="lg:ml-40 pt-16">
+      <div className="lg:ml-48 bg-gray-50 min-h-screen">
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4 text-blue-700">
             🎫 Ticket Overview
@@ -304,7 +306,8 @@ const Dashboard = () => {
 
   // ADMIN DASHBOARD VIEW
   return (
-    <div className="lg:ml-40 pt-16">
+    // <div className="lg:ml-40 pt-16">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen">
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <Button onClick={() => setActiveTab("ASSETS")}>
           View Asset Charts

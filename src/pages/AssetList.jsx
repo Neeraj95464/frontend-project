@@ -191,7 +191,8 @@ const AssetList = () => {
   };
 
   return (
-    <div className="pt-16 lg:ml-48">
+    // <div className="pt-16 lg:ml-48">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen">
       <div className="flex flex-wrap items-center gap-2 mb-4 text-sm">
         {/* Status */}
         <select

@@ -31,7 +31,7 @@ import SingleAsset from "./components/SingleAsset";
 import SiteLocationManager from "./components/SiteLocationManager";
 import TicketingPortal from "./components/TicketingPortal";
 import Unauthorized from "./components/Unauthorized";
-import Updates from "./components/Updates";
+import Updates from "./pages/Updates"
 import UsersList from "./components/UsersList";
 import VendorListPage from "./components/VendorListPage";
 import Reports from "./components/reports";
@@ -47,6 +47,8 @@ import MyAssetsPage from "./pages/MyAssetsPage";
 import PrintPage from "./pages/PrintPage";
 import SoftwareLicensePage from "./pages/SoftwareLicensePage";
 import UsersPage from "./pages/UsersPage";
+import AssigneeDashboard from "./pages/AssigneeDashboard";
+import ReportsHub from "../../../../../Downloads/ReportsHub";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -77,7 +79,7 @@ const App = () => {
               <Routes>
                 {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                {/* <Route path="/register" element={<Register />} /> */}
                 <Route path="/print-tags" element={<PrintPage />} />
                 <Route
                   path="/asset-acceptance/:token"
@@ -135,6 +137,19 @@ const App = () => {
                     </PrivateRoute>
                   }
                 />
+
+                <Route
+                  path="/reports/assignees"
+                  element={
+                    <PrivateRoute
+                      allowedRoles={["ADMIN", "MANAGER", "EXECUTIVE"]}
+                    >
+                      <AssigneeDashboard />
+                    </PrivateRoute>
+                  }
+                />
+
+
 
                 <Route
                   path="/cug-sim"

@@ -459,7 +459,8 @@ const SoftwareLicensePage = () => {
 
   // ================= UI =================
   return (
-    <div className="lg:ml-40 pt-16 py-0">
+    // <div className="lg:ml-40 pt-16 py-0">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen">
       {/* <div className="bg-white rounded-xl shadow-sm border"> */}
 
       <div className="bg-white shadow-lg rounded-lg p-8 border border-blue-100">

@@ -881,6 +881,7 @@ export const getTickets = async ({
     const response = await api.get(`${API_URL}/user-assets/tickets`, {
       params,
     });
+    // console.log("response data is ",response.data);
     return response.data;
   } catch (error) {
     console.error("Error filtering tickets:", error);
@@ -1056,6 +1057,7 @@ export const fetchUsers = async (filters, page = 0, size = 10) => {
   };
 
   const res = await api.get("/users/filter", { params });
+  console.log("REsponse data ",res.data);
   return res.data;
 };
 
@@ -1103,6 +1105,7 @@ export const changePassword = async (oldPassword, newPassword) => {
 export const fetchUserById = async (userId) => {
   try {
     const response = await api.get(`/users/${userId}`);
+    console.log("data is ",response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -1241,14 +1244,15 @@ export const fetchUserByUsername = async (username) => {
 
 export const updateEmployee = async (employeeId, employeeData) => {
   try {
-    // console.log("updating user ", employeeData);
+  
     const response = await api.put(`/users/${employeeId}`, employeeData);
-    // console.log("data received ", response.data);
+  
     return response.data;
   } catch (error) {
     throw error;
   }
 };
+
 export const deleteUser = async (userId) => {
   try {
     const response = await api.delete(`${API_URL}/users/${userId}`);
@@ -1710,5 +1714,17 @@ export const deleteLicense = async (id) => {
     return res.data;
   } catch (error) {
     throw error.response?.data?.message || "Failed to delete license.";
+  }
+};
+
+
+export const getAssigneePerformance = async () => {
+  try {
+    const response = await api.get(`user-assets/assignee-performance`);
+    console.log("Response data was ",response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching assignee performance:", error);
+    throw error;
   }
 };

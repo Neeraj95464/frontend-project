@@ -156,8 +156,10 @@ export default function CugSimList() {
   };
 
   return (
-    <div className="lg:ml-40 pt-20 px-4 sm:px-6 lg:px-8 pb-10 min-h-screen bg-gray-50">
-      {/* Header */}
+    
+    // <div className="lg:ml-40 pt-20 px-4 sm:px-6 lg:px-8 pb-10 min-h-screen bg-gray-50">
+      <div className="lg:ml-48 bg-gray-50 min-h-screen">
+    {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-gray-800 flex items-center gap-2">

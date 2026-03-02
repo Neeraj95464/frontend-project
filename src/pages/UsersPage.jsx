@@ -120,8 +120,9 @@ const UsersPage = () => {
   const handleSerialClick = (serialNumber) =>
     navigate(`/asset/${serialNumber}`);
   return (
-    <div className="lg:ml-40 pt-20 px-4 sm:px-6 lg:px-8 pb-4 min-h-screen bg-gray-50 flex flex-col">
-      <div className="flex items-center gap-2 mb-2">
+    // <div className="lg:ml-40 pt-20 px-4 sm:px-6 lg:px-8 pb-4 min-h-screen bg-gray-50 flex flex-col">
+     <div className="lg:ml-48 bg-gray-50 min-h-screen">
+     <div className="flex items-center gap-2 mb-2">
         <button
           onClick={handleAddEmployee}
           className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-3 py-1.5 rounded font-medium text-xs shadow-md flex items-center gap-1"
@@ -180,63 +181,7 @@ const UsersPage = () => {
           </div>
         )}
       </div>
-      {/* <div className="bg-white p-1.5 rounded-lg shadow-sm border border-gray-100 mb-2">
-        <div className="flex flex-wrap items-center gap-1">
-          <input
-            placeholder="EMP ID"
-            value={filters.employeeId}
-            onChange={(e) => handleFilterChange("employeeId", e.target.value)}
-            className="w-20 border border-gray-200 px-1.5 py-0.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
-          />
-          <input
-            placeholder="Username"
-            value={filters.username}
-            onChange={(e) => handleFilterChange("username", e.target.value)}
-            className="w-20 border border-gray-200 px-1.5 py-0.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
-          />
-          <input
-            placeholder="Role"
-            value={filters.role}
-            onChange={(e) => handleFilterChange("role", e.target.value)}
-            className="w-20 border border-gray-200 px-1.5 py-0.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
-          />
-          <input
-            placeholder="Department"
-            value={filters.department}
-            onChange={(e) => handleFilterChange("department", e.target.value)}
-            className="w-20 border border-gray-200 px-1.5 py-0.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none"
-          />
-          <select
-            value={filters.siteId || ""}
-            onChange={(e) =>
-              handleFilterChange("siteId", e.target.value || null)
-            }
-            className="w-24 border border-gray-200 px-1.5 py-0.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white"
-          >
-            <option value="">Site</option>
-            {sites.map(({ siteId, name }) => (
-              <option key={siteId} value={siteId}>
-                {name}
-              </option>
-            ))}
-          </select>
-          <select
-            value={filters.locationId || ""}
-            onChange={(e) =>
-              handleFilterChange("locationId", e.target.value || null)
-            }
-            disabled={!filters.siteId}
-            className="w-24 border border-gray-200 px-1.5 py-0.5 rounded text-xs focus:ring-1 focus:ring-blue-500 focus:border-transparent outline-none bg-white disabled:bg-gray-50 disabled:cursor-not-allowed"
-          >
-            <option value="">Location</option>
-            {locations.map((loc) => (
-              <option key={loc.id} value={loc.id}>
-                {loc.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div> */}
+    
 
       <div className="bg-white p-3 rounded-lg shadow-sm border border-gray-100 mb-2">
         <div className="flex flex-wrap items-center gap-2">

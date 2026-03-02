@@ -81,7 +81,8 @@ export default function VendorListPage() {
   };
 
   return (
-    <div className="lg:ml-40 pt-16 px-8">
+    // <div className="lg:ml-40 pt-16 px-8">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen">
       {/* Header Section */}
       <div className="flex justify-between items-center mb-8">
         <div>

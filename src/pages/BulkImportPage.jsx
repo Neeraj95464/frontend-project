@@ -312,7 +312,8 @@ const BulkImportPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex justify-center items-start py-10">
+    // <div className="min-h-screen bg-slate-50 flex justify-center items-start py-10">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen">
       <div className="max-w-3xl w-full mx-4 bg-white shadow-lg rounded-xl p-8">
         <h1 className="text-2xl font-bold text-slate-900 mb-6">
           Bulk Import Center

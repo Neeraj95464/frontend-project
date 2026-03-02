@@ -209,6 +209,22 @@ export default function TicketingPortal() {
     }
   };
 
+  // const handleStatusChange = async (newStatus) => { setIsUpdating(true); try { await updateTicketStatus(ticketId, newStatus); setTicketStatus(newStatus); toast.success("Status updated"); } catch (error) { toast.error("Failed to update status"); console.error("Error updating status:", error); } finally { setIsUpdating(false); } };
+
+const handleStatusChange = async (ticketId, newStatus) => {
+  setIsUpdating(true);
+  try {
+    await updateTicketStatus(ticketId, newStatus);
+    setTicketStatus(newStatus);
+    toast.success("Status updated");
+  } catch (error) {
+    toast.error("Failed to update status");
+    console.error("Error updating status:", error);
+  } finally {
+    setIsUpdating(false);
+  }
+};
+
   const handleAddMessage = async () => {
     if (!newMessage.trim()) return;
 
@@ -438,7 +454,8 @@ export default function TicketingPortal() {
   }, []);
 
   return (
-    <div className="lg:ml-40 pt-16 py-0">
+    // <div className="lg:ml-40 pt-16 py-0">
+    <div className="lg:ml-48 bg-gray-50 min-h-screen">
       <div>
         <TicketModal
           isOpen={isDialogOpen}
@@ -528,6 +545,7 @@ export default function TicketingPortal() {
                       <option value="">All Status</option>
                       <option value="OPEN">Open</option>
                       <option value="WAITING">Waiting</option>
+                      <option value="RESOLVED">Resolved</option>
                       <option value="CLOSED">Closed</option>
                       <option value="UNASSIGNED">Unassigned</option>
                     </select>
@@ -947,6 +965,45 @@ export default function TicketingPortal() {
               <div className="text-base font-bold text-green-600 bg-green-100 px-3 py-1 rounded-lg shadow-sm">
                 #{selectedTicket?.id || "—"}
               </div>
+
+
+              {/* <div className="flex items-center gap-3">
+
+  {userRole === "user" && selectedTicket?.status === "RESOLVED" && (
+    <select
+      disabled={isUpdating}
+      onChange={(e) => handleStatusChange(selectedTicket?.id, e.target.value)}
+      className="text-sm border border-gray-300 rounded-lg px-2 py-1 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+      defaultValue=""
+    >
+      <option value="" disabled>
+        Actions
+      </option>
+      <option value="REOPENED">Reopen Ticket</option>
+    </select>
+  )}
+
+</div> */}
+
+<div className="flex items-center gap-3">
+
+  {/* Reopen Button — Only for USER and RESOLVED tickets */}
+  {userRole === "user" && selectedTicket?.status === "RESOLVED" && (
+    <button
+      disabled={isUpdating}
+      onClick={() => handleStatusChange(selectedTicket?.id, "REOPENED")}
+      className={`text-sm px-4 py-2 rounded-lg font-medium transition ${
+        isUpdating
+          ? "bg-gray-400 cursor-not-allowed text-white"
+          : "bg-orange-500 hover:bg-orange-600 text-white"
+      }`}
+    >
+      {isUpdating ? "Reopening..." : "Reopen"}
+    </button>
+  )}
+
+</div>
+
               {/* Action Buttons */}
               <div className="flex items-center gap-3">
                 {/* Maximize / Minimize */}

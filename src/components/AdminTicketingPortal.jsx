@@ -366,8 +366,9 @@ export default function AdminTicketingPortal() {
   // console.log("tickets are ", tickets);
 
   return (
-    <div className="lg:ml-40 pt-16 min-h-screen py-0 bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="px-4 py-0">
+    // <div className="lg:ml-40 pt-16 min-h-screen py-0 bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="lg:ml-48 bg-gray-50 min-h-screen">
+      {/* <div className="px-4 py-0"> */}
         <TicketModal
           isOpen={isDialogOpen}
           onClose={() => {
@@ -941,7 +942,7 @@ export default function AdminTicketingPortal() {
             )}
           </div>
         </Card>
-      </div>
+      {/* </div> */}
       {selectedTicket && (
         <div
           className={`fixed top-[64px] right-0 h-[calc(100%-64px)] bg-white border-l-2 border-blue-500 shadow-2xl overflow-y-auto z-40 transition-all duration-300 ease-in-out ${
