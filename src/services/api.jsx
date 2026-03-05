@@ -1460,9 +1460,19 @@ export const createSimCard = async (payload) => {
 };
 
 // Update SIM status
-export const updateSimStatus = async (simId, status) => {
-  const response = await api.put(`/sim/${simId}/status`, null, {
-    params: { status },
+// export const updateSimStatus = async (simId, status) => {
+//   const response = await api.put(`/sim/${simId}/status`, null, {
+//     params: { status },
+//   });
+//   return response.data;
+// };
+
+export const updateSimStatus = async (simId, status, note) => {
+  const response = await api.put(`sim-cards/sim/${simId}/status`, null, {
+    params: { 
+      status,
+      note
+    },
   });
   return response.data;
 };

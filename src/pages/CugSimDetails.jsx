@@ -35,6 +35,10 @@ export default function CugSimDetails() {
   const [attachments, setAttachments] = useState([]);
   // Add these useEffects for edit modal
   const [editLocations, setEditLocations] = useState([]);
+  const [statusNote, setStatusNote] = useState("");
+const [selectedStatus, setSelectedStatus] = useState("");
+
+
 
   // Fetch sites for edit modal (reuse your existing sites)
   useEffect(() => {
@@ -172,15 +176,47 @@ export default function CugSimDetails() {
     }
   };
 
-  const handleStatusUpdate = async (newStatus) => {
-    try {
-      await updateSimStatus(id, newStatus);
-      toast.success(`Status updated to ${newStatus}`);
-      loadDetails();
-    } catch (error) {
-      toast.error("Failed to update status");
-    }
-  };
+  // const handleStatusUpdate = async (newStatus) => {
+  //   try {
+  //     await updateSimStatus(id, newStatus);
+  //     toast.success(`Status updated to ${newStatus}`);
+  //     loadDetails();
+  //   } catch (error) {
+  //     toast.error("Failed to update status");
+  //   }
+  // };
+
+  const handleStatusUpdate = async () => {
+  if (!selectedStatus) {
+    toast.error("Please select status");
+    return;
+  }
+
+  if (!statusNote.trim()) {
+    toast.error("Please enter status note");
+    return;
+  }
+
+  try {
+    await updateSimStatus(id, selectedStatus, statusNote);
+
+    toast.success(`Status updated to ${selectedStatus}`);
+    setStatusNote("");
+    setSelectedStatus("");
+    loadDetails();
+  } catch (error) {
+    toast.error("Failed to update status");
+  }
+};
+
+const simStatusOptions = [
+  "SUSPENDED",
+  "RESERVED",
+  "LOST",
+  "DEACTIVATED",
+  "REPLACED",
+  "DISCARDED"
+];
 
   const handleUpdateSimInfo = async () => {
     try {
@@ -443,85 +479,126 @@ export default function CugSimDetails() {
       {/* Rest of your existing code for Actions, Attachments, History sections... */}
       {/* Quick Actions & Status Update */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Assignment Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-800">Assignment</h2>
-          </div>
-          <div className="p-6 space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">
-                User ID *
-              </label>
-              <input
-                type="text"
-                placeholder="Enter User ID"
-                value={employeeId}
-                className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                onChange={(e) => setEmployeeId(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">
-                Assignment Note *
-              </label>
-              <textarea
-                placeholder="Enter assignment note (required)"
-                value={assignNote}
-                rows={2}
-                className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
-                onChange={(e) => setAssignNote(e.target.value)}
-              />
-            </div>
-            <div className="flex gap-3">
-              <button
-                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
-                onClick={handleAssign}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
-                  />
-                </svg>
-                Assign
-              </button>
-              {sim.assignedUserName && (
-                <button
-                  className="flex-1 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
-                  onClick={handleUnassign}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"
-                    />
-                  </svg>
-                  Unassign
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+       
 
-        {/* Status Update Card */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+  <div className="px-6 py-4 border-b border-gray-100">
+    <h2 className="text-lg font-semibold text-gray-800">Assignments & Unassignments</h2>
+  </div>
+
+  <div className="p-6 space-y-4">
+
+    {/* USER ID */}
+    <div>
+      <label className="text-sm font-medium text-gray-700 mb-1 block">
+        User ID *
+      </label>
+      <input
+        type="text"
+        placeholder="Enter User ID"
+        value={employeeId}
+        className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+        onChange={(e) => setEmployeeId(e.target.value)}
+      />
+    </div>
+
+    {/* ASSIGN NOTE */}
+    <div>
+      <label className="text-sm font-medium text-gray-700 mb-1 block">
+        Assignment Note *
+      </label>
+      <textarea
+        placeholder="Enter assignment note"
+        value={assignNote}
+        rows={2}
+        className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+        onChange={(e) => setAssignNote(e.target.value)}
+      />
+    </div>
+
+    {/* ASSIGN BUTTONS */}
+    <div className="flex gap-3">
+      <button
+        className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+        onClick={handleAssign}
+      >
+        Assign
+      </button>
+
+      {sim.assignedUserName && (
+        <button
+          className="flex-1 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all flex items-center justify-center gap-2"
+          onClick={handleUnassign}
+        >
+          Unassign
+        </button>
+      )}
+
+      
+    </div>
+
+
+
+  </div>
+
+  
+</div>
+
+    {/* -------- STATUS UPDATE SECTION -------- */}
+
+    <div className="border-t pt-4 mt-4 space-y-4">
+      <h3 className="text-md font-semibold text-gray-800">
+        Update SIM Other Status
+      </h3>
+
+      {/* STATUS DROPDOWN */}
+      <div>
+        <label className="text-sm font-medium text-gray-700 mb-1 block">
+          Select Status
+        </label>
+
+        <select
+          value={selectedStatus}
+          onChange={(e) => setSelectedStatus(e.target.value)}
+          className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+        >
+          <option value="">Select Status</option>
+
+          {simStatusOptions.map((status) => (
+            <option key={status} value={status}>
+              {status}
+            </option>
+          ))}
+
+        </select>
+      </div>
+
+      {/* STATUS NOTE */}
+      <div>
+        <label className="text-sm font-medium text-gray-700 mb-1 block">
+          Status Note *
+        </label>
+
+        <textarea
+          rows={2}
+          placeholder="Enter status update note"
+          value={statusNote}
+          className="w-full border border-gray-200 px-4 py-2.5 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none"
+          onChange={(e) => setStatusNote(e.target.value)}
+        />
+      </div>
+
+      {/* UPDATE BUTTON */}
+      <button
+        className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 py-2.5 rounded-lg font-medium transition-all"
+        onClick={handleStatusUpdate}
+      >
+        Update Status
+      </button>
+
+    </div>
+        {/* Status Update Card */}
+        {/* <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100">
             <h2 className="text-lg font-semibold text-gray-800">
               Update Status
@@ -554,7 +631,7 @@ export default function CugSimDetails() {
                 ))}
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
 
       {/* Attachments Section */}
