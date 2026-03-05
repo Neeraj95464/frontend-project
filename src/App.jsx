@@ -78,7 +78,7 @@ const App = () => {
               <Routes>
                 {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
-                {/* <Route path="/register" element={<Register />} /> */}
+                <Route path="/register" element={<Register />} />
                 <Route path="/print-tags" element={<PrintPage />} />
                 <Route
                   path="/asset-acceptance/:token"
