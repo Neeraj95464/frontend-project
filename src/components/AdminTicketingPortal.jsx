@@ -512,6 +512,7 @@ export default function AdminTicketingPortal() {
                     <option value="OPEN">Open</option>
                     <option value="WAITING">Waiting</option>
                     <option value="CLOSED">Closed</option>
+                    <option value="RESOLVED">Resolved</option>
                     <option value="UNASSIGNED">Unassigned</option>
                   </select>
 
