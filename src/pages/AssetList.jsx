@@ -222,10 +222,43 @@ const AssetList = () => {
           }}
           className="border px-2 py-1 rounded shadow-sm bg-white hover:border-blue-400 focus:border-blue-500 focus:ring focus:ring-blue-200 text-sm"
         >
-          <option value="">All Types</option>
+          {/* <option value="">All Types</option>
           <option value="LAPTOP">Laptop</option>
           <option value="DESKTOP">Desktop</option>
-          <option value="SERVER">Server</option>
+          <option value="SERVER">Server</option> */}
+
+          <option value="">All Types</option>
+<option value="LAPTOP">Laptop</option>
+<option value="DESKTOP">Desktop</option>
+<option value="MOBILE">Mobile</option>
+<option value="PRINTER">Printer</option>
+<option value="SERVER">Server</option>
+<option value="NETWORK_DEVICE">Network Device</option>
+<option value="SOFTWARE">Software</option>
+<option value="OTHERS">Others</option>
+<option value="CCTV">CCTV</option>
+<option value="COMPUTER">Computer</option>
+<option value="EQUIPMENT">Equipment</option>
+<option value="FIREWALL">Firewall</option>
+<option value="INTANGIBLE">Intangible</option>
+<option value="ASSETS">Assets</option>
+<option value="IPAD">iPad</option>
+<option value="KIOSK">Kiosk</option>
+<option value="NETWORK">Network</option>
+<option value="DEVICES">Devices</option>
+<option value="PROJECTOR">Projector</option>
+<option value="TAB">Tab</option>
+<option value="TOUGHBOOK_ODIS">Toughbook ODIS</option>
+<option value="UPS">UPS</option>
+<option value="UPS_BATTERIES">UPS Batteries</option>
+<option value="VEHICLES">Vehicles</option>
+<option value="XENTRY_DIAGNOSTIC_DEVICE">Xentry Diagnostic Device</option>
+<option value="NVR">NVR</option>
+<option value="BATTERY">Battery</option>
+<option value="DVR">DVR</option>
+<option value="WIFI_CAMERA">WiFi Camera</option>
+<option value="TV">TV</option>
+<option value="DIGITAL_ELEMENTS">Digital Elements</option>
         </select>
 
         {/* Department */}

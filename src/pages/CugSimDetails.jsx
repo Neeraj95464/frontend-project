@@ -214,7 +214,7 @@ const simStatusOptions = [
   "RESERVED",
   "LOST",
   "DEACTIVATED",
-  "REPLACED",
+  "UNRESERVED",
   "DISCARDED"
 ];
 

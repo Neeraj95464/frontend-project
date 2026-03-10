@@ -334,7 +334,7 @@ const App = () => {
                 />
 
                 <Route
-                  path="/reports"
+                  path="/tickets/reports/feedback"
                   element={
                     <PrivateRoute>
                       <Reports />

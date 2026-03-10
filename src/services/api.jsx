@@ -1645,6 +1645,11 @@ export const verifyAssetOtp = async (payload) => {
   return res.data;
 };
 
+export const getAcceptanceDetails = async (token) => {
+  const res = await api.get(`/assets/asset-assignments/acceptance/${token}`);
+  return res.data;
+};
+
 // Resend OTP
 export const resendAssetOtp = async (token) => {
   const res = await api.post(`/assets/asset-assignments/resend-otp`, { token });
