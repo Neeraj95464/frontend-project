@@ -485,6 +485,7 @@ export const getAssetCodes = async (assetTag) => {
 };
 
 export const assignLocation = async (payload) => {
+  console.log("payload was ",payload);
   return api.post(`user-assets/location-assignments`, payload);
 };
 
@@ -1656,12 +1657,30 @@ export const resendAssetOtp = async (token) => {
   return res.data;
 };
 
-export const resendAcknowledgement = async (assignmentId) => {
+// export const resendAcknowledgement = async (assignmentId) => {
+//   try {
+//     const res = await api.post(
+//       `/assets/asset-assignments/assignments/${assignmentId}/resend`,
+//     );
+//     return res.data;
+//   } catch (error) {
+//     throw error.response?.data?.message || "Failed to resend acknowledgement.";
+//   }
+// };
+
+export const resendAcknowledgement = async (assignmentId, assetType) => {
   try {
-    const res = await api.post(
-      `/assets/asset-assignments/assignments/${assignmentId}/resend`,
-    );
+    let url = "";
+
+    if (assetType === "CUG_SIM") {
+      url = `/sims/sim-assignments/assignments/${assignmentId}/resend`;
+    } else {
+      url = `/assets/asset-assignments/assignments/${assignmentId}/resend`;
+    }
+
+    const res = await api.post(url);
     return res.data;
+
   } catch (error) {
     throw error.response?.data?.message || "Failed to resend acknowledgement.";
   }
@@ -1714,7 +1733,7 @@ export const getLicenseById = async (id) => {
 // ✅ Optional: Update License
 export const updateLicense = async (id, data) => {
   try {
-    console.log("data are ", data);
+    // console.log("data are ", data);
     const res = await api.put(`/software-licenses/${id}`, data);
     return res.data;
   } catch (error) {

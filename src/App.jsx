@@ -35,7 +35,6 @@ import Updates from "./pages/Updates"
 import UsersList from "./components/UsersList";
 import VendorListPage from "./components/VendorListPage";
 import Reports from "./components/reports";
-import Settings from "./components/settings";
 import AssetAcceptance from "./pages/AssetAcceptance";
 import AssetList from "./pages/AssetList";
 import BulkImportPage from "./pages/BulkImportPage";
@@ -48,6 +47,8 @@ import PrintPage from "./pages/PrintPage";
 import SoftwareLicensePage from "./pages/SoftwareLicensePage";
 import UsersPage from "./pages/UsersPage";
 import AssigneeDashboard from "./pages/AssigneeDashboard";
+import Settings from "./pages/settings";
+import TicketResponseReport from "./pages/TicketResponsesReport";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -141,7 +142,7 @@ const App = () => {
                   path="/reports/assignees"
                   element={
                     <PrivateRoute
-                      allowedRoles={["ADMIN", "MANAGER", "EXECUTIVE"]}
+                      allowedRoles={["ADMIN", "HR_ADMIN", "EXECUTIVE"]}
                     >
                       <AssigneeDashboard />
                     </PrivateRoute>
@@ -338,6 +339,15 @@ const App = () => {
                   element={
                     <PrivateRoute>
                       <Reports />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/tickets/reports/responses"
+                  element={
+                    <PrivateRoute>
+                      <TicketResponseReport />
                     </PrivateRoute>
                   }
                 />

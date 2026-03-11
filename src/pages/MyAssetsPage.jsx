@@ -1,5 +1,3 @@
-
-
 import { useAuth } from "../components/AuthContext";
 import {
   getMyAssets,
@@ -21,8 +19,9 @@ const MyAssetsPage = () => {
       try {
         setLoading(true);
         const data = await getMyAssets();
+        // console.log(Array.isArray(data) ? data : []);
         setMyAssets(Array.isArray(data) ? data : []);
-        console.log("data are ", Array.isArray(data) ? data : []);
+        // console.log("data are ", Array.isArray(data) ? data : []);
       } catch (err) {
         setError("Unable to load your assets.");
       } finally {
@@ -58,21 +57,37 @@ const MyAssetsPage = () => {
     }
   };
 
-  const handleResend = async (assignmentId) => {
-    if (!assignmentId) return;
+  // const handleResend = async (assignmentId) => {
+  //   if (!assignmentId) return;
 
-    try {
-      setResending(assignmentId);
+  //   try {
+  //     setResending(assignmentId);
 
-      await resendAcknowledgement(assignmentId);
+  //     await resendAcknowledgement(assignmentId);
 
-      alert("Acknowledgement email resent successfully.");
-    } catch (err) {
-      alert("Failed to resend acknowledgement.");
-    } finally {
-      setResending(null);
-    }
-  };
+  //     alert("Acknowledgement email resent successfully.");
+  //   } catch (err) {
+  //     alert("Failed to resend acknowledgement.");
+  //   } finally {
+  //     setResending(null);
+  //   }
+  // };
+
+const handleResend = async (assignmentId, assetType) => {
+  if (!assignmentId) return;
+
+  try {
+    setResending(assignmentId);
+
+    await resendAcknowledgement(assignmentId, assetType);
+
+    alert("Acknowledgement email resent successfully.");
+  } catch {
+    alert("Failed to resend acknowledgement.");
+  } finally {
+    setResending(null);
+  }
+};
 
   const getStatusStyle = (status) => {
     switch (status) {
@@ -191,7 +206,8 @@ const MyAssetsPage = () => {
                 ) : asset.assignmentId ? (
                   <button
                     disabled={resending === asset.assignmentId}
-                    onClick={() => handleResend(asset.assignmentId)}
+                    // onClick={() => handleResend(asset.assignmentId)}
+                    onClick={() => handleResend(asset.assignmentId, asset.assetType)}
                     className="w-full text-xs font-semibold py-2 rounded-xl
                       border border-blue-500 text-blue-600 hover:bg-blue-50
                       transition disabled:opacity-50"

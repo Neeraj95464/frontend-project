@@ -210,7 +210,7 @@ const AssetList = () => {
           <option value="LOST">Lost</option>
           <option value="DISPOSED">Disposed</option>
           <option value="DELETED">Deleted</option>
-          <option value="PENDING">UAP</option>
+          <option value="UAP">UAP</option>
         </select>
 
         {/* Type */}

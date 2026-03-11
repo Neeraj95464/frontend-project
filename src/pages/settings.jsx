@@ -1,4 +1,4 @@
-import LocationAssignmentForm from "./LocationAssignmentTable";
+import LocationAssignmentForm from "../components/LocationAssignmentTable";
 
 const Settings = () => {
   return (

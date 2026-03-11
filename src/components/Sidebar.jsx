@@ -475,7 +475,7 @@ const advanceItems = [
 const reportItems = [
   { label: "Feedback Report", icon: FiBarChart2, to: "/tickets/reports/feedback" },
   { label: "Assignee Report", icon: FiUsers, to: "/reports/assignees" },
-  // { label: "Feedback Report", icon: FiBarChart2, to: "/reports/feedback" }
+  { label: "Tickets Responses", icon: FiBarChart2, to: "/tickets/reports/responses" }
 ];
 
 /* ---------------- NAV LINK ---------------- */
@@ -589,7 +589,7 @@ const Sidebar = () => {
           )}
 
           {/* ADVANCE */}
-          {["ADMIN", "MANAGER"].includes(user?.role) && (
+          {["ADMIN", "HR_ADMIN"].includes(user?.role) && (
             <SidebarDropdown
               title="Advance"
               icon={FiSettings}
