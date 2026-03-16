@@ -661,6 +661,8 @@ export default function TicketResponseReport() {
                         {[
                           "ID",
                           "Subject",
+                          "First Message",
+                          "Last Message",
                           "Status",
                           "Category",
                           "Location",
@@ -684,6 +686,9 @@ export default function TicketResponseReport() {
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-100">
                       {filteredTickets.map((ticket) => (
+
+
+
                         <tr
                           key={ticket.id}
                           className="hover:bg-blue-50 transition-colors cursor-pointer"
@@ -702,6 +707,49 @@ export default function TicketResponseReport() {
                               {ticket.title}
                             </div>
                           </td>
+
+<td className="px-4 py-3 text-sm text-gray-700">
+{ticket.messages && ticket.messages.length > 0
+  ? (() => {
+      const validMessages = ticket.messages.filter(
+        (m) =>
+          !m.message.includes("Status changed") &&
+          !m.message.includes("Ticket Category changed") &&
+          !m.message.includes("Ticket assignee changed")&&
+          !m.message.includes("Ticket Location changed")
+          &&
+          !m.message.includes("Due Date changed")&&
+          !m.message.includes("Employee changed")
+      );
+// ${validMessages[0].sender}:
+      return validMessages.length > 0
+        ? ` ${validMessages[0].message}`
+        : "No response";
+    })()
+  : "No response"}
+</td>
+
+<td className="px-4 py-3 text-sm text-gray-700">
+{ticket.messages && ticket.messages.length > 0
+  ? (() => {
+      const validMessages = ticket.messages.filter(
+        (m) =>
+          !m.message.includes("Status changed") &&
+          !m.message.includes("Ticket Category changed") &&
+          !m.message.includes("Ticket assignee changed")&&
+          !m.message.includes("Ticket Location changed")&&
+          !m.message.includes("Due Date changed")&&
+          !m.message.includes("Employee changed")
+      );
+// ${validMessages[validMessages.length - 1].sender}:
+      return validMessages.length > 0
+        ? ` ${
+            validMessages[validMessages.length - 1].message
+          }`
+        : "No response";
+    })()
+  : "No response"}
+</td>
 
                           <td className="px-4 py-3">
                             <span

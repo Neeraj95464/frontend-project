@@ -849,9 +849,52 @@ export const changeTicketEmployeeIfSame = async (ticketId, newEmployeeId) => {
 //   }
 // };
 
+// export const getTickets = async ({
+//   title,
+//   status,
+//   feedbackReceived,
+//   category,
+//   employeeId = "ALL",
+//   locationId,
+//   assigneeId,
+//   createdAfter,
+//   createdBefore,
+//   search,
+//   siteIdLocationId,
+//   page = 0,
+//   size = 10,
+// } = {}) => {
+//   try {
+//     const params = {
+//       page,
+//       size,
+//       employeeId,
+//       ...(title && { title }),
+//       ...(status && { status }),
+//       ...(category && { category }),
+//       ...(locationId && { locationId }),
+//       ...(assigneeId && { assigneeId }),
+//       ...(createdAfter && { createdAfter }),
+//       ...(createdBefore && { createdBefore }),
+//       ...(search && { search }),
+//       ...(siteIdLocationId && { siteIdLocationId }),
+//     };
+
+//     const response = await api.get(`${API_URL}/user-assets/tickets`, {
+//       params,
+//     });
+//     // console.log("response data is ",response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error filtering tickets:", error);
+//     throw error;
+//   }
+// };
+
 export const getTickets = async ({
   title,
   status,
+  feedbackReceived, // ✅ include this
   category,
   employeeId = "ALL",
   locationId,
@@ -877,12 +920,10 @@ export const getTickets = async ({
       ...(createdBefore && { createdBefore }),
       ...(search && { search }),
       ...(siteIdLocationId && { siteIdLocationId }),
+      ...(feedbackReceived !== undefined && { feedbackReceived }), // ✅ add this
     };
 
-    const response = await api.get(`${API_URL}/user-assets/tickets`, {
-      params,
-    });
-    // console.log("response data is ",response.data);
+    const response = await api.get(`${API_URL}/user-assets/tickets`, { params });
     return response.data;
   } catch (error) {
     console.error("Error filtering tickets:", error);
@@ -1091,6 +1132,7 @@ export const getEmployees = async (page = 0, size = 10) => {
     throw error;
   }
 };
+
 export const changePassword = async (oldPassword, newPassword) => {
   try {
     const response = await api.put("/auth/change-password", {

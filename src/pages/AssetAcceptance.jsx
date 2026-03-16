@@ -150,7 +150,7 @@ export default function AssetAcceptance() {
 
             {!policyRead && (
               <span className="text-xs text-red-500">
-                Please scroll to the bottom to continue
+                Please scroll and read to the bottom to continue with acceptance
               </span>
             )}
           </div>

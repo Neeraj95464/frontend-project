@@ -1,8 +1,10 @@
 import { getTicketsWithFeedback, getAssignees } from "../services/api";
 import DownloadButtonExcelTicket from "./DownloadButtonExcelTicket";
 import { useEffect, useState } from "react";
+import { useAuth } from "./AuthContext";
 
 const TicketWithFeedbackTable = () => {
+   const { user } = useAuth();
   const [tickets, setTickets] = useState([]);
   const [assignees, setAssignees] = useState([]);
   const [page, setPage] = useState(0);
@@ -47,6 +49,7 @@ const TicketWithFeedbackTable = () => {
   };
 
   return (
+
     // <div className="lg:ml-40 pt-16 ">
     <div className="lg:ml-48 bg-gray-50 min-h-screen">
       {/* Download Button */}
@@ -57,7 +60,7 @@ const TicketWithFeedbackTable = () => {
 
       {/* Filter Section */}
       <div className="flex flex-wrap gap-4 items-center mb-6 justify-between">
-        <div className="flex flex-col">
+        {/* <div className="flex flex-col">
           <label className="text-sm text-gray-600 mb-1">
             Filter by Executive:
           </label>
@@ -76,7 +79,32 @@ const TicketWithFeedbackTable = () => {
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
+
+        {(user?.role === "ADMIN" || user?.role === "HR_ADMIN") && (
+  <div className="flex flex-col">
+    <label className="text-sm text-gray-600 mb-1">
+      Filter by Executive:
+    </label>
+
+    <select
+      value={selectedAssignee}
+      onChange={(e) => {
+        setSelectedAssignee(e.target.value);
+        setPage(0);
+      }}
+      className="p-2 border border-gray-300 rounded-md shadow-sm w-64 focus:ring focus:ring-green-400"
+    >
+      <option value="">All Executives</option>
+
+      {assignees.map(({ employeeId, name }) => (
+        <option key={employeeId} value={employeeId}>
+          {name}
+        </option>
+      ))}
+    </select>
+  </div>
+)}
 
         {/* Pagination */}
         <div className="mt-6 flex items-center justify-center gap-3">
