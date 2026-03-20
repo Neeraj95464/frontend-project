@@ -1,5 +1,7 @@
 
 
+
+
 import { useEffect, useState, useMemo } from "react";
 import { getAssigneePerformance } from "../services/api";
 import {
@@ -105,32 +107,87 @@ const StatCard = ({ label, value, color = "#6366F1", sub }) => (
   </div>
 );
 
+// ─── Month/Year Selector ───────────────────────────────────────────────────────
+const MONTHS = [
+  { value: 1, label: "January" }, { value: 2, label: "February" },
+  { value: 3, label: "March" }, { value: 4, label: "April" },
+  { value: 5, label: "May" }, { value: 6, label: "June" },
+  { value: 7, label: "July" }, { value: 8, label: "August" },
+  { value: 9, label: "September" }, { value: 10, label: "October" },
+  { value: 11, label: "November" }, { value: 12, label: "December" },
+];
+
+const selectStyle = {
+  padding: "8px 14px",
+  background: "#0F172A",
+  border: "1px solid rgba(99,102,241,0.25)",
+  borderRadius: 10,
+  color: "#E2E8F0",
+  fontSize: 13,
+  fontFamily: "'DM Sans', sans-serif",
+  outline: "none",
+  cursor: "pointer",
+  appearance: "none",
+  WebkitAppearance: "none",
+  paddingRight: 32,
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`,
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "right 10px center",
+};
+
 // ─── Main Component ────────────────────────────────────────────────────────────
 const AssigneeDashboard = () => {
+  const now = new Date();
+  const defaultMonth = now.getMonth() + 1; // 1-based
+  const defaultYear = now.getFullYear();
+
   const [overallStats, setOverallStats] = useState([]);
   const [monthlyStats, setMonthlyStats] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [monthlyLoading, setMonthlyLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState("totalTickets");
   const [sortDir, setSortDir] = useState("desc");
   const [activeTab, setActiveTab] = useState("table");
 
+  // Month/Year picker state
+  const [selectedMonth, setSelectedMonth] = useState(defaultMonth);
+  const [selectedYear, setSelectedYear] = useState(defaultYear);
+
+  // Generate year options: current year back 3 years
+  const yearOptions = Array.from({ length: 4 }, (_, i) => defaultYear - i);
+
+  // Fetch overall stats once on mount
   useEffect(() => {
-    const fetch = async () => {
+    const fetchOverall = async () => {
       try {
         const result = await getAssigneePerformance();
         const overall = (result?.overallStats || []).sort((a, b) => b.totalTickets - a.totalTickets);
-        const monthly = result?.monthlyStats || [];
         setOverallStats(overall);
-        setMonthlyStats(monthly);
       } catch (e) {
         console.error("Dashboard error:", e);
       } finally {
         setLoading(false);
       }
     };
-    fetch();
+    fetchOverall();
   }, []);
+
+  // Fetch monthly stats whenever month/year changes
+  useEffect(() => {
+    const fetchMonthly = async () => {
+      setMonthlyLoading(true);
+      try {
+        const result = await getAssigneePerformance(selectedMonth, selectedYear);
+        setMonthlyStats(result?.monthlyStats || []);
+      } catch (e) {
+        console.error("Monthly fetch error:", e);
+      } finally {
+        setMonthlyLoading(false);
+      }
+    };
+    fetchMonthly();
+  }, [selectedMonth, selectedYear]);
 
   // Summary stats
   const summary = useMemo(() => {
@@ -154,19 +211,11 @@ const AssigneeDashboard = () => {
     return d;
   }, [overallStats, search, sortKey, sortDir]);
 
-  // Monthly chart data – top 8 agents
-  const monthlyChartData = useMemo(() => {
-    const topAgents = overallStats.slice(0, 8).map(a => a.assigneeName);
-    const grouped = {};
-    monthlyStats.forEach(m => {
-      const key = `${m.year}-${String(m.month).padStart(2, "0")}`;
-      if (!grouped[key]) grouped[key] = { month: key };
-      if (topAgents.includes(m.assigneeName)) {
-        grouped[key][m.assigneeName] = m.closedTickets;
-      }
-    });
-    return Object.values(grouped).sort((a, b) => a.month.localeCompare(b.month));
-  }, [overallStats, monthlyStats]);
+  // ── CHANGE 1: Bar chart data — monthly stats sorted descending by closedTickets ──
+  const barChartData = useMemo(() => {
+    return [...monthlyStats]
+      .sort((a, b) => b.closedTickets - a.closedTickets);
+  }, [monthlyStats]);
 
   const handleSort = (key) => {
     if (sortKey === key) setSortDir(d => d === "desc" ? "asc" : "desc");
@@ -208,268 +257,312 @@ const AssigneeDashboard = () => {
 
   return (
     <>
-    <div className="lg:ml-48 bg-gray-50 min-h-screen">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;700&display=swap');
-        * { box-sizing: border-box; }
-        .dash-root { min-height: 100vh; background: #020817; padding: 32px 24px; font-family: 'DM Sans', sans-serif; background-image: radial-gradient(ellipse at 10% 0%, #6366F112 0%, transparent 50%), radial-gradient(ellipse at 90% 100%, #06B6D412 0%, transparent 50%); }
-        .search-input { width: 100%; padding: 10px 16px 10px 40px; background: #0F172A; border: 1px solid rgba(99,102,241,0.25); border-radius: 10px; color: #E2E8F0; font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
-        .search-input::placeholder { color: #475569; }
-        .search-input:focus { border-color: #6366F1; }
-        .tab-btn { padding: 8px 20px; border-radius: 8px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-        .tab-btn.active { background: #6366F1; color: #fff; }
-        .tab-btn.inactive { background: #1E293B; color: #64748B; }
-        .tab-btn.inactive:hover { background: #263348; color: #94A3B8; }
-        .tr-row:hover td { background: #12203A !important; }
-        .tr-row td { transition: background 0.15s; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-        .fade-in { animation: fadeIn 0.4s ease; }
-      `}</style>
+      <div className="lg:ml-48 bg-gray-50 min-h-screen">
+        <style>{`
+          @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;700&display=swap');
+          * { box-sizing: border-box; }
+          .dash-root { min-height: 100vh; background: #020817; padding: 32px 24px; font-family: 'DM Sans', sans-serif; background-image: radial-gradient(ellipse at 10% 0%, #6366F112 0%, transparent 50%), radial-gradient(ellipse at 90% 100%, #06B6D412 0%, transparent 50%); }
+          .search-input { width: 100%; padding: 10px 16px 10px 40px; background: #0F172A; border: 1px solid rgba(99,102,241,0.25); border-radius: 10px; color: #E2E8F0; font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.2s; }
+          .search-input::placeholder { color: #475569; }
+          .search-input:focus { border-color: #6366F1; }
+          .tab-btn { padding: 8px 20px; border-radius: 8px; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+          .tab-btn.active { background: #6366F1; color: #fff; }
+          .tab-btn.inactive { background: #1E293B; color: #64748B; }
+          .tab-btn.inactive:hover { background: #263348; color: #94A3B8; }
+          .tr-row:hover td { background: #12203A !important; }
+          .tr-row td { transition: background 0.15s; }
+          .month-select:focus { border-color: #6366F1 !important; }
+          @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+          .fade-in { animation: fadeIn 0.4s ease; }
+        `}</style>
 
-      <div className="dash-root">
-        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+        <div className="dash-root">
+          <div style={{ maxWidth: 1400, margin: "0 auto" }}>
 
-          {/* ── Header ──────────────────────────────────────────── */}
-          <div style={{ marginBottom: 28 }}>
-            <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.5px" }}>
-              Assignee Performance
-            </h1>
-            <p style={{ margin: "6px 0 0", fontSize: 13, color: "#64748B" }}>
-              Comprehensive overview of support agent metrics and ticket resolution
-            </p>
-          </div>
+            {/* ── Header ──────────────────────────────────────────── */}
+            <div style={{ marginBottom: 28 }}>
+              <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, color: "#F1F5F9", letterSpacing: "-0.5px" }}>
+                Assignee Performance
+              </h1>
+              <p style={{ margin: "6px 0 0", fontSize: 13, color: "#64748B" }}>
+                Comprehensive overview of support agent metrics and ticket resolution
+              </p>
+            </div>
 
-          {/* ── Summary Cards ────────────────────────────────────── */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14, marginBottom: 24 }}>
-            <StatCard label="Total Agents" value={summary.agents} color="#6366F1" />
-            <StatCard label="Total Tickets" value={summary.total.toLocaleString()} color="#06B6D4" />
-            <StatCard label="Closed Tickets" value={summary.closed.toLocaleString()} color="#10B981" sub={`${((summary.closed / summary.total) * 100).toFixed(1)}% resolution rate`} />
-            <StatCard label="With Feedback" value={summary.feedback.toLocaleString()} color="#F59E0B" sub={`${((summary.feedback / summary.closed) * 100).toFixed(1)}% of closed`} />
-            <StatCard label="Avg Rating" value={summary.avgRating.toFixed(2)} color="#8B5CF6" sub="across rated agents" />
-          </div>
+            {/* ── Summary Cards ────────────────────────────────────── */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14, marginBottom: 24 }}>
+              <StatCard label="Total Agents" value={summary.agents} color="#6366F1" />
+              <StatCard label="Total Tickets" value={summary.total.toLocaleString()} color="#06B6D4" />
+              <StatCard label="Closed Tickets" value={summary.closed.toLocaleString()} color="#10B981" sub={`${((summary.closed / summary.total) * 100).toFixed(1)}% resolution rate`} />
+              <StatCard label="With Feedback" value={summary.feedback.toLocaleString()} color="#F59E0B" sub={`${((summary.feedback / summary.closed) * 100).toFixed(1)}% of closed`} />
+              <StatCard label="Avg Rating" value={summary.avgRating.toFixed(2)} color="#8B5CF6" sub="across rated agents" />
+            </div>
 
- 
+            {/* ── Controls Row ─────────────────────────────────────── */}
+            <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: 20 }}>
 
-          <div
-  style={{
-    display: "flex",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: 16,
-    marginBottom: 20
-  }}
->
-  {/* Search */}
-  <div style={{ position: "relative", maxWidth: 280 }}>
-    <svg
-      style={{
-        position: "absolute",
-        left: 12,
-        top: "50%",
-        transform: "translateY(-50%)",
-        color: "#475569"
-      }}
-      width={14}
-      height={14}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={2}
-    >
-      <circle cx={11} cy={11} r={8} />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-
-    <input
-      className="search-input"
-      placeholder="Search assignee..."
-      value={search}
-      onChange={e => setSearch(e.target.value)}
-    />
-  </div>
-
-  {/* Tabs */}
-  <div style={{ display: "flex", gap: 8 }}>
-    <button
-      className={`tab-btn ${activeTab === "table" ? "active" : "inactive"}`}
-      onClick={() => setActiveTab("table")}
-    >
-      Table View
-    </button>
-
-    <button
-      className={`tab-btn ${activeTab === "chart" ? "active" : "inactive"}`}
-      onClick={() => setActiveTab("chart")}
-    >
-      Monthly Chart
-    </button>
-  </div>
-</div>
-
-          {/* ── TABLE VIEW ───────────────────────────────────────── */}
-          {activeTab === "table" && (
-            <div className="fade-in" style={{ background: "linear-gradient(145deg, #1E293B, #0F172A)", border: "1px solid rgba(99,102,241,0.12)", borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 32px rgba(0,0,0,0.5)" }}>
-              <div style={{ overflowX: "auto" }}>
-                <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
-                  <thead>
-                    <tr>
-                      {[
-                        ["#", null],
-                        ["Assignee", "assigneeName"],
-                        ["Total Tickets", "totalTickets"],
-                        ["Closed", "totalClosedTickets"],
-                        ["With Feedback", "closedTicketsWithFeedback"],
-                        ["Feedback %", "feedbackPercentage"],
-                        ["Avg Rating", "averageRating"],
-                        ["Closure Rate", null],
-                        ["Volume", null],
-                      ].map(([label, key]) => (
-                        <th key={label} style={thStyle(key)} onClick={() => key && handleSort(key)}>
-                          {label}{key && <SortIcon col={key} />}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filtered.map((item, idx) => {
-                      const perf = item.totalTickets > 0
-                        ? ((item.totalClosedTickets / item.totalTickets) * 100).toFixed(1)
-                        : "0.0";
-                      const feedbackPct = item.feedbackPercentage?.toFixed(1) ?? "0.0";
-
-                      return (
-                        <tr key={item.assigneeId} className="tr-row">
-                          <td style={{ padding: "12px 16px", color: "#475569", fontSize: 12, fontFamily: "'DM Mono', monospace", borderBottom: "1px solid #0F172A" }}>
-                            {idx + 1}
-                          </td>
-                          <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                              <div style={{
-                                width: 32, height: 32, borderRadius: 8, flexShrink: 0,
-                                background: `${PALETTE[idx % PALETTE.length]}22`,
-                                border: `1px solid ${PALETTE[idx % PALETTE.length]}44`,
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                fontSize: 12, fontWeight: 700, color: PALETTE[idx % PALETTE.length],
-                              }}>
-                                {item.assigneeName?.[0]?.toUpperCase()}
-                              </div>
-                              <span style={{ fontSize: 13, fontWeight: 600, color: "#E2E8F0", whiteSpace: "nowrap" }}>
-                                {item.assigneeName}
-                              </span>
-                            </div>
-                          </td>
-                          <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#F1F5F9", fontFamily: "'DM Mono', monospace", borderBottom: "1px solid #0F172A" }}>
-                            {item.totalTickets.toLocaleString()}
-                          </td>
-                          <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#06B6D4", fontFamily: "'DM Mono', monospace", borderBottom: "1px solid #0F172A" }}>
-                            {item.totalClosedTickets.toLocaleString()}
-                          </td>
-                          <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#10B981", fontFamily: "'DM Mono', monospace", borderBottom: "1px solid #0F172A" }}>
-                            {item.closedTicketsWithFeedback}
-                          </td>
-                          <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A" }}>
-                            <span style={{ fontSize: 12, fontWeight: 700, color: parseFloat(feedbackPct) > 20 ? "#10B981" : "#F59E0B", fontFamily: "'DM Mono', monospace" }}>
-                              {feedbackPct}%
-                            </span>
-                          </td>
-                          <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A" }}>
-                            <StarRating rating={item.averageRating} />
-                          </td>
-                          <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A" }}>
-                            <PerfBadge value={parseFloat(perf)} />
-                          </td>
-                          <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A", minWidth: 120 }}>
-                            <MiniBar value={item.totalTickets} max={maxTickets} color={PALETTE[idx % PALETTE.length]} />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+              {/* Search */}
+              <div style={{ position: "relative", maxWidth: 280 }}>
+                <svg
+                  style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#475569" }}
+                  width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+                >
+                  <circle cx={11} cy={11} r={8} />
+                  <path d="m21 21-4.35-4.35" />
+                </svg>
+                <input
+                  className="search-input"
+                  placeholder="Search assignee..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
               </div>
 
-              {filtered.length === 0 && (
-                <div style={{ padding: "48px", textAlign: "center", color: "#475569", fontSize: 14 }}>
-                  No assignees match your search.
+              {/* Tabs */}
+              <div style={{ display: "flex", gap: 8 }}>
+                <button className={`tab-btn ${activeTab === "table" ? "active" : "inactive"}`} onClick={() => setActiveTab("table")}>
+                  Table View
+                </button>
+                <button className={`tab-btn ${activeTab === "chart" ? "active" : "inactive"}`} onClick={() => setActiveTab("chart")}>
+                  Monthly Chart
+                </button>
+              </div>
+
+              {/* ── CHANGE 2: Month / Year pickers (visible in chart tab) ── */}
+              {activeTab === "chart" && (
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: "auto" }}>
+                  <span style={{ fontSize: 12, color: "#64748B", fontWeight: 600 }}>Period:</span>
+
+                  {/* Month selector */}
+                  <div style={{ position: "relative" }}>
+                    <select
+                      className="month-select"
+                      value={selectedMonth}
+                      onChange={e => setSelectedMonth(Number(e.target.value))}
+                      style={selectStyle}
+                    >
+                      {MONTHS.map(m => (
+                        <option key={m.value} value={m.value} style={{ background: "#0F172A" }}>
+                          {m.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Year selector */}
+                  <div style={{ position: "relative" }}>
+                    <select
+                      className="month-select"
+                      value={selectedYear}
+                      onChange={e => setSelectedYear(Number(e.target.value))}
+                      style={selectStyle}
+                    >
+                      {yearOptions.map(y => (
+                        <option key={y} value={y} style={{ background: "#0F172A" }}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               )}
-
-              <div style={{ padding: "12px 20px", borderTop: "1px solid #1E293B", fontSize: 12, color: "#475569" }}>
-                Showing {filtered.length} of {overallStats.length} agents
-              </div>
             </div>
-          )}
 
-          {/* ── MONTHLY CHART VIEW ───────────────────────────────── */}
-          {activeTab === "chart" && (
-            <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* ── TABLE VIEW ───────────────────────────────────────── */}
+            {activeTab === "table" && (
+              <div className="fade-in" style={{ background: "linear-gradient(145deg, #1E293B, #0F172A)", border: "1px solid rgba(99,102,241,0.12)", borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 32px rgba(0,0,0,0.5)" }}>
+                <div style={{ overflowX: "auto" }}>
+                  <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 900 }}>
+                    <thead>
+                      <tr>
+                        {[
+                          ["#", null],
+                          ["Assignee", "assigneeName"],
+                          ["Total Tickets", "totalTickets"],
+                          ["Closed", "totalClosedTickets"],
+                          ["With Feedback", "closedTicketsWithFeedback"],
+                          ["Feedback %", "feedbackPercentage"],
+                          ["Avg Rating", "averageRating"],
+                          ["Closure Rate", null],
+                          ["Volume", null],
+                        ].map(([label, key]) => (
+                          <th key={label} style={thStyle(key)} onClick={() => key && handleSort(key)}>
+                            {label}{key && <SortIcon col={key} />}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map((item, idx) => {
+                        const perf = item.totalTickets > 0
+                          ? ((item.totalClosedTickets / item.totalTickets) * 100).toFixed(1)
+                          : "0.0";
+                        const feedbackPct = item.feedbackPercentage?.toFixed(1) ?? "0.0";
 
-              {/* Monthly Closed Tickets - Top 8 agents */}
-              <div style={{ background: "linear-gradient(145deg, #1E293B, #0F172A)", border: "1px solid rgba(99,102,241,0.12)", borderRadius: 16, padding: 24, boxShadow: "0 4px 32px rgba(0,0,0,0.4)" }}>
-                <div style={{ marginBottom: 20 }}>
-                  <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#F1F5F9" }}>Monthly Closed Tickets — Top 8 Agents</h2>
-                  <p style={{ margin: "4px 0 0", fontSize: 12, color: "#64748B" }}>Ticket closures per month by highest-volume assignees</p>
-                </div>
-                <ResponsiveContainer width="100%" height={320}>
-                  <LineChart data={monthlyChartData} margin={{ top: 4, right: 20, left: 0, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
-                    <XAxis dataKey="month" tick={{ fill: "#64748B", fontSize: 11 }} axisLine={{ stroke: "#1E293B" }} tickLine={false} />
-                    <YAxis tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Legend wrapperStyle={{ fontSize: 11, color: "#94A3B8" }} />
-                    {overallStats.slice(0, 8).map((a, i) => (
-                      <Line key={a.assigneeId} type="monotone" dataKey={a.assigneeName}
-                        stroke={PALETTE[i % PALETTE.length]} strokeWidth={2}
-                        dot={{ r: 3, fill: PALETTE[i % PALETTE.length], strokeWidth: 0 }}
-                        activeDot={{ r: 5 }} connectNulls />
-                    ))}
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Monthly Stats Cards Grid */}
-              <div style={{ background: "linear-gradient(145deg, #1E293B, #0F172A)", border: "1px solid rgba(99,102,241,0.12)", borderRadius: 16, padding: 24, boxShadow: "0 4px 32px rgba(0,0,0,0.4)" }}>
-                <h2 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 700, color: "#F1F5F9" }}>This Month's Agent Breakdown</h2>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
-                  {monthlyStats
-                    .sort((a, b) => b.closedTickets - a.closedTickets)
-                    .map((m, i) => {
-                      const feedbackPct = m.feedbackPercentage?.toFixed(1) ?? "0.0";
-                      return (
-                        <div key={m.assigneeId} style={{
-                          background: "#0F172A",
-                          border: `1px solid ${PALETTE[i % PALETTE.length]}22`,
-                          borderLeft: `3px solid ${PALETTE[i % PALETTE.length]}`,
-                          borderRadius: 10,
-                          padding: "14px 16px",
-                        }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 10, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                            {m.assigneeName}
-                          </div>
-                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                            {[
-                              ["Closed", m.closedTickets, "#06B6D4"],
-                              ["With Feedback", m.closedTicketsWithFeedback, "#10B981"],
-                              ["Feedback %", `${feedbackPct}%`, "#F59E0B"],
-                              ["Avg Rating", m.averageRating ? m.averageRating.toFixed(1) : "—", "#8B5CF6"],
-                            ].map(([label, val, color]) => (
-                              <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#64748B" }}>
-                                <span>{label}</span>
-                                <span style={{ fontWeight: 700, color, fontFamily: "'DM Mono', monospace" }}>{val}</span>
+                        return (
+                          <tr key={item.assigneeId} className="tr-row">
+                            <td style={{ padding: "12px 16px", color: "#475569", fontSize: 12, fontFamily: "'DM Mono', monospace", borderBottom: "1px solid #0F172A" }}>
+                              {idx + 1}
+                            </td>
+                            <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A" }}>
+                              <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                <div style={{
+                                  width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                                  background: `${PALETTE[idx % PALETTE.length]}22`,
+                                  border: `1px solid ${PALETTE[idx % PALETTE.length]}44`,
+                                  display: "flex", alignItems: "center", justifyContent: "center",
+                                  fontSize: 12, fontWeight: 700, color: PALETTE[idx % PALETTE.length],
+                                }}>
+                                  {item.assigneeName?.[0]?.toUpperCase()}
+                                </div>
+                                <span style={{ fontSize: 13, fontWeight: 600, color: "#E2E8F0", whiteSpace: "nowrap" }}>
+                                  {item.assigneeName}
+                                </span>
                               </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
+                            </td>
+                            <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#F1F5F9", fontFamily: "'DM Mono', monospace", borderBottom: "1px solid #0F172A" }}>
+                              {item.totalTickets.toLocaleString()}
+                            </td>
+                            <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#06B6D4", fontFamily: "'DM Mono', monospace", borderBottom: "1px solid #0F172A" }}>
+                              {item.totalClosedTickets.toLocaleString()}
+                            </td>
+                            <td style={{ padding: "12px 16px", fontSize: 13, fontWeight: 700, color: "#10B981", fontFamily: "'DM Mono', monospace", borderBottom: "1px solid #0F172A" }}>
+                              {item.closedTicketsWithFeedback}
+                            </td>
+                            <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A" }}>
+                              <span style={{ fontSize: 12, fontWeight: 700, color: parseFloat(feedbackPct) > 20 ? "#10B981" : "#F59E0B", fontFamily: "'DM Mono', monospace" }}>
+                                {feedbackPct}%
+                              </span>
+                            </td>
+                            <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A" }}>
+                              <StarRating rating={item.averageRating} />
+                            </td>
+                            <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A" }}>
+                              <PerfBadge value={parseFloat(perf)} />
+                            </td>
+                            <td style={{ padding: "12px 16px", borderBottom: "1px solid #0F172A", minWidth: 120 }}>
+                              <MiniBar value={item.totalTickets} max={maxTickets} color={PALETTE[idx % PALETTE.length]} />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {filtered.length === 0 && (
+                  <div style={{ padding: "48px", textAlign: "center", color: "#475569", fontSize: 14 }}>
+                    No assignees match your search.
+                  </div>
+                )}
+
+                <div style={{ padding: "12px 20px", borderTop: "1px solid #1E293B", fontSize: 12, color: "#475569" }}>
+                  Showing {filtered.length} of {overallStats.length} agents
                 </div>
               </div>
+            )}
 
-            </div>
-          )}
+            {/* ── MONTHLY CHART VIEW ───────────────────────────────── */}
+            {activeTab === "chart" && (
+              <div className="fade-in" style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 
+                {/* ── CHANGE 1: Bar chart sorted descending ── */}
+                <div style={{ background: "linear-gradient(145deg, #1E293B, #0F172A)", border: "1px solid rgba(99,102,241,0.12)", borderRadius: 16, padding: 24, boxShadow: "0 4px 32px rgba(0,0,0,0.4)" }}>
+                  <div style={{ marginBottom: 20 }}>
+                    <h2 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: "#F1F5F9" }}>
+                      Closed Tickets by Agent —{" "}
+                      {MONTHS.find(m => m.value === selectedMonth)?.label} {selectedYear}
+                    </h2>
+                    <p style={{ margin: "4px 0 0", fontSize: 12, color: "#64748B" }}>
+                      Sorted by ticket closures in descending order
+                    </p>
+                  </div>
+
+                  {monthlyLoading ? (
+                    <div style={{ height: 320, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ width: 32, height: 32, border: "3px solid #1E293B", borderTop: "3px solid #6366F1", borderRadius: "50%", animation: "spin 0.8s linear infinite", margin: "0 auto 12px" }} />
+                        <p style={{ color: "#64748B", fontSize: 13 }}>Loading monthly data...</p>
+                      </div>
+                    </div>
+                  ) : barChartData.length === 0 ? (
+                    <div style={{ height: 320, display: "flex", alignItems: "center", justifyContent: "center", color: "#475569", fontSize: 14 }}>
+                      No data for {MONTHS.find(m => m.value === selectedMonth)?.label} {selectedYear}
+                    </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height={320}>
+                      <BarChart data={barChartData} margin={{ top: 4, right: 20, left: 0, bottom: 60 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#1E293B" vertical={false} />
+                        <XAxis
+                          dataKey="assigneeName"
+                          tick={{ fill: "#64748B", fontSize: 11 }}
+                          axisLine={{ stroke: "#1E293B" }}
+                          tickLine={false}
+                          angle={-35}
+                          textAnchor="end"
+                          interval={0}
+                        />
+                        <YAxis tick={{ fill: "#64748B", fontSize: 11 }} axisLine={false} tickLine={false} />
+                        <Tooltip content={<CustomTooltip />} cursor={{ fill: "rgba(99,102,241,0.08)" }} />
+                        <Bar dataKey="closedTickets" name="Closed Tickets" radius={[6, 6, 0, 0]}>
+                          {barChartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={PALETTE[index % PALETTE.length]} />
+                          ))}
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  )}
+                </div>
+
+                {/* Monthly Stats Cards Grid */}
+                <div style={{ background: "linear-gradient(145deg, #1E293B, #0F172A)", border: "1px solid rgba(99,102,241,0.12)", borderRadius: 16, padding: 24, boxShadow: "0 4px 32px rgba(0,0,0,0.4)" }}>
+                  <h2 style={{ margin: "0 0 16px", fontSize: 15, fontWeight: 700, color: "#F1F5F9" }}>
+                    {MONTHS.find(m => m.value === selectedMonth)?.label} {selectedYear} — Agent Breakdown
+                  </h2>
+                  {monthlyLoading ? (
+                    <div style={{ padding: "32px", textAlign: "center", color: "#475569", fontSize: 13 }}>Loading...</div>
+                  ) : (
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 12 }}>
+                      {[...monthlyStats]
+                        .sort((a, b) => b.closedTickets - a.closedTickets)
+                        .map((m, i) => {
+                          const feedbackPct = m.feedbackPercentage?.toFixed(1) ?? "0.0";
+                          return (
+                            <div key={m.assigneeId} style={{
+                              background: "#0F172A",
+                              border: `1px solid ${PALETTE[i % PALETTE.length]}22`,
+                              borderLeft: `3px solid ${PALETTE[i % PALETTE.length]}`,
+                              borderRadius: 10,
+                              padding: "14px 16px",
+                            }}>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: "#F1F5F9", marginBottom: 10, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                {m.assigneeName}
+                              </div>
+                              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                                {[
+                                  ["Closed", m.closedTickets, "#06B6D4"],
+                                  ["With Feedback", m.closedTicketsWithFeedback, "#10B981"],
+                                  ["Feedback %", `${feedbackPct}%`, "#F59E0B"],
+                                  ["Avg Rating", m.averageRating ? m.averageRating.toFixed(1) : "—", "#8B5CF6"],
+                                ].map(([label, val, color]) => (
+                                  <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#64748B" }}>
+                                    <span>{label}</span>
+                                    <span style={{ fontWeight: 700, color, fontFamily: "'DM Mono', monospace" }}>{val}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                    </div>
+                  )}
+                </div>
+
+              </div>
+            )}
+
+          </div>
         </div>
-      </div>
       </div>
     </>
   );

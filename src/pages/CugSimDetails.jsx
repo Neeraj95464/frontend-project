@@ -371,13 +371,21 @@ const simStatusOptions = [
             >
               {sim.status}
             </span>
-            {sim.status === "ASSIGNED" && sim.assignedUserName && (
+            {/* {sim.status === "ASSIGNED" && sim.assignedUserName && (
               <SimAcknowledgementDownload
                 simData={sim}
                 employeeData={employeeData}
                 companyName="MAHAVIR GROUP"
               />
-            )}
+            )} */}
+
+{(sim.status === "ASSIGNED" || sim.status === "UAP") && sim.assignedUserName && (
+  <SimAcknowledgementDownload
+    simData={sim}
+    employeeData={employeeData}
+    companyName="MAHAVIR GROUP"
+  />
+)}
             <button
               onClick={() => setIsEditModalOpen(true)}
               className="bg-white/20 hover:bg-white/30 text-white p-1.5 rounded-lg transition-all"

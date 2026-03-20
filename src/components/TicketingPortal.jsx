@@ -574,7 +574,7 @@ const handleStatusChange = async (ticketId, newStatus) => {
   </div>
 
   {/* Feedback Received Filter (only show when status = CLOSED) */}
-  {filters.status === "CLOSED" && (
+  {/* {filters.status === "CLOSED" && (
     <div className="flex-shrink-0">
       <select
         value={filters.feedbackReceived ?? ""}
@@ -593,7 +593,28 @@ const handleStatusChange = async (ticketId, newStatus) => {
         <option value="false">Not Received</option>
       </select>
     </div>
-  )}
+  )} */}
+
+  {(filters.status === "CLOSED" || filters.status === "RESOLVED") && (
+  <div className="flex-shrink-0">
+    <select
+      value={filters.feedbackReceived ?? ""}
+      onChange={(e) =>
+        handleFilterChange(
+          "feedbackReceived",
+          e.target.value === ""
+            ? null
+            : e.target.value === "true"
+        )
+      }
+      className="text-xs p-1.5 pr-6 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-green-500 focus:border-green-500 bg-white transition-all min-w-[120px]"
+    >
+      <option value="">All Feedback</option>
+      <option value="true">Received</option>
+      <option value="false">Not Received</option>
+    </select>
+  </div>
+)}
 </div>
 
                   {/* Site Filter */}

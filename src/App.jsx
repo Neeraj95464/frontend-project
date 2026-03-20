@@ -49,6 +49,7 @@ import UsersPage from "./pages/UsersPage";
 import AssigneeDashboard from "./pages/AssigneeDashboard";
 import Settings from "./pages/settings";
 import TicketResponseReport from "./pages/TicketResponsesReport";
+import KnowledgePage from "./pages/KnowledgePage";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -142,7 +143,7 @@ const App = () => {
                   path="/reports/assignees"
                   element={
                     <PrivateRoute
-                      allowedRoles={["ADMIN", "HR_ADMIN", "EXECUTIVE"]}
+                      allowedRoles={["ADMIN", "HR_ADMIN"]}
                     >
                       <AssigneeDashboard />
                     </PrivateRoute>
@@ -302,7 +303,7 @@ const App = () => {
                   path="/updates"
                   element={
                     <PrivateRoute>
-                      <Updates />
+                      <KnowledgePage />
                     </PrivateRoute>
                   }
                 />

@@ -192,12 +192,12 @@ export default function AssetAcceptance() {
             onChange={(e) => setEmailOtp(e.target.value)}
           />
 
-          <input
+          {/* <input
             className="border rounded-lg p-3 focus:ring-2 focus:ring-blue-400 outline-none"
             placeholder="Enter Mobile OTP"
             value={mobileOtp}
             onChange={(e) => setMobileOtp(e.target.value)}
-          />
+          /> */}
 
         </div>
 

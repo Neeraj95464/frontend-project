@@ -1794,13 +1794,114 @@ export const deleteLicense = async (id) => {
 };
 
 
-export const getAssigneePerformance = async () => {
+// export const getAssigneePerformance = async () => {
+//   try {
+//     const response = await api.get(`user-assets/assignee-performance`);
+//     // console.log("Response data was ",response.data);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching assignee performance:", error);
+//     throw error;
+//   }
+// };
+
+
+export const getAssigneePerformance = async (month, year) => {
   try {
-    const response = await api.get(`user-assets/assignee-performance`);
-    console.log("Response data was ",response.data);
+    const params = {};
+
+    if (month) params.month = month;
+    if (year) params.year = year;
+
+    const response = await api.get(`user-assets/assignee-performance`, { params });
+
     return response.data;
   } catch (error) {
     console.error("Error fetching assignee performance:", error);
     throw error;
   }
 };
+
+
+
+// // ✅ Get Updates
+// export const getUpdates = async (role) => {
+//   try {
+//     const response = await api.get(`/knowledge/updates?role=${role}`);
+
+//     if (response.status !== 200) {
+//       throw new Error("Failed to fetch updates");
+//     }
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching updates:", error.response?.data || error.message);
+//     throw error;
+//   }
+// };
+
+// // ✅ Get SOP
+// export const getSOP = async (role) => {
+//   try {
+//     const response = await api.get(`/knowledge/sop?role=${role}`);
+
+//     if (response.status !== 200) {
+//       throw new Error("Failed to fetch SOP");
+//     }
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching SOP:", error.response?.data || error.message);
+//     throw error;
+//   }
+// };
+
+// // ✅ Create (Update/SOP)
+// export const createKnowledge = async (payload) => {
+//   try {
+//     const response = await api.post(`/knowledge`, payload);
+
+//     if (response.status !== 200 && response.status !== 201) {
+//       throw new Error("Failed to create record");
+//     }
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error creating:", error.response?.data || error.message);
+//     throw error;
+//   }
+// };
+
+
+// Fetch Updates
+export const fetchUpdates = async () => {
+  const res = await api.get("/knowledge/updates"); // backend endpoint for updates
+  console.log("Updates fetched ",res.data);
+  return res.data;
+};
+
+// Fetch SOPs
+export const fetchSOPs = async () => {
+  const res = await api.get("/knowledge/sop"); // backend endpoint for SOPs
+  return res.data;
+};
+
+// Create Update
+export const createUpdate = async (data) => {
+  // console.log("sending data is ",data);
+  const res = await api.post("/knowledge", { ...data, type: "UPDATE" }); // send type in body
+  return res.data;
+};
+
+// Create SOP
+export const createSOP = async (data) => {
+  const res = await api.post("/knowledge", { ...data, type: "SOP" }); // send type in body
+  return res.data;
+};
+
+export const markKnowledgeRead = async (id) => {
+  const res = await api.post(`/knowledge/read/${id}`);
+  console.log("data are ",res.data);
+  return res.data;
+};
+
