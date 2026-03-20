@@ -878,6 +878,18 @@ const KnowledgePage = () => {
                 </div>
               </div>
 
+                            <div>
+              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">
+                   Roles <span className="text-slate-400 normal-case font-normal">(comma separated)</span>
+                </label>
+                 <input
+                  placeholder="e.g. ADMIN,EXECUTIVE"
+                  className="w-full border border-slate-200 bg-slate-50 px-3 py-2.5 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+                  value={form.roles.join(",")}
+                  onChange={(e) => setForm({ ...form, roles: e.target.value.split(",") })}
+                />
+              </div>
+
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
