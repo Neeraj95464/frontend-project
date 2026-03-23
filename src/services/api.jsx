@@ -1682,37 +1682,52 @@ export const getChildAssetHistory = async (childAssetTag) => {
   return res.data;
 };
 
-// Verify OTP
-export const verifyAssetOtp = async (payload) => {
-  const res = await api.post(`/assets/asset-assignments/verify`, payload);
-  return res.data;
+
+// src/utils/tokenRouter.js
+export const getAssignmentType = (token) => {
+  if (token.startsWith('ASSET_')) return 'asset';
+  if (token.startsWith('SIM_')) return 'sim';
+  return 'asset'; // fallback
 };
 
+// Dynamic API caller
 export const getAcceptanceDetails = async (token) => {
-  const res = await api.get(`/assets/asset-assignments/acceptance/${token}`);
+  const type = getAssignmentType(token);
+  const endpoint = type === 'sim' 
+    ? `/sims/sim-assignments/acceptance/${token}`
+    : `/assets/asset-assignments/acceptance/${token}`;
+  
+  const res = await api.get(endpoint);
   return res.data;
 };
 
-// Resend OTP
-export const resendAssetOtp = async (token) => {
-  const res = await api.post(`/assets/asset-assignments/resend-otp`, { token });
+export const verifyOtp = async (token, otpData) => {
+  const type = getAssignmentType(token);
+  const endpoint = type === 'sim'
+    ? `/sims/sim-assignments/verify`
+    : `/assets/asset-assignments/verify`;
+  
+  const res = await api.post(endpoint, { token, ...otpData });
   return res.data;
 };
 
-// export const resendAcknowledgement = async (assignmentId) => {
-//   try {
-//     const res = await api.post(
-//       `/assets/asset-assignments/assignments/${assignmentId}/resend`,
-//     );
-//     return res.data;
-//   } catch (error) {
-//     throw error.response?.data?.message || "Failed to resend acknowledgement.";
-//   }
-// };
+export const resendOtp = async (token) => {
+  const type = getAssignmentType(token);
+  const endpoint = type === 'sim'
+    ? `/sims/sim-assignments/resend-otp`
+    : `/assets/asset-assignments/resend-otp`;
+  
+  const res = await api.post(endpoint, { token });
+  return res.data;
+};
+
+
 
 export const resendAcknowledgement = async (assignmentId, assetType) => {
   try {
     let url = "";
+
+    console.log("asset type was ",assetType);
 
     if (assetType === "CUG_SIM") {
       url = `/sims/sim-assignments/assignments/${assignmentId}/resend`;
@@ -1876,7 +1891,7 @@ export const getAssigneePerformance = async (month, year) => {
 // Fetch Updates
 export const fetchUpdates = async () => {
   const res = await api.get("/knowledge/updates"); // backend endpoint for updates
-  console.log("Updates fetched ",res.data);
+  // console.log("Updates fetched ",res.data);
   return res.data;
 };
 

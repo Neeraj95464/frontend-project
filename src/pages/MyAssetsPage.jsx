@@ -57,21 +57,7 @@ const MyAssetsPage = () => {
     }
   };
 
-  // const handleResend = async (assignmentId) => {
-  //   if (!assignmentId) return;
 
-  //   try {
-  //     setResending(assignmentId);
-
-  //     await resendAcknowledgement(assignmentId);
-
-  //     alert("Acknowledgement email resent successfully.");
-  //   } catch (err) {
-  //     alert("Failed to resend acknowledgement.");
-  //   } finally {
-  //     setResending(null);
-  //   }
-  // };
 
 const handleResend = async (assignmentId, assetType) => {
   if (!assignmentId) return;
