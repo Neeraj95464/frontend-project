@@ -2,10 +2,12 @@
 
 import { resendOtp, getAcceptanceDetails, verifyOtp } from "../services/api";
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 
 export default function AcceptancePage() {
   const { token } = useParams();
+
+  const navigate = useNavigate();
 
   const [emailOtp, setEmailOtp] = useState("");
   const [mobileOtp, setMobileOtp] = useState("");
@@ -76,6 +78,8 @@ export default function AcceptancePage() {
     });
 
     alert(`${assignmentType === 'sim' ? 'SIM' : 'Asset'} accepted successfully`);
+
+    navigate('/myasset');
   } catch (err) {
     alert(err.response?.data || "Verification failed");
   } finally {
