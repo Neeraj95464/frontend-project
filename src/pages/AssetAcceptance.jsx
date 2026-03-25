@@ -87,14 +87,24 @@ export default function AcceptancePage() {
   }
 };
 
-  const handleResend = async () => {
-    try {
-      await resendOtp({ token });
-      alert("OTP resent successfully");
-    } catch (err) {
-      alert("Unable to resend OTP");
-    }
-  };
+  // const handleResend = async () => {
+  //   try {
+  //     await resendOtp({ token });
+  //     alert("OTP resent successfully");
+  //   } catch (err) {
+  //     alert("Unable to resend OTP", err);
+  //   }
+  // };
+
+const handleResend = async () => {
+  try {
+    await resendOtp(token); // ✅ FIXED
+    alert("OTP resent successfully");
+  } catch (err) {
+    console.error(err);
+    alert("Unable to resend OTP");
+  }
+};
 
   if (pageLoading) {
     return (
