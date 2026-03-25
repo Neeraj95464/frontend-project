@@ -1712,8 +1712,8 @@ export const verifyOtp = async (token, otpData) => {
 };
 
 export const resendOtp = async (token) => {
-  // const type = getAssignmentType(token);
-  console.log("token was while sending otp ", token);
+  const type = getAssignmentType(token);
+  // console.log("token was while sending otp ", token);
   const endpoint = type === 'sim'
     ? `/sims/sim-assignments/resend-otp`
     : `/assets/asset-assignments/resend-otp`;
