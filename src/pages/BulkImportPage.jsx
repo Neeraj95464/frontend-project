@@ -1,8 +1,317 @@
-import { importAssets, importTickets, importSimExcel } from "../services/api";
+
+
+// import {
+//   importAssets,
+//   importTickets,
+//   importSimExcel,
+//   userAudit,
+// } from "../services/api";
+// import React, { useState } from "react";
+// import * as XLSX from "xlsx";
+
+// const BulkImportPage = () => {
+//   const [selectedType, setSelectedType] = useState("assets");
+//   const [file, setFile] = useState(null);
+//   const [result, setResult] = useState(null);
+//   const [loadingType, setLoadingType] = useState(null);
+//   const [error, setError] = useState("");
+
+//   // ---- Excel generator ----
+//   const downloadExcel = (rows, fileName) => {
+//     const worksheet = XLSX.utils.json_to_sheet(rows);
+//     const workbook = XLSX.utils.book_new();
+//     XLSX.utils.book_append_sheet(workbook, worksheet, "Template");
+//     XLSX.writeFile(workbook, fileName);
+//   };
+
+//   // ================================
+//   // ✅ HR USER AUDIT TEMPLATE
+//   // ================================
+//   const handleDownloadUserAuditTemplate = () => {
+//     const sampleRows = [
+//       {
+//         employeeId: "EMP001",
+//         username: "Ravi Kumar",
+//         Designation: "enter designation",
+//         personalEmail: "ravi@gmail.com",
+//         phone: "9876543210",
+//         aadhar: "123412341234",
+//         pan: "ABCDE1234F",
+//         status: "ACTIVE",
+//         siteName: "MADPL",
+//         LocationName:"Skoda-Jubilee hills"
+//       },
+//       {
+//         employeeId: "EMP002",
+//         username: "Suresh Reddy",
+//         designaiton: "Accounts Manager",
+//         personalEmail: "suresh@gmail.com",
+//         phone: "9123456789",
+//         aadhar: "567856785678",
+//         pan: "PQRSX5678Z",
+//         status: "INACTIVE",
+//         siteName: "MADPL",
+//         LocationName:"Skoda-Jubilee hills"
+//       },
+//     ];
+
+//     downloadExcel(sampleRows, "user_audit_template.xlsx");
+//   };
+
+//   // ---- Existing Templates (unchanged) ----
+
+//   const handleDownloadAssetsTemplate = () => {
+//     const sampleRows = [
+//       {
+//         name: "Dell Laptop",
+//         description: "Developer machine",
+//         serialNumber: "DL-001",
+//         purchaseDate: "2024-01-15",
+//         purchaseFrom: "Dell India",
+//         brand: "Dell",
+//         model: "Latitude",
+//         assetType: "LAPTOP",
+//         department: "IT",
+//         cost: 75000,
+//         status: "AVAILABLE",
+//         statusNote: "New",
+//         siteName: "MADPL",
+//         locationName: "Jubilee Hills-Skoda",
+//       },
+//     ];
+//     downloadExcel(sampleRows, "assets_import_template.xlsx");
+//   };
+
+//   const handleDownloadTicketsTemplate = () => {
+//     const sampleRows = [
+//       {
+//         title: "Email not working",
+//         description: "User issue",
+//         category: "EMAIL",
+//         status: "OPEN",
+//         ticket_department: "IT",
+//         due_date: "2025-12-31T10:00:00",
+//         assetTag: "TAG-001",
+//         employeeId: "EMP001",
+//       },
+//     ];
+//     downloadExcel(sampleRows, "tickets_import_template.xlsx");
+//   };
+
+//   const handleDownloadSimCardsTemplate = () => {
+//     const sampleRows = [
+//       {
+//         phoneNumber: "9876543210",
+//         iccid: "89860012345678901234",
+//         imsi: "404123456789012",
+//         provider: "AIRTEL",
+//         status: "AVAILABLE",
+//         activatedAt: "2024-01-15",
+//         purchaseDate: "2023-12-01",
+//         purchaseFrom: "Airtel",
+//         cost: 59900,
+//         note: "Corporate",
+//         siteName: "MADPL",
+//         locationName: "Jubilee Hills-Skoda",
+//         assignedUserId: "",
+//       },
+//     ];
+//     downloadExcel(sampleRows, "simcards_import_template.xlsx");
+//   };
+
+//   // ---- Template Switch ----
+//   const handleDownloadTemplate = () => {
+//     switch (selectedType) {
+//       case "assets":
+//         handleDownloadAssetsTemplate();
+//         break;
+//       case "tickets":
+//         handleDownloadTicketsTemplate();
+//         break;
+//       case "simcards":
+//         handleDownloadSimCardsTemplate();
+//         break;
+//       case "userAudit":
+//         handleDownloadUserAuditTemplate();
+//         break;
+//       default:
+//         break;
+//     }
+//   };
+
+//   // ---- Import Handler ----
+//   const handleImport = async () => {
+//     if (!file) {
+//       setError("Please select an Excel file.");
+//       return;
+//     }
+
+//     setError("");
+//     setLoadingType(selectedType);
+//     setResult(null);
+
+//     try {
+//       let res;
+
+//       switch (selectedType) {
+//         case "assets":
+//           res = await importAssets(file);
+//           break;
+//         case "tickets":
+//           res = await importTickets(file);
+//           break;
+//         case "simcards":
+//           res = await importSimExcel(file);
+//           break;
+//         case "userAudit":
+//           res = await userAudit(file);
+//           break;
+//         default:
+//           throw new Error("Invalid type");
+//       }
+
+//       setResult(res);
+//     } catch (e) {
+//       setError(e.response?.data || e.message);
+//     } finally {
+//       setLoadingType(null);
+//     }
+//   };
+
+//   // ---- Labels ----
+//   const getTypeLabel = () => {
+//     switch (selectedType) {
+//       case "assets":
+//         return "Assets";
+//       case "tickets":
+//         return "Tickets";
+//       case "simcards":
+//         return "SIM Cards";
+//       case "userAudit":
+//         return "User Audit (HR Sync)";
+//       default:
+//         return "";
+//     }
+//   };
+
+//   const getButtonColor = () => {
+//     switch (selectedType) {
+//       case "assets":
+//         return "bg-blue-600 hover:bg-blue-500";
+//       case "tickets":
+//         return "bg-green-600 hover:bg-green-500";
+//       case "simcards":
+//         return "bg-purple-600 hover:bg-purple-500";
+//       case "userAudit":
+//         return "bg-red-600 hover:bg-red-500";
+//       default:
+//         return "bg-blue-600";
+//     }
+//   };
+
+//   const getDescription = () => {
+//     switch (selectedType) {
+//       case "userAudit":
+//         return "Upload HR Excel to sync users. It will create, update, and deactivate users automatically.";
+//       default:
+//         return "Use template, fill data and upload.";
+//     }
+//   };
+
+//   return (
+//     <div className="lg:ml-48 bg-gray-50 min-h-screen">
+//       <div className="max-w-3xl w-full mx-4 bg-white shadow-lg rounded-xl p-8">
+//         <h1 className="text-2xl font-bold mb-6">Bulk Import Center</h1>
+
+//         {error && (
+//           <div className="mb-4 text-red-600 text-sm">{error}</div>
+//         )}
+
+//         {/* Selector */}
+//         <select
+//           value={selectedType}
+//           onChange={(e) => {
+//             setSelectedType(e.target.value);
+//             setResult(null);
+//             setFile(null);
+//           }}
+//           className="mb-4 w-full border p-2 rounded"
+//         >
+//           <option value="assets">Assets</option>
+//           <option value="tickets">Tickets</option>
+//           <option value="simcards">SIM Cards</option>
+//           <option value="userAudit">User Audit (HR Sync)</option>
+//         </select>
+
+//         {/* Card */}
+//         <div className="p-4 border rounded bg-gray-50">
+//           <h2 className="font-semibold mb-2">{getTypeLabel()}</h2>
+//           <p className="text-xs mb-3">{getDescription()}</p>
+
+//           <button
+//             onClick={handleDownloadTemplate}
+//             className="mb-3 bg-black text-white px-3 py-2 rounded text-xs"
+//           >
+//             Download Template
+//           </button>
+
+//           <input
+//             type="file"
+//             accept=".xlsx"
+//             onChange={(e) => setFile(e.target.files[0])}
+//             className="block mb-3"
+//           />
+
+//           <button
+//             onClick={handleImport}
+//             disabled={loadingType === selectedType}
+//             className={`px-4 py-2 text-white rounded ${getButtonColor()}`}
+//           >
+//             {loadingType === selectedType ? "Processing..." : "Import"}
+//           </button>
+
+//           {/* ============================= */}
+//           {/* ✅ RESULT DISPLAY */}
+//           {/* ============================= */}
+//           {result && selectedType === "userAudit" && (
+//             <div className="mt-4 text-sm bg-white p-3 rounded border">
+//               <p><b>Created:</b> {result.created}</p>
+//               <p><b>Updated:</b> {result.updated}</p>
+//               <p><b>Inactivated:</b> {result.inactivated}</p>
+//               <p><b>Errors Found :</b> {result.errors}</p>
+
+//               {result.logFileName && (
+//                 <p className="mt-2 text-blue-600">
+//                   Log File: {result.logFileName}
+//                 </p>
+//               )}
+//             </div>
+//           )}
+
+//           {result && selectedType !== "userAudit" && (
+//             <div className="mt-4 text-sm">
+//               <p>Success: {result.success}</p>
+//               <p>Failed: {result.failure}</p>
+//             </div>
+//           )}
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default BulkImportPage;
+
+
+import {
+  importAssets,
+  importTickets,
+  importSimExcel,
+  userAudit,
+} from "../services/api";
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
-
-// install with: npm i xlsx
+import { AlertCircle, CheckCircle, Download, Upload, FileText, Users, AlertTriangle, XCircle } from "lucide-react";
 
 const BulkImportPage = () => {
   const [selectedType, setSelectedType] = useState("assets");
@@ -10,9 +319,9 @@ const BulkImportPage = () => {
   const [result, setResult] = useState(null);
   const [loadingType, setLoadingType] = useState(null);
   const [error, setError] = useState("");
+  const [expandedErrors, setExpandedErrors] = useState(false);
 
-  // ---- Template generators ----
-
+  // ---- Excel generator ----
   const downloadExcel = (rows, fileName) => {
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
@@ -20,106 +329,72 @@ const BulkImportPage = () => {
     XLSX.writeFile(workbook, fileName);
   };
 
+  // ================================
+  // ✅ HR USER AUDIT TEMPLATE
+  // ================================
+  const handleDownloadUserAuditTemplate = () => {
+    const sampleRows = [
+      {
+        employeeId: "EMP001",
+        username: "Ravi Kumar",
+        designation: "Software Engineer",
+        personalEmail: "ravi.kumar@example.com",
+        phone: "9876543210",
+        aadhar: "123412341234",
+        pan: "ABCDE1234F",
+        status: "ACTIVE",
+        siteName: "MADPL",
+        locationName: "Skoda-Jubilee Hills"
+      },
+      {
+        employeeId: "EMP002",
+        username: "Suresh Reddy",
+        designation: "Accounts Manager",
+        personalEmail: "suresh.reddy@example.com",
+        phone: "9123456789",
+        aadhar: "567856785678",
+        pan: "PQRSX5678Z",
+        status: "INACTIVE",
+        siteName: "MADPL",
+        locationName: "Skoda-Jubilee Hills"
+      },
+      {
+        employeeId: "EMP003",
+        username: "Priya Sharma",
+        designation: "HR Executive",
+        personalEmail: "priya.sharma@example.com",
+        phone: "9988776655",
+        aadhar: "987698769876",
+        pan: "XYZAB1234C",
+        status: "ACTIVE",
+        siteName: "AADPL",
+        locationName: "MB-Bowenpally"
+      },
+    ];
+
+    downloadExcel(sampleRows, "user_audit_template.xlsx");
+  };
+
+  // ---- Existing Templates ----
   const handleDownloadAssetsTemplate = () => {
     const sampleRows = [
       {
-        name: "Dell Latitude 5420",
-        description: "Laptop for developer",
-        serialNumber: "DL-LT-001",
+        name: "Dell Laptop",
+        description: "Developer machine",
+        serialNumber: "DL-001",
         purchaseDate: "2024-01-15",
         purchaseFrom: "Dell India",
         brand: "Dell",
-        model: "Latitude 5420",
+        model: "Latitude",
         assetType: "LAPTOP",
         department: "IT",
         cost: 75000,
         status: "AVAILABLE",
-        statusNote: "New device",
-        siteName: "MADPL",
-        locationName: "Jubilee Hills-Skoda",
-      },
-      {
-        name: "Fortinet FortiGate 100F",
-        description: "Perimeter firewall",
-        serialNumber: "FG-FW-002",
-        purchaseDate: "2023-06-20",
-        purchaseFrom: "Fortinet Partner",
-        brand: "Fortinet",
-        model: "FG-100F",
-        assetType: "FIREWALL",
-        department: "IT",
-        cost: 150000,
-        status: "ASSIGNED_TO_LOCATION",
-        statusNote: "Installed at Head Office",
-        siteName: "MADPL",
-        locationName: "Vizag-Skoda",
-      },
-      {
-        name: "HP LaserJet Pro M404n",
-        description: "Office printer",
-        serialNumber: "HP-PR-003",
-        purchaseDate: "2023-09-10",
-        purchaseFrom: "HP Authorized Dealer",
-        brand: "HP",
-        model: "M404n",
-        assetType: "PRINTER",
-        department: "FINANCE_AND_ACCOUNTS",
-        cost: 35000,
-        status: "AVAILABLE",
-        statusNote: "Located at floor 2",
-        siteName: "AADPL",
-        locationName: "Madhapur-MB",
-      },
-      {
-        name: "Apple iPad Pro 12.9",
-        description: "Tablet for presentations",
-        serialNumber: "AP-IPD-004",
-        purchaseDate: "2024-02-01",
-        purchaseFrom: "Apple Store",
-        brand: "Apple",
-        model: "iPad Pro 12.9",
-        assetType: "IPAD",
-        department: "MANAGEMENT",
-        cost: 120000,
-        status: "CHECKED_OUT",
-        statusNote: "Assigned to manager",
-        siteName: "AADPL",
-        locationName: "Kondapur-MB",
-      },
-      {
-        name: "Cisco Catalyst 2960X",
-        description: "Network switch",
-        serialNumber: "CS-SW-005",
-        purchaseDate: "2023-04-12",
-        purchaseFrom: "Cisco",
-        brand: "Cisco",
-        model: "Catalyst 2960X",
-        assetType: "NETWORK_DEVICE",
-        department: "IT",
-        cost: 250000,
-        status: "AVAILABLE",
-        statusNote: "In storage",
-        siteName: "JAPL",
-        locationName: "Kukatpally-Isuzu",
-      },
-      {
-        name: "Samsung UPS System",
-        description: "Uninterruptible Power Supply",
-        serialNumber: "SA-UPS-006",
-        purchaseDate: "2023-08-05",
-        purchaseFrom: "Samsung India",
-        brand: "Samsung",
-        model: "OfficeServ UPS",
-        assetType: "UPS",
-        department: "IT",
-        cost: 185000,
-        status: "AVAILABLE",
-        statusNote: "Backup power system",
+        statusNote: "New",
         siteName: "MADPL",
         locationName: "Jubilee Hills-Skoda",
       },
     ];
-
     downloadExcel(sampleRows, "assets_import_template.xlsx");
   };
 
@@ -127,7 +402,7 @@ const BulkImportPage = () => {
     const sampleRows = [
       {
         title: "Email not working",
-        description: "User unable to send emails",
+        description: "User issue",
         category: "EMAIL",
         status: "OPEN",
         ticket_department: "IT",
@@ -135,18 +410,7 @@ const BulkImportPage = () => {
         assetTag: "TAG-001",
         employeeId: "EMP001",
       },
-      {
-        title: "Projector issue",
-        description: "Projector not turning on",
-        category: "PROJECTOR",
-        status: "UNASSIGNED",
-        ticket_department: "ADMIN",
-        due_date: "2025-12-31T12:00:00",
-        assetTag: "TAG-002",
-        employeeId: "EMP002",
-      },
     ];
-
     downloadExcel(sampleRows, "tickets_import_template.xlsx");
   };
 
@@ -157,69 +421,21 @@ const BulkImportPage = () => {
         iccid: "89860012345678901234",
         imsi: "404123456789012",
         provider: "AIRTEL",
-        status: "AVAILABLE", // must match SimStatus enum
-        activatedAt: "2024-01-15", // YYYY-MM-DD
-        purchaseDate: "2023-12-01", // YYYY-MM-DD
-        purchaseFrom: "Airtel Corporate",
-        cost: 59900, // numeric (in paise or your currency unit)
-        note: "Corporate Postpaid plan",
-        siteName: "MADPL", // must exist in Site table
-        locationName: "Jubilee Hills-Skoda", // must exist in Location for that site
-        assignedUserId: "", // leave empty for AVAILABLE, put employee ID for ASSIGNED
-      },
-      {
-        phoneNumber: "9123456789",
-        iccid: "89860098765432109876",
-        imsi: "405987654321098",
-        provider: "JIO",
-        status: "ASSIGNED",
-        activatedAt: "2024-03-20",
-        purchaseDate: "2024-02-15",
-        purchaseFrom: "Jio Business",
-        cost: 39900,
-        note: "Field staff prepaid",
-        siteName: "JAPL",
-        locationName: "Kukatpally-Isuzu",
-        assignedUserId: "EMP002", // actual employee ID from User table
-      },
-      {
-        phoneNumber: "9988776655",
-        iccid: "",
-        imsi: "",
-        provider: "VI",
-        status: "SUSPENDED",
-        activatedAt: "2023-12-01",
-        purchaseDate: "2023-11-20",
-        purchaseFrom: "VI Dealer",
-        cost: 79900,
-        note: "Spare SIM - suspended",
-        siteName: "JAPL",
-        locationName: "Kukatpally-Isuzu",
+        status: "AVAILABLE",
+        activatedAt: "2024-01-15",
+        purchaseDate: "2023-12-01",
+        purchaseFrom: "Airtel",
+        cost: 59900,
+        note: "Corporate",
+        siteName: "MADPL",
+        locationName: "Jubilee Hills-Skoda",
         assignedUserId: "",
       },
     ];
-
-    // Column order matches your mapRequestToEntity method processing order
-    const columnsOrder = [
-      "phoneNumber",
-      "iccid",
-      "imsi",
-      "provider",
-      "status",
-      "activatedAt",
-      "purchaseDate",
-      "purchaseFrom",
-      "cost",
-      "note",
-      "siteName",
-      "locationName",
-      "assignedUserId",
-    ];
-
-    downloadExcel(sampleRows, "simcards_import_template.xlsx", columnsOrder);
+    downloadExcel(sampleRows, "simcards_import_template.xlsx");
   };
 
-  // ---- Download template handler ----
+  // ---- Template Switch ----
   const handleDownloadTemplate = () => {
     switch (selectedType) {
       case "assets":
@@ -231,23 +447,29 @@ const BulkImportPage = () => {
       case "simcards":
         handleDownloadSimCardsTemplate();
         break;
+      case "userAudit":
+        handleDownloadUserAuditTemplate();
+        break;
       default:
         break;
     }
   };
 
-  // ---- Upload handler ----
+  // ---- Import Handler ----
   const handleImport = async () => {
     if (!file) {
-      setError("Please select an Excel file to import.");
+      setError("Please select an Excel file.");
       return;
     }
+
     setError("");
     setLoadingType(selectedType);
     setResult(null);
+    setExpandedErrors(false);
 
     try {
       let res;
+
       switch (selectedType) {
         case "assets":
           res = await importAssets(file);
@@ -258,20 +480,22 @@ const BulkImportPage = () => {
         case "simcards":
           res = await importSimExcel(file);
           break;
+        case "userAudit":
+          res = await userAudit(file);
+          break;
         default:
-          throw new Error("Invalid import type selected");
+          throw new Error("Invalid type");
       }
-      setResult(res);
+
+      setResult(res.data || res);
     } catch (e) {
-      setError(
-        `Failed to import ${selectedType}. ${e.response?.data || e.message}`,
-      );
+      setError(e.response?.data?.message || e.message || "Import failed");
     } finally {
       setLoadingType(null);
     }
   };
 
-  // ---- Get labels based on selected type ----
+  // ---- Labels ----
   const getTypeLabel = () => {
     switch (selectedType) {
       case "assets":
@@ -280,6 +504,8 @@ const BulkImportPage = () => {
         return "Tickets";
       case "simcards":
         return "SIM Cards";
+      case "userAudit":
+        return "User Audit (HR Sync)";
       default:
         return "";
     }
@@ -288,130 +514,345 @@ const BulkImportPage = () => {
   const getButtonColor = () => {
     switch (selectedType) {
       case "assets":
-        return "bg-blue-600 hover:bg-blue-500";
+        return "bg-blue-600 hover:bg-blue-700";
       case "tickets":
-        return "bg-green-600 hover:bg-green-500";
+        return "bg-green-600 hover:bg-green-700";
       case "simcards":
-        return "bg-purple-600 hover:bg-purple-500";
+        return "bg-purple-600 hover:bg-purple-700";
+      case "userAudit":
+        return "bg-red-600 hover:bg-red-700";
       default:
-        return "bg-blue-600 hover:bg-blue-500";
+        return "bg-blue-600";
+    }
+  };
+
+  const getIcon = () => {
+    switch (selectedType) {
+      case "assets":
+        return <FileText className="w-5 h-5" />;
+      case "tickets":
+        return <AlertCircle className="w-5 h-5" />;
+      case "simcards":
+        return <Upload className="w-5 h-5" />;
+      case "userAudit":
+        return <Users className="w-5 h-5" />;
+      default:
+        return <FileText className="w-5 h-5" />;
     }
   };
 
   const getDescription = () => {
     switch (selectedType) {
-      case "assets":
-        return "Use the template to add new assets. Ensure enum values like assetType and department match exactly.";
-      case "tickets":
-        return "Use the template to import tickets. Enum columns like category, status and ticket_department must match allowed values.";
-      case "simcards":
-        return "Use the template to import SIM cards. Ensure fields like provider, planType, and status match the allowed values.";
+      case "userAudit":
+        return "Upload HR Excel file to sync users. The system will automatically create new users, update existing ones, and deactivate users marked as INACTIVE.";
       default:
-        return "";
+        return "Download the template, fill in your data, and upload to bulk import.";
     }
   };
 
+  // Format error details for display
+  const formatErrorDetails = (details) => {
+    if (!details || details.length === 0) return null;
+    return (
+      <ul className="mt-2 space-y-1 list-disc list-inside">
+        {details.map((detail, idx) => (
+          <li key={idx} className="text-sm text-red-700">{detail}</li>
+        ))}
+      </ul>
+    );
+  };
+
   return (
-    // <div className="min-h-screen bg-slate-50 flex justify-center items-start py-10">
-    <div className="lg:ml-48 bg-gray-50 min-h-screen">
-      <div className="max-w-3xl w-full mx-4 bg-white shadow-lg rounded-xl p-8">
-        <h1 className="text-2xl font-bold text-slate-900 mb-6">
-          Bulk Import Center
-        </h1>
-        <p className="text-sm text-slate-600 mb-8">
-          Import assets, tickets, and SIM cards using Excel templates. Select
-          the import type, download the sample file, fill in your data, and
-          upload it back here.
-        </p>
-
-        {error && (
-          <div className="mb-6 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
-            {error}
+    <div className="lg:ml-48 bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header Card */}
+        <div className="bg-white rounded-2xl shadow-xl overflow-hidden mb-6">
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+            <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+              {getIcon()}
+              Bulk Import Center
+            </h1>
+            <p className="text-indigo-100 text-sm mt-1">
+              Import data in bulk using Excel templates
+            </p>
           </div>
-        )}
-
-        {/* Import Type Selector */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-slate-700 mb-2">
-            Select Import Type
-          </label>
-          <select
-            value={selectedType}
-            onChange={(e) => {
-              setSelectedType(e.target.value);
-              setFile(null);
-              setResult(null);
-              setError("");
-            }}
-            className="block w-full px-4 py-2.5 text-sm border border-slate-300 rounded-lg bg-white text-slate-900 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-          >
-            <option value="assets">Assets</option>
-            <option value="tickets">Tickets</option>
-            <option value="simcards">SIM Cards</option>
-          </select>
-        </div>
-
-        {/* Import Card */}
-        <div className="border border-slate-200 rounded-lg p-6 bg-slate-50">
-          <h2 className="text-lg font-semibold text-slate-900 mb-2">
-            Import {getTypeLabel()}
-          </h2>
-          <p className="text-xs text-slate-600 mb-4">{getDescription()}</p>
-
-          <button
-            type="button"
-            onClick={handleDownloadTemplate}
-            className="inline-flex items-center px-3 py-2 text-xs font-medium rounded-md bg-slate-900 text-white hover:bg-slate-800 mb-4"
-          >
-            Download {getTypeLabel()} Template
-          </button>
-
-          <div className="mb-4">
-            <label className="block text-xs font-medium text-slate-700 mb-1">
-              Upload filled Excel (.xlsx)
-            </label>
-            <input
-              type="file"
-              accept=".xlsx,.xls"
-              onChange={(e) => setFile(e.target.files[0] || null)}
-              className="block w-full text-xs text-slate-700 file:mr-3 file:py-2 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-slate-900 file:text-white hover:file:bg-slate-800 border border-dashed border-slate-300 rounded-md cursor-pointer bg-white"
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={handleImport}
-            disabled={loadingType === selectedType}
-            className={`inline-flex items-center px-4 py-2 text-xs font-semibold rounded-md text-white disabled:opacity-60 ${getButtonColor()}`}
-          >
-            {loadingType === selectedType
-              ? "Importing..."
-              : `Import ${getTypeLabel()}`}
-          </button>
-
-          {result && (
-            <div className="mt-4 text-xs">
-              <p className="font-semibold text-slate-800">
-                Import summary ({getTypeLabel()})
-              </p>
-              <p className="text-slate-700">
-                Success: <span className="font-mono">{result.success}</span>,
-                Failed: <span className="font-mono">{result.failure}</span>
-              </p>
-              {result.errors && result.errors.length > 0 && (
-                <div className="mt-2 max-h-40 overflow-y-auto border border-slate-200 rounded-md p-2 bg-white">
-                  {result.errors.map((err, idx) => (
-                    <div
-                      key={idx}
-                      className="text-xs text-red-700 border-b last:border-b-0 border-slate-100 py-1"
-                    >
-                      Row {err.rowNumber}: {err.message}
-                    </div>
-                  ))}
-                </div>
-              )}
+          
+          <div className="p-6">
+            {/* Type Selector */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Select Import Type
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[
+                  { value: "assets", label: "Assets", color: "blue" },
+                  { value: "tickets", label: "Tickets", color: "green" },
+                  { value: "simcards", label: "SIM Cards", color: "purple" },
+                  { value: "userAudit", label: "User Audit", color: "red" },
+                ].map((type) => (
+                  <button
+                    key={type.value}
+                    onClick={() => {
+                      setSelectedType(type.value);
+                      setResult(null);
+                      setFile(null);
+                      setError("");
+                    }}
+                    className={`p-3 rounded-lg border-2 transition-all ${
+                      selectedType === type.value
+                        ? `border-${type.color}-500 bg-${type.color}-50 text-${type.color}-700`
+                        : "border-gray-200 bg-white text-gray-600 hover:border-gray-300"
+                    }`}
+                  >
+                    <div className="font-medium">{type.label}</div>
+                  </button>
+                ))}
+              </div>
             </div>
-          )}
+
+            {/* Error Alert */}
+            {error && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <XCircle className="w-5 h-5 text-red-600 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-red-800">Import Failed</p>
+                    <p className="text-sm text-red-700 mt-1">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Import Card */}
+            <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 bg-gray-50">
+              <div className="text-center mb-4">
+                <h2 className="font-semibold text-lg text-gray-800 mb-2">
+                  {getTypeLabel()} Import
+                </h2>
+                <p className="text-sm text-gray-600">{getDescription()}</p>
+              </div>
+
+              <div className="space-y-4">
+                <button
+                  onClick={handleDownloadTemplate}
+                  className="w-full flex items-center justify-center gap-2 bg-gray-800 text-white px-4 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  Download {getTypeLabel()} Template
+                </button>
+
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept=".xlsx, .xls"
+                    onChange={(e) => setFile(e.target.files[0])}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label
+                    htmlFor="file-upload"
+                    className="w-full flex items-center justify-center gap-2 border-2 border-gray-300 bg-white px-4 py-3 rounded-lg cursor-pointer hover:border-indigo-400 transition-colors"
+                  >
+                    <Upload className="w-4 h-4 text-gray-500" />
+                    <span className="text-gray-700">
+                      {file ? file.name : "Choose Excel File"}
+                    </span>
+                  </label>
+                </div>
+
+                <button
+                  onClick={handleImport}
+                  disabled={loadingType === selectedType || !file}
+                  className={`w-full flex items-center justify-center gap-2 text-white px-4 py-3 rounded-lg transition-all ${
+                    loadingType === selectedType || !file
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : getButtonColor()
+                  }`}
+                >
+                  {loadingType === selectedType ? (
+                    <>
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-4 h-4" />
+                      Import {getTypeLabel()}
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* ============================= */}
+            {/* ✅ USER AUDIT RESULT DISPLAY */}
+            {/* ============================= */}
+            {result && selectedType === "userAudit" && (
+              <div className="mt-6 space-y-4">
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-green-600 font-medium">Created</p>
+                        <p className="text-2xl font-bold text-green-700">{result.created || 0}</p>
+                      </div>
+                      <CheckCircle className="w-8 h-8 text-green-500" />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-blue-600 font-medium">Updated</p>
+                        <p className="text-2xl font-bold text-blue-700">{result.updated || 0}</p>
+                      </div>
+                      <AlertCircle className="w-8 h-8 text-blue-500" />
+                    </div>
+                  </div>
+                  
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm text-yellow-600 font-medium">Inactivated</p>
+                        <p className="text-2xl font-bold text-yellow-700">{result.inactivated || 0}</p>
+                      </div>
+                      <AlertTriangle className="w-8 h-8 text-yellow-500" />
+                    </div>
+                  </div>
+                  
+                  <div className={`${result.errors && result.errors.length > 0 ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'} border rounded-lg p-4`}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className={`text-sm font-medium ${result.errors && result.errors.length > 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                          Errors
+                        </p>
+                        <p className={`text-2xl font-bold ${result.errors && result.errors.length > 0 ? 'text-red-700' : 'text-gray-700'}`}>
+                          {result.errors ? result.errors.length : 0}
+                        </p>
+                      </div>
+                      <XCircle className={`w-8 h-8 ${result.errors && result.errors.length > 0 ? 'text-red-500' : 'text-gray-400'}`} />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Log File Info */}
+                {result.logFileName && (
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-gray-500" />
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Log File:</span> {result.logFileName}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Error Details */}
+                {result.errors && result.errors.length > 0 && (
+                  <div className="bg-white border border-red-200 rounded-lg overflow-hidden">
+                    <button
+                      onClick={() => setExpandedErrors(!expandedErrors)}
+                      className="w-full px-4 py-3 bg-red-50 hover:bg-red-100 transition-colors flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        <AlertTriangle className="w-4 h-4 text-red-600" />
+                        <span className="font-medium text-red-700">
+                          {result.errors.length} Error{result.errors.length !== 1 ? 's' : ''} Found
+                        </span>
+                      </div>
+                      <span className="text-red-600 text-sm">
+                        {expandedErrors ? '▼' : '▶'}
+                      </span>
+                    </button>
+                    
+                    {expandedErrors && (
+                      <div className="p-4 space-y-3 max-h-96 overflow-y-auto">
+                        {result.errors.map((error, idx) => (
+                          <div key={idx} className="border-l-4 border-red-400 bg-red-50 p-3 rounded-r-lg">
+                            <div className="flex items-start justify-between mb-1">
+                              <div>
+                                <span className="font-medium text-red-800">
+                                  Row {error.rowNumber}
+                                </span>
+                                {error.employeeId && (
+                                  <span className="text-sm text-red-600 ml-2">
+                                    (Emp ID: {error.employeeId})
+                                  </span>
+                                )}
+                              </div>
+                              <span className="text-xs px-2 py-1 bg-red-200 text-red-800 rounded-full">
+                                {error.errorType}
+                              </span>
+                            </div>
+                            <p className="text-sm text-red-700 mt-1 font-medium">
+                              {error.errorMessage}
+                            </p>
+                            {error.details && error.details.length > 0 && (
+                              <ul className="mt-2 space-y-1">
+                                {error.details.map((detail, detailIdx) => (
+                                  <li key={detailIdx} className="text-xs text-red-600 flex items-start gap-1">
+                                    <span className="text-red-400">•</span>
+                                    {detail}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Success Message */}
+                {result.created > 0 || result.updated > 0 || result.inactivated > 0 ? (
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-green-800">Import Completed Successfully</p>
+                        <p className="text-xs text-green-700 mt-1">
+                          {result.created > 0 && `${result.created} user(s) created. `}
+                          {result.updated > 0 && `${result.updated} user(s) updated. `}
+                          {result.inactivated > 0 && `${result.inactivated} user(s) inactivated. `}
+                          {result.errors && result.errors.length > 0 && `${result.errors.length} error(s) encountered.`}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : result.errors && result.errors.length > 0 ? (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                    <div className="flex items-start gap-2">
+                      <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-medium text-yellow-800">Import Completed with Errors</p>
+                        <p className="text-xs text-yellow-700 mt-1">
+                          No users were created or updated. Please check the errors above and try again.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            )}
+
+            {/* Other Import Results */}
+            {result && selectedType !== "userAudit" && (
+              <div className="mt-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600">Success</p>
+                    <p className="text-2xl font-bold text-green-600">{result.success || 0}</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600">Failed</p>
+                    <p className="text-2xl font-bold text-red-600">{result.failure || 0}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

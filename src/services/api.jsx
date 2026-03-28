@@ -85,21 +85,21 @@ export const getUserRoles = () => {
 export const registerUser = async (userData) => {
   const response = await api.post("/auth/register", userData);
 
-  // console.log("response was ", response.data);
+  // ("response was ", response.data);
   return response.data;
 };
 
 export const hasRole = (role) => {
   const roles = getUserRoles();
-  // console.log("Current user roles:", roles);
+  // ("Current user roles:", roles);
   return roles.includes(role.toUpperCase());
 };
 
 export const loginUser = async (employeeId, password) => {
   try {
-    // console.log("going for login " + employeeId, password);
+    // ("going for login " + employeeId, password);
     const response = await api.post("/auth/login", { employeeId, password });
-    // console.log("Backend response was ", response);
+    // ("Backend response was ", response);
     if (response.data.token) {
       localStorage.setItem("user", JSON.stringify(response.data));
     }
@@ -141,7 +141,7 @@ export const deleteContract = async (id) => {
 
 export const getVendors = async () => {
   const response = await api.get("/vendors");
-  // console.log("res", response.data);
+  // ("res", response.data);
   return response.data;
 };
 
@@ -151,7 +151,9 @@ export const createVendor = async (vendor) => {
 };
 
 export const updateVendor = async (id, vendor) => {
+    ("Vendor daa ",vendor);
   const response = await api.put(`/vendors/${id}`, vendor);
+
   return response.data;
 };
 
@@ -335,7 +337,7 @@ export const getTicketsBySite = async (
 //       endDate,
 //     },
 //   });
-//   console.log("🎫 Tickets received by site:", res.data);
+//   ("🎫 Tickets received by site:", res.data);
 //   return res.data;
 // };
 
@@ -485,12 +487,12 @@ export const getAssetCodes = async (assetTag) => {
 };
 
 export const assignLocation = async (payload) => {
-  console.log("payload was ",payload);
+  ("payload was ",payload);
   return api.post(`user-assets/location-assignments`, payload);
 };
 
 export const getAllAssignments = () => {
-  // console.log("Fetching your assignments...");
+  // ("Fetching your assignments...");
   return api.get(`/user-assets/all/locations-assignments`);
 };
 
@@ -534,10 +536,10 @@ export const getAssetHistory = async (id) => {
 // services/api.js
 export const getAssetsByUser = async (query) => {
   try {
-    // console.log("query in api ", query);
+    // ("query in api ", query);
 
     const res = await api.get(`/assets/user/${query}`); // Axios GET request
-    // console.log("res is ", res);
+    // ("res is ", res);
 
     // Axios automatically parses JSON
     return res.data; // ✅ send only the data
@@ -771,7 +773,7 @@ export const createTicket = async (ticketData, attachment) => {
     "ticket",
     new Blob([JSON.stringify(ticketData)], { type: "application/json" }),
   );
-  // console.log("sending ticket data are ", formData);
+  // ("sending ticket data are ", formData);
 
   // Add the file if it exists
   if (attachment) {
@@ -818,78 +820,7 @@ export const changeTicketEmployeeIfSame = async (ticketId, newEmployeeId) => {
   }
 };
 
-// export const getTickets = async ({ status = "OPEN", page = 0, size = 10 }) => {
-//   try {
-//     const response = await api.get(`${API_URL}/user-assets/tickets`, {
-//       params: { status, page, size },
-//     });
-//     console.log("your ticket data are ", response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching tickets:", error);
-//     throw error;
-//   }
-// };
 
-// export const getTickets = async ({
-//   status = "OPEN",
-//   page = 0,
-//   size = 10,
-//   employeeId = "ALL", // New optional param
-// }) => {
-//   try {
-//     const response = await api.get(`${API_URL}/user-assets/tickets`, {
-//       params: { status, page, size, employeeId }, // Include employeeId
-//     });
-//     // console.log("response tickets are ", response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching tickets:", error);
-//     throw error;
-//   }
-// };
-
-// export const getTickets = async ({
-//   title,
-//   status,
-//   feedbackReceived,
-//   category,
-//   employeeId = "ALL",
-//   locationId,
-//   assigneeId,
-//   createdAfter,
-//   createdBefore,
-//   search,
-//   siteIdLocationId,
-//   page = 0,
-//   size = 10,
-// } = {}) => {
-//   try {
-//     const params = {
-//       page,
-//       size,
-//       employeeId,
-//       ...(title && { title }),
-//       ...(status && { status }),
-//       ...(category && { category }),
-//       ...(locationId && { locationId }),
-//       ...(assigneeId && { assigneeId }),
-//       ...(createdAfter && { createdAfter }),
-//       ...(createdBefore && { createdBefore }),
-//       ...(search && { search }),
-//       ...(siteIdLocationId && { siteIdLocationId }),
-//     };
-
-//     const response = await api.get(`${API_URL}/user-assets/tickets`, {
-//       params,
-//     });
-//     // console.log("response data is ",response.data);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error filtering tickets:", error);
-//     throw error;
-//   }
-// };
 
 export const getTickets = async ({
   title,
@@ -1099,7 +1030,7 @@ export const fetchUsers = async (filters, page = 0, size = 10) => {
   };
 
   const res = await api.get("/users/filter", { params });
-  console.log("REsponse data ",res.data);
+  // ("REsponse data ",res.data);
   return res.data;
 };
 
@@ -1148,7 +1079,7 @@ export const changePassword = async (oldPassword, newPassword) => {
 export const fetchUserById = async (userId) => {
   try {
     const response = await api.get(`/users/${userId}`);
-    console.log("data is ",response.data);
+    // ("data is ",response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -1260,21 +1191,21 @@ export const createEmployee = async (employeeData) => {
 
 export const fetchUserByUsername = async (username) => {
   try {
-    console.log("Request received with name:", username);
-    console.log(`API URL: ${API_URL}/users/search?username=${username}`);
+    // ("Request received with name:", username);
+    // (`API URL: ${API_URL}/users/search?username=${username}`);
 
     const response = await api.get(`${API_URL}/users/search`, {
       params: { username },
     });
 
-    console.log("Full API Response:", response.data);
+    // ("Full API Response:", response.data);
 
     if (
       response.data?.content &&
       Array.isArray(response.data.content) &&
       response.data.content.length > 0
     ) {
-      console.log("Returning user:", response.data.content[0]);
+      // ("Returning user:", response.data.content[0]);
       return response.data.content[0];
     }
 
@@ -1390,7 +1321,7 @@ export const getTicketsWithFeedback = async (
   const response = await api.get(
     `user-assets/tickets/feedbacks?${params.toString()}`,
   );
-  // console.log("res ", response.data);
+  // ("res ", response.data);
   return response.data; // should be PaginatedResponse<TicketWithFeedbackDTO>
 };
 
@@ -1451,7 +1382,7 @@ export const fetchSimCards = async (filters, page = 0, size = 10) => {
   params.append("page", page);
   params.append("size", size);
 
-  // console.log("sending data are ", params.toString());
+  // ("sending data are ", params.toString());
 
   const response = await api.get(`/sim-cards/filter?${params.toString()}`);
   return response.data;
@@ -1555,7 +1486,7 @@ export const deleteSimAttachment = async (simId, attachmentId) => {
 
 export const fetchSimAttachments = async (simId) => {
   const response = await api.get(`/sim-cards/attachments/${simId}`);
-  // console.log("Attachments are received ", response.data);
+  // ("Attachments are received ", response.data);
   return response.data;
 };
 
@@ -1567,7 +1498,20 @@ export const importSimExcel = async (file) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-  // console.log("data are ", response.data);
+  // ("data are ", response.data);
+
+  return response.data;
+};
+
+export const userAudit = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const response = await api.post("/audit/users", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+
+  // ("data are ", response.data);
 
   return response.data;
 };
@@ -1607,7 +1551,7 @@ export const uploadOnboardingExcel = async (file) => {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-  // console.log("response data are ", response.data);
+  // ("response data are ", response.data);
   return response.data;
 };
 
@@ -1615,7 +1559,7 @@ export const getMyAssets = async () => {
   const response = await api.get(`assets/user/my-asset`, {
     withCredentials: true, // if you use cookie-based auth
   });
-  // console.log("data are ", response.data);
+  // ("data are ", response.data);
   return response.data; // List<AssetDTO>
 };
 
@@ -1632,7 +1576,7 @@ export const resetUserPasswordByEmpId = async (employeeId) => {
 
 // ✅ CORRECT - Direct payload as 2nd parameter 
 export const reportAssetIssue = async (asset) => {
-  // console.log("asset data are ", asset);
+  // ("asset data are ", asset);
 
   return api.post("/user-assets/report-asset", {
     assetTag: asset.assetTag,
@@ -1713,13 +1657,13 @@ export const verifyOtp = async (token, otpData) => {
 
 export const resendOtp = async (token) => {
   const type = getAssignmentType(token);
-  // console.log("token was while sending otp ", token);
+  // ("token was while sending otp ", token);
   const endpoint = type === 'sim'
     ? `/sims/sim-assignments/resend-otp`
     : `/assets/asset-assignments/resend-otp`;
   
   const res = await api.post(endpoint, { token });
-// console.log(res);
+// (res);
   return res.data;
 };
 
@@ -1729,7 +1673,7 @@ export const resendAcknowledgement = async (assignmentId, assetType) => {
   try {
     let url = "";
 
-    console.log("asset type was ",assetType);
+    ("asset type was ",assetType);
 
     if (assetType === "CUG_SIM") {
       url = `/sims/sim-assignments/assignments/${assignmentId}/resend`;
@@ -1747,7 +1691,7 @@ export const resendAcknowledgement = async (assignmentId, assetType) => {
 
 export const fetchFilteredLicenses = async (params) => {
   try {
-    // console.log("data are ", params);
+    // ("data are ", params);
     const res = await api.get(`/software-licenses/filter`, { params });
     return res.data;
   } catch (error) {
@@ -1792,7 +1736,7 @@ export const getLicenseById = async (id) => {
 // ✅ Optional: Update License
 export const updateLicense = async (id, data) => {
   try {
-    // console.log("data are ", data);
+    // ("data are ", data);
     const res = await api.put(`/software-licenses/${id}`, data);
     return res.data;
   } catch (error) {
@@ -1814,7 +1758,7 @@ export const deleteLicense = async (id) => {
 // export const getAssigneePerformance = async () => {
 //   try {
 //     const response = await api.get(`user-assets/assignee-performance`);
-//     // console.log("Response data was ",response.data);
+//     // ("Response data was ",response.data);
 //     return response.data;
 //   } catch (error) {
 //     console.error("Error fetching assignee performance:", error);
@@ -1893,7 +1837,7 @@ export const getAssigneePerformance = async (month, year) => {
 // Fetch Updates
 export const fetchUpdates = async () => {
   const res = await api.get("/knowledge/updates"); // backend endpoint for updates
-  // console.log("Updates fetched ",res.data);
+  // ("Updates fetched ",res.data);
   return res.data;
 };
 
@@ -1905,7 +1849,7 @@ export const fetchSOPs = async () => {
 
 // Create Update
 export const createUpdate = async (data) => {
-  // console.log("sending data is ",data);
+  // ("sending data is ",data);
   const res = await api.post("/knowledge", { ...data, type: "UPDATE" }); // send type in body
   return res.data;
 };
@@ -1918,7 +1862,40 @@ export const createSOP = async (data) => {
 
 export const markKnowledgeRead = async (id) => {
   const res = await api.post(`/knowledge/read/${id}`);
-  console.log("data are ",res.data);
+  ("data are ",res.data);
   return res.data;
 };
 
+
+
+export const getInactiveAssignmentsReport = async () => {
+  try {
+    const response = await api.get(
+      `/reports/inactive-user-assets`
+    );
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching report:", error);
+    return {
+      success: false,
+      message: error.response?.data || error.message,
+    };
+  }
+};
+
+export const getMultipleAssignmentsReport = async () => {
+  try {
+    const response = await api.get(
+      `${API_URL}/reports/multiple-assignments`
+    );
+console.log("Response ",response.data);
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error fetching multiple assignment report:", error);
+    return {
+      success: false,
+      message: error.response?.data || error.message,
+    };
+  }
+};

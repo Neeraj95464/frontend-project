@@ -50,6 +50,8 @@ import AssigneeDashboard from "./pages/AssigneeDashboard";
 import Settings from "./pages/settings";
 import TicketResponseReport from "./pages/TicketResponsesReport";
 import KnowledgePage from "./pages/KnowledgePage";
+import InactiveUsersAssetReport from "./pages/InactiveUsersAssetReport";
+import MultipleAssignmentReport from "./pages/MultipleAssignmentReport";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -197,7 +199,25 @@ const App = () => {
                 />
 
                 <Route
-                  path="/softwareandlicences"
+                  path="/report/inactive-users-assets"
+                  element={
+                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <InactiveUsersAssetReport />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/report/multiple-assignments"
+                  element={
+                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <MultipleAssignmentReport />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/contractsandlicences"
                   element={
                     <PrivateRoute allowedRoles={["ADMIN"]}>
                       <SoftwareLicensePage />

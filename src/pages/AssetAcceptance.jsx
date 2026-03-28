@@ -79,7 +79,7 @@ export default function AcceptancePage() {
 
     alert(`${assignmentType === 'sim' ? 'SIM' : 'Asset'} accepted successfully`);
 
-    navigate('/myasset');
+    navigate('/myassets');
   } catch (err) {
     alert(err.response?.data || "Verification failed");
   } finally {

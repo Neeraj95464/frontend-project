@@ -38,7 +38,7 @@ const LicenseFormModal = ({ isOpen, onClose, onSuccess, editData }) => {
 
   const renewalFrequencies = ["MONTHLY", "QUARTERLY", "HALF_YEARLY", "YEARLY"];
   const softwareCategories = ["ERP", "CRM", "FIREWALL", "ACCOUNTING", "OTHER"];
-  const licenseStatuses = ["ACTIVE", "EXPIRED", "CANCELLED", "PENDING"];
+  const licenseStatuses = ["ACTIVE", "EXPIRED", "CANCELLED"];
 
   // ================= LOAD DROPDOWNS =================
   useEffect(() => {

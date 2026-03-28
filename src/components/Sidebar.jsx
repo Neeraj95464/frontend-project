@@ -708,7 +708,8 @@ const advanceItems = [
   { label: "Vendors", icon: FiBox, to: "/vendors", roles: ["ADMIN"] },
   { label: "Sites", icon: FiBox, to: "/sites", roles: ["ADMIN"] },
   { label: "Setting", icon: FiBox, to: "/settings", roles: ["ADMIN", "HR_ADMIN"] },
-  { label: "Software & Contracts", icon: FiSettings, to: "/softwareandlicences", roles: ["ADMIN"] }
+  
+  { label: "Contracts & Licences", icon: FiSettings, to: "/contractsandlicences", roles: ["ADMIN"] }
 ];
 
 /* ---------------- REPORTS MENU ---------------- */
@@ -731,6 +732,18 @@ const reportItems = [
     icon: FiBarChart2,
     to: "/tickets/reports/responses",
     roles: ["ADMIN", "HR_ADMIN", "MANAGER"]
+  },
+    {
+    label: "Multiple Assignments",
+    icon: FiBarChart2,
+    to: "/report/multiple-assignments",
+    roles: ["ADMIN", "MANAGER"]
+  },
+  {
+    label: "Inactive Users Assets",
+    icon: FiBarChart2,
+    to: "/report/inactive-users-assets",
+    roles: ["ADMIN", "MANAGER"]
   }
 ];
 
