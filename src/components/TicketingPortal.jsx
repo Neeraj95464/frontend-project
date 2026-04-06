@@ -536,23 +536,7 @@ const handleStatusChange = async (ticketId, newStatus) => {
               <div className="px-6 pb-4">
                 {/* Main Filter Row */}
                 <div className="flex items-center gap-2 mb-3 overflow-x-auto pb-2">
-                  {/* Status Filter */}
-                  {/* <div className="flex-shrink-0">
-                    <select
-                      value={filters.status || ""}
-                      onChange={(e) =>
-                        handleFilterChange("status", e.target.value || null)
-                      }
-                      className="text-xs p-1.5 pr-6 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-white transition-all min-w-[100px]"
-                    >
-                      <option value="">All Status</option>
-                      <option value="OPEN">Open</option>
-                      <option value="WAITING">Waiting</option>
-                      <option value="RESOLVED">Resolved</option>
-                      <option value="CLOSED">Closed</option>
-                      <option value="UNASSIGNED">Unassigned</option>
-                    </select>
-                  </div> */}
+                  
 
                   <div className="flex space-x-2 items-center">
   {/* Status Filter */}
@@ -573,27 +557,6 @@ const handleStatusChange = async (ticketId, newStatus) => {
     </select>
   </div>
 
-  {/* Feedback Received Filter (only show when status = CLOSED) */}
-  {/* {filters.status === "CLOSED" && (
-    <div className="flex-shrink-0">
-      <select
-        value={filters.feedbackReceived ?? ""}
-        onChange={(e) =>
-          handleFilterChange(
-            "feedbackReceived",
-            e.target.value === ""
-              ? null
-              : e.target.value === "true"
-          )
-        }
-        className="text-xs p-1.5 pr-6 border border-gray-300 rounded-md shadow-sm focus:ring-1 focus:ring-green-500 focus:border-green-500 bg-white transition-all min-w-[120px]"
-      >
-        <option value="">All Feedback</option>
-        <option value="true">Received</option>
-        <option value="false">Not Received</option>
-      </select>
-    </div>
-  )} */}
 
   {(filters.status === "CLOSED" || filters.status === "RESOLVED") && (
   <div className="flex-shrink-0">
@@ -1033,23 +996,7 @@ const handleStatusChange = async (ticketId, newStatus) => {
               </div>
 
 
-              {/* <div className="flex items-center gap-3">
-
-  {userRole === "user" && selectedTicket?.status === "RESOLVED" && (
-    <select
-      disabled={isUpdating}
-      onChange={(e) => handleStatusChange(selectedTicket?.id, e.target.value)}
-      className="text-sm border border-gray-300 rounded-lg px-2 py-1 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-      defaultValue=""
-    >
-      <option value="" disabled>
-        Actions
-      </option>
-      <option value="REOPENED">Reopen Ticket</option>
-    </select>
-  )}
-
-</div> */}
+       
 
 <div className="flex items-center gap-3">
 

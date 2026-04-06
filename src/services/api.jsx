@@ -1,9 +1,9 @@
 import axios from "axios";
 import { toast } from "react-toastify";
 
-// const API_URL = "http://localhost:7355/api";
+const API_URL = "http://localhost:7355/api";
 // const API_URL = "https://mahavir-asset.duckdns.org:7355/api";
-const API_URL = "https://erp.mahavirgroup.co/api";
+// const API_URL = "https://erp.mahavirgroup.co/api";
 // Create Axios instance
 const api = axios.create({
   baseURL: API_URL,
@@ -623,18 +623,7 @@ export const uploadAssetPhoto = async (id, files) => {
   }
 };
 
-// export const createChildAsset = async (assetTag, childAsset) => {
-//   try {
-//     const response = await api.post(
-//       `/child-assets/create/${assetTag}`,
-//       childAsset
-//     );
-//     return response.data; // Return the created child asset
-//   } catch (error) {
-//     console.error("Error creating child asset:", error);
-//     throw new Error("Failed to create child asset");
-//   }
-// };
+
 
 // ✅ Updated: Single POST body, no path param
 export const createChildAsset = async (childAssetData) => {
@@ -695,6 +684,7 @@ export const importAssets = async (file) => {
   const res = await api.post("/assets/import/with-employees", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+  console.log("res was ",res.data);
   return res.data;
 };
 
