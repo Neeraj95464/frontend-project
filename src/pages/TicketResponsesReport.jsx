@@ -163,6 +163,13 @@ export default function TicketResponseReport() {
     setPage(0);
   };
 
+  const truncate = (text, maxLength = 50) => {
+  if (!text) return "";
+  return text.length > maxLength
+    ? text.substring(0, maxLength) + "..."
+    : text;
+};
+
   // Unified fetch function
   const fetchTicketsWithFilters = async (customPage = page) => {
     setLoading(true);
@@ -708,7 +715,7 @@ export default function TicketResponseReport() {
                             </div>
                           </td>
 
-<td className="px-4 py-3 text-sm text-gray-700">
+{/* <td className="px-4 py-3 text-sm text-gray-700">
 {ticket.messages && ticket.messages.length > 0
   ? (() => {
       const validMessages = ticket.messages.filter(
@@ -727,9 +734,30 @@ export default function TicketResponseReport() {
         : "No response";
     })()
   : "No response"}
-</td>
+</td> */}
 
 <td className="px-4 py-3 text-sm text-gray-700">
+  {ticket.messages && ticket.messages.length > 0
+    ? (() => {
+        const validMessages = ticket.messages.filter(
+          (m) =>
+            !m.message.includes("Status changed") &&
+            !m.message.includes("Ticket Category changed") &&
+            !m.message.includes("Ticket assignee changed") &&
+            !m.message.includes("Ticket Location changed") &&
+            !m.message.includes("Due Date changed") &&
+            !m.message.includes("Employee changed")
+        );
+
+        return validMessages.length > 0
+          ? truncate(validMessages[0].message, 80)
+          : "No response";
+      })()
+    : "No response"}
+</td>
+
+
+{/* <td className="px-4 py-3 text-sm text-gray-700">
 {ticket.messages && ticket.messages.length > 0
   ? (() => {
       const validMessages = ticket.messages.filter(
@@ -749,7 +777,31 @@ export default function TicketResponseReport() {
         : "No response";
     })()
   : "No response"}
+</td> */}
+
+<td className="px-4 py-3 text-sm text-gray-700">
+  {ticket.messages && ticket.messages.length > 0
+    ? (() => {
+        const validMessages = ticket.messages.filter(
+          (m) =>
+            !m.message.includes("Status changed") &&
+            !m.message.includes("Ticket Category changed") &&
+            !m.message.includes("Ticket assignee changed") &&
+            !m.message.includes("Ticket Location changed") &&
+            !m.message.includes("Due Date changed") &&
+            !m.message.includes("Employee changed")
+        );
+
+        return validMessages.length > 0
+          ? truncate(
+              validMessages[validMessages.length - 1].message,
+              80
+            )
+          : "No response";
+      })()
+    : "No response"}
 </td>
+
 
                           <td className="px-4 py-3">
                             <span

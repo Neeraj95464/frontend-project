@@ -123,6 +123,29 @@ export const getEnums = async () => {
   return response.data; // { departments: [...], assetTypes: [...] }
 };
 
+// Bulk import software licenses from Excel
+export const importSoftwareLicenses = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await api.post(`software-licenses/bulk-import`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error importing software licenses:", error);
+    return { 
+      success: false, 
+      message: error.response?.data?.message || error.message,
+      data: error.response?.data 
+    };
+  }
+};
+
 export const createContract = async (contractData) => {
   const response = await api.post("/contracts", contractData);
   return response.data;
@@ -159,6 +182,28 @@ export const updateVendor = async (id, vendor) => {
 
 export const deleteVendor = async (id) => {
   await api.delete(`/vendors/${id}`);
+};
+
+export const importBulkVendors = async (file) => {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await api.post(`vendors/bulk-import`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    
+    return { success: true, data: response.data };
+  } catch (error) {
+    console.error("Error importing vendors:", error);
+    return { 
+      success: false, 
+      message: error.response?.data?.message || error.message,
+      data: error.response?.data 
+    };
+  }
 };
 
 // ================== ASSET MANAGEMENT ==================
@@ -1888,4 +1933,98 @@ console.log("Response ",response.data);
       message: error.response?.data || error.message,
     };
   }
+};
+
+
+
+// Generate acknowledgement PDF
+export const generateAcknowledgement = async (requestData) => {
+  try {
+
+    const response = await api.post(`/acknowledgement/generate`, requestData);
+    return { 
+      success: true, 
+      data: response.data 
+    };
+  } catch (error) {
+    console.error("Error generating acknowledgement:", error);
+    return { 
+      success: false, 
+      message: error.response?.data?.message || error.message,
+      data: error.response?.data 
+    };
+  }
+};
+
+// Download acknowledgement PDF
+export const downloadAcknowledgement = async (fileName) => {
+  try {
+    const response = await api.get(`/acknowledgement/download/${fileName}`, {
+      responseType: 'blob'
+    });
+    
+    // Create blob link to download
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(url);
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error downloading acknowledgement:", error);
+    return { 
+      success: false, 
+      message: error.response?.data?.message || error.message 
+    };
+  }
+};
+
+// Verify assignment with token
+export const verifyAssignment = async (token, ipAddress = null) => {
+  try {
+    const headers = {};
+    if (ipAddress) {
+      headers['X-Forwarded-For'] = ipAddress;
+    }
+    
+    const response = await api.post(`/acknowledgement/verify/${token}`, {}, { headers });
+    return { 
+      success: true, 
+      data: response.data 
+    };
+  } catch (error) {
+    console.error("Error verifying assignment:", error);
+    return { 
+      success: false, 
+      message: error.response?.data || error.message 
+    };
+  }
+};
+
+// Get acknowledgement by asset tag
+export const getAcknowledgementByAsset = async (assetTag) => {
+  return await generateAcknowledgement({
+    requestType: 'ASSET',
+    assetTag: assetTag
+  });
+};
+
+// Get acknowledgement by SIM card number
+export const getAcknowledgementBySim = async (simCardNumber) => {
+  return await generateAcknowledgement({
+    requestType: 'SIM',
+    simCardNumber: simCardNumber
+  });
+};
+
+// Get acknowledgement by user ID
+export const getAcknowledgementByUser = async (userId) => {
+  return await generateAcknowledgement({
+    requestType: 'USER',
+    userId: userId
+  });
 };

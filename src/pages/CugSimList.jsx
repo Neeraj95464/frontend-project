@@ -240,7 +240,7 @@ export default function CugSimList() {
             <option value="LOST">Lost</option>
             <option value="DEACTIVATED">Deactivated</option>
             <option value="REPLACED">Replaced</option>
-            <option value="DISCARDED">Discarded</option>
+            <option value="UAP">UAP</option>
           </select>
 
           {/* Emp ID */}

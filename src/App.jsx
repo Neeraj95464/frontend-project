@@ -52,6 +52,9 @@ import TicketResponseReport from "./pages/TicketResponsesReport";
 import KnowledgePage from "./pages/KnowledgePage";
 import InactiveUsersAssetReport from "./pages/InactiveUsersAssetReport";
 import MultipleAssignmentReport from "./pages/MultipleAssignmentReport";
+import VendorBulkImport from "./pages/VendorBulkImport";
+import SoftwareLicenseBulkImport from "./pages/SoftwareLicenseBulkImport";
+import AcknowledgementDownload from "./pages/AcknowledgementDownload";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -255,6 +258,34 @@ const App = () => {
                     </PrivateRoute>
                   }
                 />
+
+                <Route
+                  path="/vendor/bulk-imports"
+                  element={
+                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <VendorBulkImport />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
+                  path="/softwarelicense/bulk-imports"
+                  element={
+                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <SoftwareLicenseBulkImport />
+                    </PrivateRoute>
+                  }
+                />
+
+<Route
+                  path="/acknowledgementdownload"
+                  element={
+                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <AcknowledgementDownload />
+                    </PrivateRoute>
+                  }
+                />
+
 
                 <Route
                   path="/assets/:status"

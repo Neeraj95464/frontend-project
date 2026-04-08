@@ -87,14 +87,6 @@ export default function AcceptancePage() {
   }
 };
 
-  // const handleResend = async () => {
-  //   try {
-  //     await resendOtp({ token });
-  //     alert("OTP resent successfully");
-  //   } catch (err) {
-  //     alert("Unable to resend OTP", err);
-  //   }
-  // };
 
 const handleResend = async () => {
   try {
@@ -227,12 +219,7 @@ const handleResend = async () => {
             onChange={(e) => setEmailOtp(e.target.value)}
           />
 
-          {/* <input
-            className="border rounded-lg p-3 focus:ring-2 focus:ring-blue-400 outline-none"
-            placeholder="Enter Mobile OTP"
-            value={mobileOtp}
-            onChange={(e) => setMobileOtp(e.target.value)}
-          /> */}
+          
         </div>
 
         {/* Buttons */}
