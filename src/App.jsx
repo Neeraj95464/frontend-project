@@ -204,7 +204,7 @@ const App = () => {
                 <Route
                   path="/report/inactive-users-assets"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER","HR_ADMIN"]}>
                       <InactiveUsersAssetReport />
                     </PrivateRoute>
                   }
@@ -213,7 +213,7 @@ const App = () => {
                 <Route
                   path="/report/multiple-assignments"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER","HR_ADMIN"]}>
                       <MultipleAssignmentReport />
                     </PrivateRoute>
                   }

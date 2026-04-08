@@ -114,13 +114,13 @@ const reportItems = [
     label: "Multiple Assignments",
     icon: FiBarChart2,
     to: "/report/multiple-assignments",
-    roles: ["ADMIN", "MANAGER"]
+    roles: ["ADMIN", "MANAGER","HR_ADMIN"]
   },
   {
     label: "Inactive Users Assets",
     icon: FiBarChart2,
     to: "/report/inactive-users-assets",
-    roles: ["ADMIN", "MANAGER"]
+    roles: ["ADMIN", "MANAGER","HR_ADMIN"]
   }
 ];
 
