@@ -80,13 +80,16 @@ const navItems = [
 /* ---------------- ADVANCE MENU ---------------- */
 
 const advanceItems = [
-  { label: "Bulk Imports", icon: FiBox, to: "/bulk-imports", roles: ["ADMIN"] },
+  { label: "Bulk Imports", icon: FiBox, to: "/bulk-imports", roles: ["ADMIN","MANAGER"] },
+  { label: "Vendor Import", icon: FiBox, to: "/vendor/bulk-imports", roles: ["ADMIN"] },
+  { label: "License Import", icon: FiBox, to: "/softwarelicense/bulk-imports", roles: ["ADMIN"] },
   { label: "Onboarding", icon: FiUsers, to: "/onboarding", roles: ["ADMIN", "HR_ADMIN"] },
-  { label: "Vendors", icon: FiBox, to: "/vendors", roles: ["ADMIN"] },
-  { label: "Sites", icon: FiBox, to: "/sites", roles: ["ADMIN"] },
-  { label: "Setting", icon: FiBox, to: "/settings", roles: ["ADMIN", "HR_ADMIN"] },
+  { label: "Vendors", icon: FiBox, to: "/vendors", roles: ["ADMIN","MANAGER","EXECUTIVE"] },
+  { label: "Sites", icon: FiBox, to: "/sites", roles: ["ADMIN","MANAGER"] },
+  { label: "Setting", icon: FiBox, to: "/settings", roles: ["ADMIN", "HR_ADMIN","MANAGER"] },
+  { label: "Agents", icon: FiBox, to: "/agents", roles: ["ADMIN", "HR_ADMIN"] },
   
-  { label: "Contracts & Licences", icon: FiSettings, to: "/contractsandlicences", roles: ["ADMIN"] }
+  { label: "Contracts & Licences", icon: FiSettings, to: "/contractsandlicences", roles: ["ADMIN","MANAGER"] }
 ];
 
 /* ---------------- REPORTS MENU ---------------- */
@@ -109,6 +112,12 @@ const reportItems = [
     icon: FiBarChart2,
     to: "/tickets/reports/responses",
     roles: ["ADMIN", "HR_ADMIN", "MANAGER"]
+  },
+    {
+    label: "Asset Tiger",
+    icon: FiBarChart2,
+    to: "/asset-tiger/management",
+    roles: ["ADMIN", "MANAGER"]
   },
     {
     label: "Multiple Assignments",

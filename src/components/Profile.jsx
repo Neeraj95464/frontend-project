@@ -69,7 +69,7 @@ const Profile = () => {
   }, [logout, navigate]);
 
   const handleAdminResetPassword = useCallback(async () => {
-    if (!user || (user.role !== "ADMIN" && user.role !== "EXECUTIVE")) return;
+    if (!user || (user.role !== "ADMIN" && user.role !== "EXECUTIVE" && user.role !== "MANAGER")) return;
 
     const employeeId = window.prompt(
       "Enter employee ID to reset password to 'Welcome@1234':"
@@ -101,7 +101,7 @@ const Profile = () => {
   }, [user, clearResetMessage]);
 
   const isAdmin = useMemo(
-    () => user && (user.role === "ADMIN" || user.role === "EXECUTIVE"),
+    () => user && (user.role === "ADMIN" || user.role === "EXECUTIVE"|| user.role === "MANAGER"),
     [user]
   );
 

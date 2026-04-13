@@ -55,6 +55,8 @@ import MultipleAssignmentReport from "./pages/MultipleAssignmentReport";
 import VendorBulkImport from "./pages/VendorBulkImport";
 import SoftwareLicenseBulkImport from "./pages/SoftwareLicenseBulkImport";
 import AcknowledgementDownload from "./pages/AcknowledgementDownload";
+import AssetTigerManagement from "./pages/AssetTigerManagement";
+import Agents from "./pages/Agents";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -148,7 +150,7 @@ const App = () => {
                   path="/reports/assignees"
                   element={
                     <PrivateRoute
-                      allowedRoles={["ADMIN", "HR_ADMIN"]}
+                      allowedRoles={["ADMIN", "HR_ADMIN","MANAGER"]}
                     >
                       <AssigneeDashboard />
                     </PrivateRoute>
@@ -202,6 +204,15 @@ const App = () => {
                 />
 
                 <Route
+                  path="/asset-tiger/management"
+                  element={
+                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                      <AssetTigerManagement />
+                    </PrivateRoute>
+                  }
+                />
+
+                <Route
                   path="/report/inactive-users-assets"
                   element={
                     <PrivateRoute allowedRoles={["ADMIN", "MANAGER","HR_ADMIN"]}>
@@ -222,7 +233,7 @@ const App = () => {
                 <Route
                   path="/contractsandlicences"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN"]}>
+                    <PrivateRoute allowedRoles={["ADMIN","MANAGER"]}>
                       <SoftwareLicensePage />
                     </PrivateRoute>
                   }
@@ -285,6 +296,15 @@ const App = () => {
                     </PrivateRoute>
                   }
                 />
+                
+<Route
+                  path="/agents"
+                  element={
+                    <PrivateRoute allowedRoles={["ADMIN"]}>
+                      <Agents />
+                    </PrivateRoute>
+                  }
+                />
 
 
                 <Route
@@ -295,6 +315,7 @@ const App = () => {
                     </PrivateRoute>
                   }
                 />
+                
 
                 <Route
                   path="/assets/edit/:id"

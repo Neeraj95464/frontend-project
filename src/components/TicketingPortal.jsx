@@ -449,7 +449,7 @@ const handleStatusChange = async (ticketId, newStatus) => {
     // fetchTickets();
 
     let role = "user";
-    if (hasRole("ADMIN") || hasRole("HR_ADMIN") || hasRole("EXECUTIVE")) {
+    if (hasRole("ADMIN") || hasRole("HR_ADMIN") || hasRole("EXECUTIVE")|| hasRole("MANAGER")) {
       role = "admin";
     }
 

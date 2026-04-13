@@ -2028,3 +2028,151 @@ export const getAcknowledgementByUser = async (userId) => {
     userId: userId
   });
 };
+
+
+
+
+
+export const assetTigerService = {
+  // Import Excel file
+  importExcel: async (file, batchName, validateOnly = false, skipDuplicates = false) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('batchName', batchName);
+    formData.append('validateOnly', validateOnly);
+    formData.append('skipDuplicates', skipDuplicates);
+
+    try {
+      const response = await api.post('/asset-tiger/import', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error('Error importing Excel file:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: error.response?.data,
+      };
+    }
+  },
+
+  // Get assets by batch ID with pagination
+  getAssetsByBatch: async (batchId, page = 0, size = 20, sortBy = 'assetTagId', direction = 'ASC') => {
+    try {
+      const response = await api.get(`/asset-tiger/batches/${batchId}/assets`, {
+        params: { page, size, sortBy, direction },
+      });
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error('Error fetching assets by batch:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: error.response?.data,
+      };
+    }
+  },
+
+  // Get all assets with pagination
+  getAllAssets: async (page = 0, size = 20, sortBy = 'assetTagId', direction = 'ASC') => {
+    try {
+      const response = await api.get('/asset-tiger/assets', {
+        params: { page, size, sortBy, direction },
+      });
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error('Error fetching all assets:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: error.response?.data,
+      };
+    }
+  },
+
+  // Search assets
+  searchAssets: async (query, page = 0, size = 20) => {
+    try {
+      const response = await api.get('/asset-tiger/assets/search', {
+        params: { query, page, size },
+      });
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error('Error searching assets:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: error.response?.data,
+      };
+    }
+  },
+
+  // Get all import batches
+  getImportBatches: async () => {
+    try {
+      const response = await api.get('/asset-tiger/batches');
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error('Error fetching import batches:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: error.response?.data,
+      };
+    }
+  },
+
+  // Delete a batch
+  deleteBatch: async (batchId) => {
+    try {
+      const response = await api.delete(`/asset-tiger/batches/${batchId}`);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error('Error deleting batch:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: error.response?.data,
+      };
+    }
+  },
+
+  // Get batch statistics
+  getBatchStats: async (batchId) => {
+    try {
+      const response = await api.get(`/asset-tiger/stats/batch/${batchId}`);
+      return {
+        success: true,
+        data: response.data,
+      };
+    } catch (error) {
+      console.error('Error fetching batch stats:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: error.response?.data,
+      };
+    }
+  },
+};
