@@ -117,7 +117,7 @@ const reportItems = [
     label: "Asset Tiger",
     icon: FiBarChart2,
     to: "/asset-tiger/management",
-    roles: ["ADMIN", "MANAGER"]
+    roles: ["ADMIN"]
   },
     {
     label: "Multiple Assignments",

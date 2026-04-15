@@ -206,7 +206,7 @@ const App = () => {
                 <Route
                   path="/asset-tiger/management"
                   element={
-                    <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                    <PrivateRoute allowedRoles={["ADMIN"]}>
                       <AssetTigerManagement />
                     </PrivateRoute>
                   }
