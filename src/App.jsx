@@ -5,7 +5,7 @@ import "react-toastify/dist/ReactToastify.css";
 // Components
 import AddAsset from "./components/AddAsset";
 import AddCugSim from "./components/AddCugSim";
-import AdminTicketingPortal from "./components/AdminTicketingPortal";
+import AdminTicketingPortal from "./pages/AdminTicketingPortal";
 import AssetFormModal from "./components/AssetFormModal";
 import AssetPhotos from "./components/AssetPhoto";
 import AssetStatusPage from "./components/AssetStatusPage";
