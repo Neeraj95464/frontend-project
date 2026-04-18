@@ -11,3 +11,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.btn {
+  @apply px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-sm;
+}
+.btn-blue {
+  @apply px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 text-sm;
+}
+.btn-green {
+  @apply px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 text-sm;
+}
+.btn-dark {
+  @apply px-3 py-1 rounded bg-gray-700 text-white hover:bg-gray-800 text-sm;
+}
+.card {
+  @apply bg-white p-4 rounded-xl shadow-sm;
+}
+.dropdown {
+  @apply absolute right-0 mt-2 w-44 bg-white shadow-lg rounded-lg flex flex-col text-sm z-10;
+}
+.dropdown button {
+  @apply px-3 py-2 hover:bg-gray-100 text-left;
+}

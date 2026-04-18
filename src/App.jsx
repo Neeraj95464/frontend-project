@@ -27,7 +27,7 @@ import Profile from "./components/Profile";
 import Register from "./components/Register";
 import SearchResults from "./components/SearchResult";
 import Sidebar from "./components/Sidebar";
-import SingleAsset from "./components/SingleAsset";
+import SingleAsset from "./pages/SingleAsset";
 import SiteLocationManager from "./components/SiteLocationManager";
 import TicketingPortal from "./components/TicketingPortal";
 import Unauthorized from "./components/Unauthorized";
@@ -330,7 +330,7 @@ const App = () => {
                   path="/asset/:id"
                   element={
                     <PrivateRoute>
-                      <SingleAsset />
+                      <SingleAsset/>
                     </PrivateRoute>
                   }
                 />
