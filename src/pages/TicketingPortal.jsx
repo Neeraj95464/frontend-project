@@ -1730,6 +1730,7 @@ export default function TicketingPortal() {
           </span>
 
           {/* Download */}
+          
           <button
             onClick={handleDownloadTickets}
             disabled={loading}
@@ -2117,9 +2118,13 @@ export default function TicketingPortal() {
               {/* Title & Description */}
               <h2 className="text-sm font-semibold text-gray-800 leading-tight">{selectedTicket.title}</h2>
               {selectedTicket.description && (
-                <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap">
-                  {selectedTicket.description}
-                </p>
+                // <p className="text-xs text-gray-500 mt-1 leading-relaxed line-clamp-3 whitespace-pre-wrap">
+                //   {selectedTicket.description}
+                // </p>
+
+ <p className="text-xs text-gray-500 mt-1 leading-relaxed whitespace-pre-wrap max-h-40 overflow-y-auto">
+  {selectedTicket.description}
+</p>
               )}
             </div>
 

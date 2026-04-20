@@ -1,4 +1,141 @@
-import React from "react";
+// import React from "react";
+// import { NavLink } from "react-router-dom";
+// import {
+//   FiHome,
+//   FiBox,
+//   FiBarChart2,
+//   FiSettings,
+//   FiSearch,
+//   FiPlus,
+//   FiX,
+// } from "react-icons/fi";
+
+// const MobileMenu = ({
+//   isOpen,
+//   toggleSidebar,
+//   handleAddAsset,
+//   handleSearchAsset,
+// }) => {
+//   return (
+//     <>
+//       {/* Overlay */}
+//       {isOpen && (
+//         <div
+//           className="fixed inset-0 bg-black opacity-50 z-40"
+//           onClick={toggleSidebar}
+//         ></div>
+//       )}
+
+//       {/* Sidebar */}
+//       <div
+//         className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-blue-600 to-gray-800 text-white transform ${
+//           isOpen ? "translate-x-0" : "-translate-x-full"
+//         } transition-transform duration-300 ease-in-out z-50`}
+//       >
+//         {/* Header */}
+//         <div className="h-16 flex items-center justify-between px-4 bg-blue-700">
+//           <h1 className="text-lg font-bold">Asset Manager</h1>
+//           <button
+//             className="text-white focus:outline-none"
+//             onClick={toggleSidebar}
+//           >
+//             <FiX size={24} />
+//           </button>
+//         </div>
+
+//         {/* Add/Search Buttons */}
+//         <div className="flex flex-col gap-3 px-4 py-4 border-b border-blue-500">
+//           <button
+//             onClick={() => {
+//               handleAddAsset();
+//               toggleSidebar();
+//             }}
+//             className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-lg bg-green-500 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none"
+//           >
+//             <FiPlus className="text-lg" />
+//             <span>Add Asset</span>
+//           </button>
+//           <button
+//             onClick={() => {
+//               handleSearchAsset();
+//               toggleSidebar();
+//             }}
+//             className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+//           >
+//             <FiSearch className="text-lg" />
+//             <span>Search Asset</span>
+//           </button>
+//         </div>
+
+//         {/* Menu Items */}
+//         <nav className="p-4 space-y-3 overflow-y-auto h-[calc(100vh-8rem)]">
+//           <NavLink
+//             to="/"
+//             onClick={toggleSidebar}
+//             className={({ isActive }) =>
+//               `flex items-center px-4 py-2 text-base rounded-lg ${
+//                 isActive
+//                   ? "bg-blue-500 text-white"
+//                   : "hover:bg-blue-600 hover:text-white"
+//               }`
+//             }
+//           >
+//             <FiHome className="mr-3 text-lg" />
+//             Dashboard
+//           </NavLink>
+//           <NavLink
+//             to="/assets"
+//             onClick={toggleSidebar}
+//             className={({ isActive }) =>
+//               `flex items-center px-4 py-2 text-base rounded-lg ${
+//                 isActive
+//                   ? "bg-blue-500 text-white"
+//                   : "hover:bg-blue-600 hover:text-white"
+//               }`
+//             }
+//           >
+//             <FiBox className="mr-3 text-lg" />
+//             Assets
+//           </NavLink>
+//           <NavLink
+//             to="/reports"
+//             onClick={toggleSidebar}
+//             className={({ isActive }) =>
+//               `flex items-center px-4 py-2 text-base rounded-lg ${
+//                 isActive
+//                   ? "bg-blue-500 text-white"
+//                   : "hover:bg-blue-600 hover:text-white"
+//               }`
+//             }
+//           >
+//             <FiBarChart2 className="mr-3 text-lg" />
+//             Reports
+//           </NavLink>
+//           <NavLink
+//             to="/settings"
+//             onClick={toggleSidebar}
+//             className={({ isActive }) =>
+//               `flex items-center px-4 py-2 text-base rounded-lg ${
+//                 isActive
+//                   ? "bg-blue-500 text-white"
+//                   : "hover:bg-blue-600 hover:text-white"
+//               }`
+//             }
+//           >
+//             <FiSettings className="mr-3 text-lg" />
+//             Settings
+//           </NavLink>
+//         </nav>
+//       </div>
+//     </>
+//   );
+// };
+
+// export default MobileMenu;
+
+
+
+import React, { useEffect, useRef } from "react";
 import { NavLink } from "react-router-dom";
 import {
   FiHome,
@@ -16,28 +153,75 @@ const MobileMenu = ({
   handleAddAsset,
   handleSearchAsset,
 }) => {
+  const touchStartX = useRef(0);
+
+  // Close on ESC
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape' && isOpen) {
+        toggleSidebar();
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, toggleSidebar]);
+
+  // Prevent body scroll
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  // Swipe to close
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e) => {
+    if (touchStartX.current > 100 && isOpen) {
+      toggleSidebar();
+    }
+  };
+
+  const MENU_ITEMS = [
+    { path: "/", label: "Dashboard", icon: <FiHome className="mr-3 text-lg" /> },
+    { path: "/assets", label: "Assets", icon: <FiBox className="mr-3 text-lg" /> },
+    { path: "/reports", label: "Reports", icon: <FiBarChart2 className="mr-3 text-lg" /> },
+    { path: "/settings", label: "Settings", icon: <FiSettings className="mr-3 text-lg" /> },
+  ];
+
   return (
     <>
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black opacity-50 z-40"
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300"
           onClick={toggleSidebar}
-        ></div>
+          aria-label="Close menu"
+        />
       )}
 
       {/* Sidebar */}
       <div
         className={`fixed inset-y-0 left-0 w-64 bg-gradient-to-b from-blue-600 to-gray-800 text-white transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } transition-transform duration-300 ease-in-out z-50`}
+        } transition-transform duration-300 ease-in-out z-50 shadow-2xl`}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {/* Header */}
         <div className="h-16 flex items-center justify-between px-4 bg-blue-700">
           <h1 className="text-lg font-bold">Asset Manager</h1>
           <button
-            className="text-white focus:outline-none"
+            className="p-2 rounded-lg hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-white min-h-[44px] min-w-[44px]"
             onClick={toggleSidebar}
+            aria-label="Close menu"
           >
             <FiX size={24} />
           </button>
@@ -50,7 +234,7 @@ const MobileMenu = ({
               handleAddAsset();
               toggleSidebar();
             }}
-            className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-lg bg-green-500 hover:bg-green-600 focus:ring-2 focus:ring-green-400 focus:outline-none"
+            className="flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-lg bg-green-500 hover:bg-green-600 active:bg-green-700 focus:ring-2 focus:ring-green-400 focus:outline-none transition-colors min-h-[48px]"
           >
             <FiPlus className="text-lg" />
             <span>Add Asset</span>
@@ -60,7 +244,7 @@ const MobileMenu = ({
               handleSearchAsset();
               toggleSidebar();
             }}
-            className="flex items-center justify-center gap-2 px-4 py-3 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            className="flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium rounded-lg bg-blue-500 hover:bg-blue-600 active:bg-blue-700 focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors min-h-[48px]"
           >
             <FiSearch className="text-lg" />
             <span>Search Asset</span>
@@ -69,66 +253,47 @@ const MobileMenu = ({
 
         {/* Menu Items */}
         <nav className="p-4 space-y-3 overflow-y-auto h-[calc(100vh-8rem)]">
-          <NavLink
-            to="/"
-            onClick={toggleSidebar}
-            className={({ isActive }) =>
-              `flex items-center px-4 py-2 text-base rounded-lg ${
-                isActive
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-blue-600 hover:text-white"
-              }`
-            }
-          >
-            <FiHome className="mr-3 text-lg" />
-            Dashboard
-          </NavLink>
-          <NavLink
-            to="/assets"
-            onClick={toggleSidebar}
-            className={({ isActive }) =>
-              `flex items-center px-4 py-2 text-base rounded-lg ${
-                isActive
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-blue-600 hover:text-white"
-              }`
-            }
-          >
-            <FiBox className="mr-3 text-lg" />
-            Assets
-          </NavLink>
-          <NavLink
-            to="/reports"
-            onClick={toggleSidebar}
-            className={({ isActive }) =>
-              `flex items-center px-4 py-2 text-base rounded-lg ${
-                isActive
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-blue-600 hover:text-white"
-              }`
-            }
-          >
-            <FiBarChart2 className="mr-3 text-lg" />
-            Reports
-          </NavLink>
-          <NavLink
-            to="/settings"
-            onClick={toggleSidebar}
-            className={({ isActive }) =>
-              `flex items-center px-4 py-2 text-base rounded-lg ${
-                isActive
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-blue-600 hover:text-white"
-              }`
-            }
-          >
-            <FiSettings className="mr-3 text-lg" />
-            Settings
-          </NavLink>
+          {MENU_ITEMS.map((item, index) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              onClick={toggleSidebar}
+              className={({ isActive }) =>
+                `flex items-center px-4 py-3 text-base rounded-lg transition-all duration-200 ${
+                  isActive
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-blue-600 hover:text-white"
+                }`
+              }
+              style={{
+                animation: isOpen 
+                  ? `slideIn 0.3s ease-out ${index * 0.05}s both` 
+                  : 'none'
+              }}
+            >
+              {item.icon}
+              {item.label}
+            </NavLink>
+          ))}
         </nav>
       </div>
+
+      {/* Add keyframes styles */}
+      <style>{`
+        @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
     </>
   );
 };
 
 export default MobileMenu;
+
