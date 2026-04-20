@@ -29,7 +29,7 @@ import SearchResults from "./components/SearchResult";
 import Sidebar from "./components/Sidebar";
 import SingleAsset from "./pages/SingleAsset";
 import SiteLocationManager from "./components/SiteLocationManager";
-import TicketingPortal from "./components/TicketingPortal";
+import TicketingPortal from "./pages/TicketingPortal";
 import Unauthorized from "./components/Unauthorized";
 import Updates from "./pages/Updates"
 import UsersList from "./components/UsersList";
