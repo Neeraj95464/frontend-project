@@ -3226,8 +3226,14 @@ const SingleAsset = () => {
             </h2>
             <div className="grid sm:grid-cols-2 gap-3">
               {[
-                { label: "Name", value: asset.name },
                 { label: "Description", value: asset.description },
+                { label: "Purchase Date", value: asset.purchaseDate },
+                { label: "Purchase From", value: asset.purchaseFrom },
+                { label: "Cost", value: asset.cost },
+                { label: "Model", value: asset.model },
+                { label: "Asset Type", value: asset.assetType },
+                { label: "Department", value: asset.department },
+                { label: "Created By", value: asset.createdBy },
                 { label: "Asset Tag", value: asset.assetTag || id },
                 { label: "Status", value: asset.status },
               ].map(({ label, value }) => (
