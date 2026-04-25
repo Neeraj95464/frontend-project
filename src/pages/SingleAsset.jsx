@@ -3195,7 +3195,10 @@ const SingleAsset = () => {
       />
 
       {/* Tabs */}
-      <div className="flex gap-1 mt-6 bg-white border border-slate-200 rounded-xl p-1 shadow-sm overflow-x-auto">
+      {/* <div className="flex gap-1 mt-6 bg-white border border-slate-200 rounded-xl p-1 
+      shadow-sm overflow-x-auto z-0"> */}
+
+      <div className="flex gap-1 mt-6 bg-white border border-slate-200 rounded-xl p-1 shadow-sm overflow-x-auto relative z-0">
         {tabs.map((tab) => (
           <button
             key={tab.key}

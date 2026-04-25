@@ -1,9 +1,11 @@
+
+
 // import {
 //   getAssetByAssetTag,
 //   getSites,
-//   getDepartments,
 //   getLocationsBySite,
 //   checkInAsset,
+//   getEnums,
 // } from "../services/api";
 // import { useState, useEffect } from "react";
 
@@ -27,8 +29,13 @@
 //           setSelectedLocation(asset.locationId || "");
 //           setSelectedDepartment(asset.department || "");
 
-//           setSites(await getSites());
-//           setDepartments(await getDepartments());
+//           const [sitesData, enumsData] = await Promise.all([
+//             getSites(),
+//             getEnums(),
+//           ]);
+
+//           setSites(sitesData);
+//           setDepartments(enumsData.departments || []);
 //         } catch (error) {
 //           console.error("Error fetching initial data:", error);
 //         }
@@ -47,7 +54,7 @@
 //           console.error("Error fetching locations:", error);
 //         }
 //       } else {
-//         setLocations([]); // Reset locations if no site is selected
+//         setLocations([]);
 //       }
 //     };
 
@@ -59,17 +66,18 @@
 
 //     const checkInData = {
 //       checkInNote: note,
-//       site: sites.find((s) => s.id === selectedSite) || null,
-//       location: locations.find((l) => l.id === selectedLocation) || null,
-//       department: departments.find((d) => d.id === selectedDepartment) || null,
+//       site: selectedSite ? { id: selectedSite } : null,
+//       location: selectedLocation ? { id: selectedLocation } : null,
+//       // department is enum string, backend binds it to Department
+//       department: selectedDepartment || null,
 //       checkInDate: new Date().toISOString(),
 //     };
 
 //     try {
 //       const response = await checkInAsset(assetTag, checkInData);
 //       console.log("Check-in successful:", response);
-//       onCheckIn(response); // Update parent component
-//       onClose(); // Close modal
+//       onCheckIn(response);
+//       onClose();
 //     } catch (error) {
 //       console.error("Error during check-in:", error);
 //     }
@@ -105,7 +113,7 @@
 //             value={selectedSite}
 //             onChange={(e) => {
 //               setSelectedSite(e.target.value);
-//               setSelectedLocation(""); // Reset location when site changes
+//               setSelectedLocation("");
 //             }}
 //             className="border p-2 rounded"
 //           >
@@ -123,7 +131,7 @@
 //             value={selectedLocation}
 //             onChange={(e) => setSelectedLocation(e.target.value)}
 //             className="border p-2 rounded"
-//             disabled={!selectedSite} // Disable if no site is selected
+//             disabled={!selectedSite}
 //           >
 //             <option value="">Select Location</option>
 //             {locations.map((location) => (
@@ -171,6 +179,7 @@
 // };
 
 // export default CheckInModal;
+
 
 import {
   getAssetByAssetTag,
@@ -240,7 +249,6 @@ const CheckInModal = ({ assetTag, isOpen, onClose, onCheckIn }) => {
       checkInNote: note,
       site: selectedSite ? { id: selectedSite } : null,
       location: selectedLocation ? { id: selectedLocation } : null,
-      // department is enum string, backend binds it to Department
       department: selectedDepartment || null,
       checkInDate: new Date().toISOString(),
     };
@@ -258,8 +266,10 @@ const CheckInModal = ({ assetTag, isOpen, onClose, onCheckIn }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto">
+    // Fixed overlay with high z-index
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999]">
+      {/* Modal content with higher z-index than overlay */}
+      <div className="bg-white p-6 rounded-lg shadow-lg w-96 max-h-[80vh] overflow-y-auto relative z-[10000]">
         <h2 className="text-xl font-semibold mb-4">Check In Asset</h2>
 
         <p className="mb-2">
