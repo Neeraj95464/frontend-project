@@ -2176,3 +2176,23 @@ export const assetTigerService = {
     }
   },
 };
+export const getAssetTransactions = async (assetTagId) => {
+  try {
+
+    const response = await api.get(`/assets/transactions/${assetTagId}/transactions`);
+    return {
+      success: true,
+      data: response.data.data,
+      message: response.data.message,
+    };
+  } catch (error) {
+    console.error('Error fetching asset transactions:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message,
+      data: null,
+    };
+  }
+};
+
+
