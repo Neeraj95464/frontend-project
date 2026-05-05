@@ -800,7 +800,7 @@ const reportItems = [
   {
     label: "Asset Tiger",
     icon: FiShield,
-    to: "/asset-tiger/management",
+    to: "/report/asset-tiger/matching/reports",
     roles: ["ADMIN"]
   },
   {
