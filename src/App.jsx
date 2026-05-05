@@ -1155,6 +1155,7 @@ import SoftwareLicenseBulkImport from "./pages/SoftwareLicenseBulkImport";
 import AcknowledgementDownload from "./pages/AcknowledgementDownload";
 import AssetTigerManagement from "./pages/AssetTigerManagement";
 import Agents from "./pages/Agents";
+import UnmatchedAssetsReport from "./pages/UnmatchedAssetsReport";
 
 const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -1324,6 +1325,14 @@ const App = () => {
                       element={
                         <PrivateRoute allowedRoles={["ADMIN", "MANAGER","HR_ADMIN"]}>
                           <InactiveUsersAssetReport />
+                        </PrivateRoute>
+                      }
+                    />
+                    <Route
+                      path="/report/asset-tiger/matching/reports"
+                      element={
+                        <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                          <UnmatchedAssetsReport />
                         </PrivateRoute>
                       }
                     />

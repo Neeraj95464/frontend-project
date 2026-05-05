@@ -2196,3 +2196,127 @@ export const getAssetTransactions = async (assetTagId) => {
 };
 
 
+
+
+
+export const unmatchedAssetService = {
+  // Generate report of unmatched assets
+  generateUnmatchedReport: async () => {
+    try {
+      const response = await api.post('/unmatched-assets/generate-report');
+      return {
+        success: true,
+        data: response.data,
+        message: 'Report generated successfully',
+      };
+    } catch (error) {
+      console.error('Error generating unmatched report:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null,
+      };
+    }
+  },
+
+  // Get all unmatched assets with pagination and filters
+  getUnmatchedAssets: async (page = 0, size = 20, sortBy = 'assetTag', direction = 'ASC', onlyActive = null, onlyUnresolved = null) => {
+    try {
+      let url = `/unmatched-assets?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`;
+      if (onlyActive !== null) url += `&onlyActive=${onlyActive}`;
+      if (onlyUnresolved !== null) url += `&onlyUnresolved=${onlyUnresolved}`;
+      
+      const response = await api.get(url);
+      return {
+        success: true,
+        data: response.data,
+        message: 'Assets fetched successfully',
+      };
+    } catch (error) {
+      console.error('Error fetching unmatched assets:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null,
+      };
+    }
+  },
+
+  // Search unmatched assets
+  searchUnmatchedAssets: async (query, page = 0, size = 20) => {
+    try {
+      const response = await api.get(`/unmatched-assets/search?query=${query}&page=${page}&size=${size}`);
+      return {
+        success: true,
+        data: response.data,
+        message: 'Search completed successfully',
+      };
+    } catch (error) {
+      console.error('Error searching unmatched assets:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null,
+      };
+    }
+  },
+
+  // Get statistics about unmatched assets
+  getUnmatchedStats: async () => {
+    try {
+      const response = await api.get('/unmatched-assets/stats');
+      return {
+        success: true,
+        data: response.data,
+        message: 'Stats fetched successfully',
+      };
+    } catch (error) {
+      console.error('Error fetching unmatched stats:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null,
+      };
+    }
+  },
+
+  // Resolve a specific unmatched asset
+  resolveUnmatchedAsset: async (reportId, resolutionData) => {
+    try {
+      const response = await api.put(`/unmatched-assets/${reportId}/resolve`, resolutionData);
+      return {
+        success: true,
+        data: response.data,
+        message: 'Asset resolved successfully',
+      };
+    } catch (error) {
+      console.error('Error resolving unmatched asset:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null,
+      };
+    }
+  },
+
+  // Bulk resolve unmatched assets
+  bulkResolveUnmatchedAssets: async (reportIds, reason, isActive) => {
+    try {
+      const response = await api.put(`/unmatched-assets/bulk-resolve?reason=${encodeURIComponent(reason)}&isActive=${isActive}`, reportIds);
+      return {
+        success: true,
+        data: response.data,
+        message: `${reportIds.length} assets resolved successfully`,
+      };
+    } catch (error) {
+      console.error('Error bulk resolving unmatched assets:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null,
+      };
+    }
+  },
+};
+
+
