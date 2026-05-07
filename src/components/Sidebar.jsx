@@ -748,6 +748,13 @@ const navItems = [
     to: "/myassets",
     roles: ["USER", "HR_ADMIN", "MANAGER", "ADMIN", "EXECUTIVE"]
   },
+
+    {
+    label: "Employees Item",
+    icon: FiGrid,
+    to: "/hr/employee-items",
+    roles: ["USER", "HR_ADMIN", "ADMIN"]
+  },
   {
     label: "Sim Asset",
     icon: FiDatabase,

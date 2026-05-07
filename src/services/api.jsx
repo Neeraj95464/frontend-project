@@ -729,7 +729,7 @@ export const importAssets = async (file) => {
   const res = await api.post("/assets/import/with-employees", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
-  console.log("res was ",res.data);
+
   return res.data;
 };
 
@@ -1924,7 +1924,7 @@ export const getMultipleAssignmentsReport = async () => {
     const response = await api.get(
       `${API_URL}/reports/multiple-assignments`
     );
-console.log("Response ",response.data);
+
     return { success: true, data: response.data };
   } catch (error) {
     console.error("Error fetching multiple assignment report:", error);
@@ -2317,6 +2317,474 @@ export const unmatchedAssetService = {
       };
     }
   },
+};
+
+
+
+
+
+
+// export const employeeItemApi = {
+//   // Fetch all items with optional status filter
+//   getEmployeeItems: async (status = '') => {
+//     try {
+//       const url = status ? `/employee-items?status=${status}` : '/employee-items';
+//       const response = await api.get(url);
+//       // Return the full response which already has the ApiResponse structure
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'Items fetched successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error fetching employee items:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Get dashboard statistics
+//   getDashboardStats: async () => {
+//     try {
+//       const response = await api.get('/employee-items/stats');
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'Stats fetched successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error fetching stats:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Get my items (for employee dashboard)
+//   getMyItems: async () => {
+//     try {
+//       const response = await api.get('/employee-items/my-items');
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'My items fetched successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error fetching my items:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Assign ID Card
+//   assignIdCard: async (data) => {
+//     try {
+//       const response = await api.post('/employee-items/assign/id-card', data);
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'ID card assigned successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error assigning ID card:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Assign Appointment Letter
+//   assignAppointmentLetter: async (data) => {
+//     try {
+//       const response = await api.post('/employee-items/assign/appointment-letter', data);
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'Appointment letter assigned successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error assigning appointment letter:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Assign Dress
+//   assignDress: async (data) => {
+//     try {
+//       const response = await api.post('/employee-items/assign/dress', data);
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'Dress assigned successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error assigning dress:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Get acceptance details by token
+//   getAcceptanceDetails: async (token) => {
+//     try {
+//       const response = await api.get(`/employee-items/accept/${token}`);
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'Acceptance details fetched successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error fetching acceptance details:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Verify OTP and accept item
+//   acceptItem: async (token, emailOtp) => {
+//     try {
+//       const response = await api.post('/employee-items/accept/verify', { token, emailOtp });
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'Item accepted successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error accepting item:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Resend acknowledgment (regenerates token and OTP)
+//   resendAcknowledgment: async (acknowledgmentId) => {
+//     try {
+//       const response = await api.post(`/employee-items/resend/${acknowledgmentId}`);
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'Acknowledgment resent successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error resending acknowledgment:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   },
+
+//   // Resend OTP only (keeps same token)
+//   resendOtp: async (token) => {
+//     try {
+//       const response = await api.post(`/employee-items/resend-otp?token=${token}`);
+//       return {
+//         success: true,
+//         data: response.data,
+//         message: response.data?.message || 'OTP resent successfully'
+//       };
+//     } catch (error) {
+//       console.error('Error resending OTP:', error);
+//       return {
+//         success: false,
+//         message: error.response?.data?.message || error.message,
+//         data: null
+//       };
+//     }
+//   }
+// };
+
+
+
+// src/services/api.js - Add these to your existing employeeItemApi
+
+export const employeeItemApi = {
+  // Fetch all items with optional status filter (deprecated - use filterItems instead)
+  getEmployeeItems: async (status = '') => {
+    try {
+      const url = status ? `/employee-items?status=${status}` : '/employee-items';
+      const response = await api.get(url);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Items fetched successfully'
+      };
+    } catch (error) {
+      console.error('Error fetching employee items:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Add to api.js
+bulkImport: async (data) => {
+  try {
+    const response = await api.post('/employee-items/bulk-import', data);
+    return {
+      success: true,
+      data: response.data,
+      message: response.data?.message || 'Bulk import completed'
+    };
+  } catch (error) {
+    console.error('Error in bulk import:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message,
+      data: null
+    };
+  }
+},
+
+
+filterEmployeeItems: async (filters) => {
+  try {
+    const params = new URLSearchParams();
+    
+    // Employee ID filter - IMPORTANT
+    if (filters.employeeId && filters.employeeId.trim()) {
+      params.append('employeeId', filters.employeeId.trim());
+    }
+    
+    // Other filters
+    if (filters.itemType) params.append('itemType', filters.itemType);
+    if (filters.status) params.append('status', filters.status);
+    if (filters.assignedUserId) params.append('assignedUserId', filters.assignedUserId);
+    if (filters.assignedBy) params.append('assignedBy', filters.assignedBy);
+    if (filters.assignedAt) params.append('assignedAt', filters.assignedAt);
+    if (filters.createdBy) params.append('createdBy', filters.createdBy);
+    if (filters.assignedDateStart) params.append('assignedDateStart', filters.assignedDateStart);
+    if (filters.assignedDateEnd) params.append('assignedDateEnd', filters.assignedDateEnd);
+    if (filters.acceptedStart) params.append('acceptedStart', filters.acceptedStart);
+    if (filters.acceptedEnd) params.append('acceptedEnd', filters.acceptedEnd);
+    if (filters.createdStart) params.append('createdStart', filters.createdStart);
+    if (filters.createdEnd) params.append('createdEnd', filters.createdEnd);
+    if (filters.keyword) params.append('keyword', filters.keyword);
+    if (filters.isActive !== undefined) params.append('isActive', filters.isActive);
+    if (filters.page !== undefined) params.append('page', filters.page);
+    if (filters.size !== undefined) params.append('size', filters.size);
+    
+    const url = `/employee-items/filter?${params.toString()}`;
+
+    
+    const response = await api.get(url);
+
+    
+    return {
+      success: true,
+      data: response.data,
+      message: response.data?.message || 'Items fetched successfully'
+    };
+  } catch (error) {
+    console.error('Error filtering employee items:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message,
+      data: null
+    };
+  }
+},
+
+  // Get dashboard statistics with filters
+  getDashboardStats: async (filters = {}) => {
+    try {
+      const params = new URLSearchParams();
+      if (filters.dateRange) params.append('dateRange', filters.dateRange);
+      if (filters.department) params.append('department', filters.department);
+      
+      const response = await api.get(`/employee-items/stats?${params.toString()}`);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Stats fetched successfully'
+      };
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Get my items (for employee dashboard)
+  getMyItems: async () => {
+    try {
+      const response = await api.get('/employee-items/my-items');
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'My items fetched successfully'
+      };
+    } catch (error) {
+      console.error('Error fetching my items:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Assign ID Card
+  assignIdCard: async (data) => {
+    try {
+      const response = await api.post('/employee-items/assign/id-card', data);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'ID card assigned successfully'
+      };
+    } catch (error) {
+      console.error('Error assigning ID card:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Assign Appointment Letter
+  assignAppointmentLetter: async (data) => {
+    try {
+      const response = await api.post('/employee-items/assign/appointment-letter', data);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Appointment letter assigned successfully'
+      };
+    } catch (error) {
+      console.error('Error assigning appointment letter:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Assign Dress
+  assignDress: async (data) => {
+    try {
+      const response = await api.post('/employee-items/assign/dress', data);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Dress assigned successfully'
+      };
+    } catch (error) {
+      console.error('Error assigning dress:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Get acceptance details by token
+  getAcceptanceDetails: async (token) => {
+    try {
+      const response = await api.get(`/employee-items/accept/${token}`);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Acceptance details fetched successfully'
+      };
+    } catch (error) {
+      console.error('Error fetching acceptance details:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Verify OTP and accept item
+  acceptItem: async (token, emailOtp) => {
+    try {
+      const response = await api.post('/employee-items/accept/verify', { token, emailOtp });
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Item accepted successfully'
+      };
+    } catch (error) {
+      console.error('Error accepting item:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Resend acknowledgment (regenerates token and OTP)
+  resendAcknowledgment: async (acknowledgmentId) => {
+    try {
+      const response = await api.post(`/employee-items/resend/${acknowledgmentId}`);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Acknowledgment resent successfully'
+      };
+    } catch (error) {
+      console.error('Error resending acknowledgment:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Resend OTP only (keeps same token)
+  resendOtp: async (token) => {
+    try {
+      const response = await api.post(`/employee-items/resend-otp?token=${token}`);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'OTP resent successfully'
+      };
+    } catch (error) {
+      console.error('Error resending OTP:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  }
 };
 
 
