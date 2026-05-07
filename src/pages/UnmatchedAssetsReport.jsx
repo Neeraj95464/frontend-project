@@ -1254,7 +1254,7 @@ export default function UnmatchedAssetsReport() {
           <div className="h-5 w-px bg-gray-200 hidden sm:block" />
 
           {/* Generate report */}
-          {/* <button
+          <button
             onClick={handleGenerateReport}
             disabled={generating || loading}
             className="flex items-center gap-1 px-2 py-1 text-xs bg-indigo-600 hover:bg-indigo-700 text-white rounded-md font-semibold transition shadow-sm disabled:opacity-50"
@@ -1262,7 +1262,7 @@ export default function UnmatchedAssetsReport() {
             <RefreshCw className={`w-3 h-3 ${generating ? "animate-spin" : ""}`} />
             <span className="hidden sm:inline">Generate Report</span>
             <span className="sm:hidden">Generate</span>
-          </button> */}
+          </button>
 
           {/* Advanced filters */}
           <div className="relative" ref={advancedRef}>
