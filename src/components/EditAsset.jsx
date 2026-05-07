@@ -1,19 +1,62 @@
+
+
+
 // import { Button, Input, Textarea, Card, CardContent } from "../components/ui";
-// import { getAssetByAssetTag, updateAsset } from "../services/api";
+// import { getAssetByAssetTag, updateAsset, getSites, getLocationsBySite } from "../services/api";
 // import { useState, useEffect } from "react";
 // import { useParams, useNavigate } from "react-router-dom";
-
-// // Import API functions
+// import { AlertCircle, Save, X, Loader } from "lucide-react";
 
 // const EditAsset = () => {
 //   const { id } = useParams();
 //   const navigate = useNavigate();
 
-//   const [asset, setAsset] = useState({});
+//   const [formData, setFormData] = useState({
+//     description: "",
+//     serialNumber: "",
+//     purchaseDate: "",
+//     purchaseFrom: "",
+//     brand: "",
+//     model: "",
+//     assetType: "",
+//     department: "",
+//     status: "",
+//     cost: "",
+//     statusNote: "",
+//     reservationStartDate: "",
+//     reservationEndDate: "",
+//     siteId: "",
+//     locationId: ""
+//   });
+  
+//   const [sites, setSites] = useState([]);
+//   const [locations, setLocations] = useState([]);
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState(null);
 //   const [submitting, setSubmitting] = useState(false);
 
+//   // Fetch sites on mount
+//   useEffect(() => {
+//     getSites()
+//       .then(setSites)
+//       .catch(err => console.error("Failed to load sites", err));
+//   }, []);
+
+//   // Fetch locations when site changes
+//   useEffect(() => {
+//     if (formData.siteId) {
+//       getLocationsBySite(formData.siteId)
+//         .then(setLocations)
+//         .catch(err => {
+//           console.error("Failed to load locations", err);
+//           setLocations([]);
+//         });
+//     } else {
+//       setLocations([]);
+//     }
+//   }, [formData.siteId]);
+
+//   // Fetch asset data
 //   useEffect(() => {
 //     if (!id) {
 //       setError("Invalid asset ID");
@@ -24,7 +67,23 @@
 //     getAssetByAssetTag(id)
 //       .then((data) => {
 //         if (data) {
-//           setAsset(data);
+//           setFormData({
+//             description: data.description || "",
+//             serialNumber: data.serialNumber || "",
+//             purchaseDate: data.purchaseDate || "",
+//             purchaseFrom: data.purchaseFrom || "",
+//             brand: data.brand || "",
+//             model: data.model || "",
+//             assetType: data.assetType || "",
+//             department: data.department || "",
+//             status: data.status || "",
+//             cost: data.cost || "",
+//             statusNote: data.statusNote || "",
+//             reservationStartDate: data.reservationStartDate || "",
+//             reservationEndDate: data.reservationEndDate || "",
+//             siteId: data.site?.id || "",
+//             locationId: data.location?.id || ""
+//           });
 //         } else {
 //           setError("Asset not found");
 //         }
@@ -34,146 +93,325 @@
 //   }, [id]);
 
 //   const handleChange = (e) => {
-//     setAsset({ ...asset, [e.target.name]: e.target.value });
+//     const { name, value } = e.target;
+//     setFormData(prev => ({ ...prev, [name]: value }));
 //   };
 
 //   const handleSubmit = async (e) => {
 //     e.preventDefault();
 //     setSubmitting(true);
+//     setError(null);
+    
 //     try {
-//       await updateAsset(id, asset);
+//       const updateData = {
+//         description: formData.description,
+//         serialNumber: formData.serialNumber,
+//         purchaseDate: formData.purchaseDate || null,
+//         purchaseFrom: formData.purchaseFrom,
+//         brand: formData.brand,
+//         model: formData.model,
+//         assetType: formData.assetType,
+//         department: formData.department,
+//         status: formData.status,
+//         cost: formData.cost ? parseFloat(formData.cost) : null,
+//         statusNote: formData.statusNote,
+//         reservationStartDate: formData.reservationStartDate || null,
+//         reservationEndDate: formData.reservationEndDate || null,
+//         site: formData.siteId ? { id: parseInt(formData.siteId) } : null,
+//         location: formData.locationId ? { id: parseInt(formData.locationId) } : null
+//       };
+      
+//       await updateAsset(id, updateData);
 //       navigate(`/asset/${id}`);
-//     } catch {
+//     } catch (err) {
 //       setError("Update failed. Please try again.");
+//       console.error(err);
 //     } finally {
 //       setSubmitting(false);
 //     }
 //   };
 
-//   if (loading) return <p className="text-center text-gray-500">Loading...</p>;
-//   if (error)
-//     return <p className="text-center text-red-500 font-semibold">{error}</p>;
+//   const assetTypes = ["LAPTOP", "DESKTOP", "SERVER", "MONITOR", "PRINTER", "SCANNER", "PROJECTOR", "PHONE", "TABLET", "NETWORK_DEVICE", "SOFTWARE", "VEHICLE", "FURNITURE", "OTHER"];
+//   const departments = ["IT", "HR", "FINANCE", "SALES", "MARKETING", "OPERATIONS", "ADMIN", "LEGAL", "RND", "CUSTOMER_SUPPORT", "MANAGEMENT", "OTHER"];
+//   const statuses = ["AVAILABLE", "ASSIGNED", "MAINTENANCE", "DAMAGED", "LOST", "RETIRED", "RESERVED", "UNDER_REPAIR", "PENDING_APPROVAL"];
+
+//   if (loading) {
+//     return (
+//       <div className="flex justify-center items-center min-h-screen">
+//         <div className="text-center">
+//           <Loader className="animate-spin h-12 w-12 text-blue-600 mx-auto" />
+//           <p className="mt-4 text-gray-600">Loading asset details...</p>
+//         </div>
+//       </div>
+//     );
+//   }
 
 //   return (
-//     <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-300 p-6">
-//       <Card className="max-w-3xl w-full shadow-lg rounded-lg border border-gray-200 bg-white">
-//         <CardContent className="p-8">
-//           <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-//             Edit Asset
-//           </h2>
-//           <form onSubmit={handleSubmit} className="space-y-6">
+//     <div className="min-h-screen bg-gray-50 py-8 px-4">
+//       <div className="max-w-4xl mx-auto">
+//         {/* Header */}
+//         <div className="mb-6">
+//           <h1 className="text-2xl font-bold text-gray-900">Edit Asset</h1>
+//           <p className="text-sm text-gray-500 mt-1">Asset Tag: {id}</p>
+//         </div>
+
+//         {/* Error Alert */}
+//         {error && (
+//           <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+//             <div className="flex items-center gap-2">
+//               <AlertCircle className="text-red-600 w-5 h-5" />
+//               <p className="text-red-600 font-medium">{error}</p>
+//             </div>
+//           </div>
+//         )}
+
+//         {/* Form */}
+//         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-gray-200">
+//           <div className="p-6 space-y-6">
+//             {/* Basic Information */}
 //             <div>
-//               <label className="block text-sm font-semibold mb-2">Name</label>
-//               <Input
-//                 name="name"
-//                 value={asset.name || ""}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full"
-//               />
+//               <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+//               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">
+//                     Serial Number <span className="text-red-500">*</span>
+//                   </label>
+//                   <Input
+//                     name="serialNumber"
+//                     value={formData.serialNumber}
+//                     onChange={handleChange}
+//                     required
+//                     className="w-full"
+//                   />
+//                 </div>
+//                 <div className="md:col-span-2">
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">
+//                     Description
+//                   </label>
+//                   <Textarea
+//                     name="description"
+//                     value={formData.description}
+//                     onChange={handleChange}
+//                     rows="3"
+//                     className="w-full"
+//                   />
+//                 </div>
+//               </div>
 //             </div>
 
+//             {/* Product Details */}
 //             <div>
-//               <label className="block text-sm font-semibold mb-2">
-//                 Description
-//               </label>
-//               <Textarea
-//                 name="description"
-//                 value={asset.description || ""}
-//                 onChange={handleChange}
-//                 className="w-full"
-//               />
+//               <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h2>
+//               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Brand</label>
+//                   <Input
+//                     name="brand"
+//                     value={formData.brand}
+//                     onChange={handleChange}
+//                     className="w-full"
+//                   />
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Model</label>
+//                   <Input
+//                     name="model"
+//                     value={formData.model}
+//                     onChange={handleChange}
+//                     className="w-full"
+//                   />
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Asset Type</label>
+//                   <select
+//                     name="assetType"
+//                     value={formData.assetType}
+//                     onChange={handleChange}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                   >
+//                     <option value="">Select Asset Type</option>
+//                     {assetTypes.map(type => (
+//                       <option key={type} value={type}>{type.replace("_", " ")}</option>
+//                     ))}
+//                   </select>
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
+//                   <select
+//                     name="department"
+//                     value={formData.department}
+//                     onChange={handleChange}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                   >
+//                     <option value="">Select Department</option>
+//                     {departments.map(dept => (
+//                       <option key={dept} value={dept}>{dept}</option>
+//                     ))}
+//                   </select>
+//                 </div>
+//               </div>
 //             </div>
 
+//             {/* Purchase Information */}
 //             <div>
-//               <label className="block text-sm font-semibold mb-2">
-//                 Serial Number
-//               </label>
-//               <Input
-//                 name="serialNumber"
-//                 value={asset.serialNumber || ""}
-//                 onChange={handleChange}
-//                 required
-//                 className="w-full"
-//               />
+//               <h2 className="text-lg font-semibold text-gray-900 mb-4">Purchase Information</h2>
+//               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Date</label>
+//                   <Input
+//                     name="purchaseDate"
+//                     type="date"
+//                     value={formData.purchaseDate}
+//                     onChange={handleChange}
+//                     className="w-full"
+//                   />
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Purchase From</label>
+//                   <Input
+//                     name="purchaseFrom"
+//                     value={formData.purchaseFrom}
+//                     onChange={handleChange}
+//                     className="w-full"
+//                     placeholder="Vendor name"
+//                   />
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Cost (₹)</label>
+//                   <Input
+//                     name="cost"
+//                     type="number"
+//                     step="0.01"
+//                     value={formData.cost}
+//                     onChange={handleChange}
+//                     className="w-full"
+//                     placeholder="Enter cost"
+//                   />
+//                 </div>
+//               </div>
 //             </div>
 
+//             {/* Location Information */}
 //             <div>
-//               <label className="block text-sm font-semibold mb-2">
-//                 Purchase Date
-//               </label>
-//               <Input
-//                 name="purchaseDate"
-//                 type="date"
-//                 value={asset.purchaseDate || ""}
-//                 onChange={handleChange}
-//                 className="w-full"
-//               />
+//               <h2 className="text-lg font-semibold text-gray-900 mb-4">Location Information</h2>
+//               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Site</label>
+//                   <select
+//                     name="siteId"
+//                     value={formData.siteId}
+//                     onChange={handleChange}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                   >
+//                     <option value="">Select Site</option>
+//                     {sites.map(site => (
+//                       <option key={site.id} value={site.id}>{site.name}</option>
+//                     ))}
+//                   </select>
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+//                   <select
+//                     name="locationId"
+//                     value={formData.locationId}
+//                     onChange={handleChange}
+//                     disabled={!formData.siteId}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+//                   >
+//                     <option value="">
+//                       {formData.siteId ? "Select Location" : "Select site first"}
+//                     </option>
+//                     {locations.map(location => (
+//                       <option key={location.id} value={location.id}>{location.name}</option>
+//                     ))}
+//                   </select>
+//                 </div>
+//               </div>
 //             </div>
 
+//             {/* Status Information */}
 //             <div>
-//               <label className="block text-sm font-semibold mb-2">Brand</label>
-//               <Input
-//                 name="brand"
-//                 value={asset.brand || ""}
-//                 onChange={handleChange}
-//                 className="w-full"
-//               />
+//               <h2 className="text-lg font-semibold text-gray-900 mb-4">Status Information</h2>
+//               <div className="grid grid-cols-1 gap-4">
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+//                   <select
+//                     name="status"
+//                     value={formData.status}
+//                     onChange={handleChange}
+//                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+//                   >
+//                     <option value="">Select Status</option>
+//                     {statuses.map(status => (
+//                       <option key={status} value={status}>{status.replace("_", " ")}</option>
+//                     ))}
+//                   </select>
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Status Note</label>
+//                   <Textarea
+//                     name="statusNote"
+//                     value={formData.statusNote}
+//                     onChange={handleChange}
+//                     rows="2"
+//                     className="w-full"
+//                     placeholder="Additional notes about status"
+//                   />
+//                 </div>
+//               </div>
 //             </div>
 
+//             {/* Reservation Information */}
 //             <div>
-//               <label className="block text-sm font-semibold mb-2">Model</label>
-//               <Input
-//                 name="model"
-//                 value={asset.model || ""}
-//                 onChange={handleChange}
-//                 className="w-full"
-//               />
+//               <h2 className="text-lg font-semibold text-gray-900 mb-4">Reservation Information</h2>
+//               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Reservation Start Date</label>
+//                   <Input
+//                     name="reservationStartDate"
+//                     type="date"
+//                     value={formData.reservationStartDate}
+//                     onChange={handleChange}
+//                     className="w-full"
+//                   />
+//                 </div>
+//                 <div>
+//                   <label className="block text-sm font-medium text-gray-700 mb-1">Reservation End Date</label>
+//                   <Input
+//                     name="reservationEndDate"
+//                     type="date"
+//                     value={formData.reservationEndDate}
+//                     onChange={handleChange}
+//                     className="w-full"
+//                   />
+//                 </div>
+//               </div>
 //             </div>
+//           </div>
 
-//             {/* <div>
-//               <label className="block text-sm font-semibold mb-2">Cost</label>
-//               <Input
-//                 name="cost"
-//                 type="number"
-//                 step="0.01"
-//                 value={asset.cost || ""}
-//                 onChange={handleChange}
-//                 className="w-full"
-//               />
-//             </div> */}
-
-//             <div>
-//               <label className="block text-sm font-semibold mb-2">
-//                 Status Note
-//               </label>
-//               <Textarea
-//                 name="statusNote"
-//                 value={asset.statusNote || ""}
-//                 onChange={handleChange}
-//                 className="w-full"
-//               />
-//             </div>
-
-//             <div className="flex justify-between mt-6">
-//               <Button
-//                 type="submit"
-//                 disabled={submitting}
-//                 className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-lg shadow-lg"
-//               >
-//                 {submitting ? "Updating..." : "Update"}
-//               </Button>
+//           {/* Form Actions */}
+//           <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 rounded-b-lg">
+//             <div className="flex justify-end gap-3">
 //               <Button
 //                 type="button"
 //                 onClick={() => navigate(`/asset/${id}`)}
-//                 className="bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-lg shadow-lg"
+//                 className="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
 //               >
+//                 <X className="w-4 h-4 inline mr-2" />
 //                 Cancel
 //               </Button>
+//               <Button
+//                 type="submit"
+//                 disabled={submitting}
+//                 className="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50"
+//               >
+//                 <Save className="w-4 h-4 inline mr-2" />
+//                 {submitting ? "Updating..." : "Update Asset"}
+//               </Button>
 //             </div>
-//           </form>
-//         </CardContent>
-//       </Card>
+//           </div>
+//         </form>
+//       </div>
 //     </div>
 //   );
 // };
@@ -181,19 +419,17 @@
 // export default EditAsset;
 
 
-
-import { Button, Input, Textarea, Card, CardContent } from "../components/ui";
-import { getAssetByAssetTag, updateAsset } from "../services/api";
+import { Button, Input, Textarea } from "../components/ui";
+import { getAssetByAssetTag, updateAsset, getSites, getLocationsBySite } from "../services/api";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { AlertCircle, Save, X, Loader } from "lucide-react";
+import { AlertCircle, Save, X, Loader, MapPin, Package, ShoppingBag, Hash, FileText, Tag } from "lucide-react";
 
 const EditAsset = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const [asset, setAsset] = useState({
-    name: "",
+  const [formData, setFormData] = useState({
     description: "",
     serialNumber: "",
     purchaseDate: "",
@@ -202,16 +438,38 @@ const EditAsset = () => {
     model: "",
     assetType: "",
     department: "",
-    status: "",
     cost: "",
     statusNote: "",
-    reservationStartDate: "",
-    reservationEndDate: ""
+    siteId: "",
+    locationId: ""
   });
   
+  const [sites, setSites] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+
+  // Fetch sites on mount
+  useEffect(() => {
+    getSites()
+      .then(setSites)
+      .catch(err => console.error("Failed to load sites", err));
+  }, []);
+
+  // Fetch locations when site changes
+  useEffect(() => {
+    if (formData.siteId) {
+      getLocationsBySite(formData.siteId)
+        .then(setLocations)
+        .catch(err => {
+          console.error("Failed to load locations", err);
+          setLocations([]);
+        });
+    } else {
+      setLocations([]);
+    }
+  }, [formData.siteId]);
 
   // Fetch asset data
   useEffect(() => {
@@ -224,8 +482,7 @@ const EditAsset = () => {
     getAssetByAssetTag(id)
       .then((data) => {
         if (data) {
-          setAsset({
-            name: data.name || "",
+          setFormData({
             description: data.description || "",
             serialNumber: data.serialNumber || "",
             purchaseDate: data.purchaseDate || "",
@@ -234,11 +491,10 @@ const EditAsset = () => {
             model: data.model || "",
             assetType: data.assetType || "",
             department: data.department || "",
-            status: data.status || "",
             cost: data.cost || "",
             statusNote: data.statusNote || "",
-            reservationStartDate: data.reservationStartDate || "",
-            reservationEndDate: data.reservationEndDate || ""
+            siteId: data.site?.id || "",
+            locationId: data.location?.id || ""
           });
         } else {
           setError("Asset not found");
@@ -250,29 +506,28 @@ const EditAsset = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setAsset(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
+    setError(null);
+    
     try {
-      // Prepare asset data for update - only editable fields
       const updateData = {
-        name: asset.name,
-        description: asset.description,
-        serialNumber: asset.serialNumber,
-        purchaseDate: asset.purchaseDate || null,
-        purchaseFrom: asset.purchaseFrom,
-        brand: asset.brand,
-        model: asset.model,
-        assetType: asset.assetType,
-        department: asset.department,
-        status: asset.status,
-        cost: asset.cost ? parseFloat(asset.cost) : null,
-        statusNote: asset.statusNote,
-        reservationStartDate: asset.reservationStartDate || null,
-        reservationEndDate: asset.reservationEndDate || null
+        description: formData.description,
+        serialNumber: formData.serialNumber,
+        purchaseDate: formData.purchaseDate || null,
+        purchaseFrom: formData.purchaseFrom,
+        brand: formData.brand,
+        model: formData.model,
+        assetType: formData.assetType,
+        department: formData.department,
+        cost: formData.cost ? parseFloat(formData.cost) : null,
+        statusNote: formData.statusNote,
+        site: formData.siteId ? { id: parseInt(formData.siteId) } : null,
+        location: formData.locationId ? { id: parseInt(formData.locationId) } : null
       };
       
       await updateAsset(id, updateData);
@@ -285,321 +540,248 @@ const EditAsset = () => {
     }
   };
 
-  // Asset Type options
-  const assetTypes = [
-    "LAPTOP", "DESKTOP", "SERVER", "MONITOR", "PRINTER", "SCANNER", 
-    "PROJECTOR", "PHONE", "TABLET", "NETWORK_DEVICE", "SOFTWARE", 
-    "VEHICLE", "FURNITURE", "OTHER"
-  ];
+  const assetTypes = ["LAPTOP", "DESKTOP", "SERVER", "MONITOR", "PRINTER", "SCANNER", "PROJECTOR", "PHONE", "TABLET", "NETWORK_DEVICE", "SOFTWARE", "VEHICLE", "FURNITURE", "OTHER"];
+  const departments = ["IT", "HR", "FINANCE", "SALES", "MARKETING", "OPERATIONS", "ADMIN", "LEGAL", "RND", "CUSTOMER_SUPPORT", "MANAGEMENT", "OTHER"];
 
-  // Department options
-  const departments = [
-    "IT", "HR", "FINANCE", "SALES", "MARKETING", "OPERATIONS", 
-    "ADMIN", "LEGAL", "RND", "CUSTOMER_SUPPORT", "MANAGEMENT", "OTHER"
-  ];
-
-  // Status options
-  const statuses = [
-    "AVAILABLE", "ASSIGNED", "MAINTENANCE", "DAMAGED", "LOST", 
-    "RETIRED", "RESERVED", "UNDER_REPAIR", "PENDING_APPROVAL"
-  ];
-
-  if (loading) return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="text-center">
-        <Loader className="animate-spin h-12 w-12 text-blue-600 mx-auto" />
-        <p className="mt-4 text-gray-600">Loading asset details...</p>
-      </div>
-    </div>
-  );
-  
-  if (error) return (
-    <div className="flex justify-center items-center min-h-screen">
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
-        <div className="flex items-center gap-3">
-          <AlertCircle className="text-red-600 w-6 h-6" />
-          <p className="text-red-600 font-semibold">{error}</p>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="text-center">
+          <Loader className="animate-spin h-10 w-10 text-indigo-600 mx-auto" />
+          <p className="mt-3 text-sm text-gray-500">Loading asset details...</p>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-gray-100 to-gray-300 p-6">
-      <Card className="max-w-3xl w-full shadow-lg rounded-lg border border-gray-200 bg-white">
-        <CardContent className="p-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-gray-800">
-              Edit Asset
-            </h2>
-            <div className="text-sm bg-gray-100 px-3 py-1 rounded-full">
-              Asset Tag: {id}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="mb-6 flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Edit Asset</h1>
+            <p className="text-sm text-gray-500 mt-1">Asset Tag: {id}</p>
+          </div>
+          <button
+            onClick={() => navigate(`/asset/${id}`)}
+            className="p-2 text-gray-400 hover:text-gray-600 transition-colors rounded-full hover:bg-gray-100"
+            title="Cancel"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 bg-red-50 border-l-4 border-red-500 rounded-md p-4">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="text-red-600 w-4 h-4" />
+              <p className="text-sm text-red-600 font-medium">{error}</p>
             </div>
           </div>
-          
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information Section */}
-            <div className="border-b border-gray-200 pb-4">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">Basic Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Name <span className="text-red-500">*</span>
-                  </label>
-                  <Input
-                    name="name"
-                    value={asset.name || ""}
-                    onChange={handleChange}
-                    required
-                    className="w-full"
-                  />
-                </div> */}
+        )}
 
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Serial Number <span className="text-red-500">*</span>
-                  </label>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="p-6 space-y-6">
+            {/* Row 1: Serial Number & Description */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Serial Number <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <Input
                     name="serialNumber"
-                    value={asset.serialNumber || ""}
+                    value={formData.serialNumber}
                     onChange={handleChange}
                     required
-                    className="w-full"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold mb-2">
-                    Description
-                  </label>
-                  <Textarea
-                    name="description"
-                    value={asset.description || ""}
-                    onChange={handleChange}
-                    className="w-full"
-                    rows="3"
+                    className="pl-9 py-2.5"
+                    placeholder="Enter serial number"
                   />
                 </div>
               </div>
-            </div>
-
-            {/* Product Details Section */}
-            <div className="border-b border-gray-200 pb-4">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">Product Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Brand
-                  </label>
-                  <Input
-                    name="brand"
-                    value={asset.brand || ""}
-                    onChange={handleChange}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Model
-                  </label>
-                  <Input
-                    name="model"
-                    value={asset.model || ""}
-                    onChange={handleChange}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Asset Type
-                  </label>
-                  <select
-                    name="assetType"
-                    value={asset.assetType || ""}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Asset Type</option>
-                    {assetTypes.map(type => (
-                      <option key={type} value={type}>{type.replace("_", " ")}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Department
-                  </label>
-                  <select
-                    name="department"
-                    value={asset.department || ""}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Department</option>
-                    {departments.map(dept => (
-                      <option key={dept} value={dept}>{dept}</option>
-                    ))}
-                  </select>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <Textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="2"
+                  className="resize-none py-2.5"
+                  placeholder="Asset description"
+                />
               </div>
             </div>
 
-            {/* Purchase Information Section */}
-            <div className="border-b border-gray-200 pb-4">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">Purchase Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Purchase Date
-                  </label>
-                  <Input
-                    name="purchaseDate"
-                    type="date"
-                    value={asset.purchaseDate || ""}
-                    onChange={handleChange}
-                    className="w-full"
-                  />
-                </div>
+            {/* Row 2: Brand, Model, Asset Type */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                <Input
+                  name="brand"
+                  value={formData.brand}
+                  onChange={handleChange}
+                  className="py-2.5"
+                  placeholder="Enter brand"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Model</label>
+                <Input
+                  name="model"
+                  value={formData.model}
+                  onChange={handleChange}
+                  className="py-2.5"
+                  placeholder="Enter model"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Asset Type</label>
+                <select
+                  name="assetType"
+                  value={formData.assetType}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                >
+                  <option value="">Select asset type</option>
+                  {assetTypes.map(type => (
+                    <option key={type} value={type}>{type.replace("_", " ")}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Purchase From
-                  </label>
-                  <Input
-                    name="purchaseFrom"
-                    value={asset.purchaseFrom || ""}
-                    onChange={handleChange}
-                    className="w-full"
-                    placeholder="Vendor name"
-                  />
-                </div>
+            {/* Row 3: Department, Purchase Date, Purchase From */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+                <select
+                  name="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white"
+                >
+                  <option value="">Select department</option>
+                  {departments.map(dept => (
+                    <option key={dept} value={dept}>{dept}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Purchase Date</label>
+                <Input
+                  name="purchaseDate"
+                  type="date"
+                  value={formData.purchaseDate}
+                  onChange={handleChange}
+                  className="py-2.5"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Purchase From</label>
+                <Input
+                  name="purchaseFrom"
+                  value={formData.purchaseFrom}
+                  onChange={handleChange}
+                  className="py-2.5"
+                  placeholder="Vendor name"
+                />
+              </div>
+            </div>
 
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Cost (₹)
-                  </label>
+            {/* Row 4: Cost, Site, Location */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Cost (₹)</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">₹</span>
                   <Input
                     name="cost"
                     type="number"
                     step="0.01"
-                    value={asset.cost || ""}
+                    value={formData.cost}
                     onChange={handleChange}
-                    className="w-full"
-                    placeholder="Enter cost"
+                    className="pl-7 py-2.5"
+                    placeholder="0.00"
                   />
                 </div>
               </div>
-            </div>
-
-            {/* Status Section */}
-            <div className="border-b border-gray-200 pb-4">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">Status Information</h3>
-              <div className="grid grid-cols-1 gap-4">
-                {/* <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Status
-                  </label>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Site</label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                   <select
-                    name="status"
-                    value={asset.status || ""}
+                    name="siteId"
+                    value={formData.siteId}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white appearance-none"
                   >
-                    <option value="">Select Status</option>
-                    {statuses.map(status => (
-                      <option key={status} value={status}>{status.replace("_", " ")}</option>
+                    <option value="">Select site</option>
+                    {sites.map(site => (
+                      <option key={site.id} value={site.id}>{site.name}</option>
                     ))}
                   </select>
-                </div> */}
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Status Note
-                  </label>
-                  <Textarea
-                    name="statusNote"
-                    value={asset.statusNote || ""}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <div className="relative">
+                  <Package className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <select
+                    name="locationId"
+                    value={formData.locationId}
                     onChange={handleChange}
-                    className="w-full"
-                    rows="2"
-                    placeholder="Additional notes about status"
-                  />
+                    disabled={!formData.siteId}
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white disabled:bg-gray-50 disabled:cursor-not-allowed appearance-none"
+                  >
+                    <option value="">
+                      {formData.siteId ? "Select location" : "Select site first"}
+                    </option>
+                    {locations.map(location => (
+                      <option key={location.id} value={location.id}>{location.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
 
-            {/* Reservation Section */}
-            <div className="border-b border-gray-200 pb-4">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">Reservation Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Reservation Start Date
-                  </label>
-                  <Input
-                    name="reservationStartDate"
-                    type="date"
-                    value={asset.reservationStartDate || ""}
-                    onChange={handleChange}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold mb-2">
-                    Reservation End Date
-                  </label>
-                  <Input
-                    name="reservationEndDate"
-                    type="date"
-                    value={asset.reservationEndDate || ""}
-                    onChange={handleChange}
-                    className="w-full"
-                  />
-                </div>
+            {/* Row 5: Status Note */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Status Note</label>
+              <div className="relative">
+                <FileText className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                <Textarea
+                  name="statusNote"
+                  value={formData.statusNote}
+                  onChange={handleChange}
+                  rows="3"
+                  className="pl-9 py-2.5 resize-none"
+                  placeholder="Add any notes about the asset status..."
+                />
               </div>
             </div>
+          </div>
 
-            {/* Read-only Fields Information */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="text-sm font-semibold text-gray-600 mb-2">Read-only Information</h3>
-              <div className="text-xs text-gray-500 space-y-1">
-                <p>• Asset Tag: {id}</p>
-                <p>• Location & Site: Cannot be edited here</p>
-                <p>• Assigned User: Cannot be edited here</p>
-                <p>• Parent Asset: Cannot be edited here</p>
-                <p>• Photos: Cannot be edited here</p>
-                <p>• Child Assets: Cannot be edited here</p>
-              </div>
-            </div>
-
-            {/* Form Actions */}
-            <div className="flex justify-end gap-4 mt-6 pt-4 border-t border-gray-200">
-              <Button
-                type="button"
-                onClick={() => navigate(`/asset/${id}`)}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg shadow-lg flex items-center gap-2"
-              >
-                <X className="w-4 h-4" />
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={submitting}
-                className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow-lg flex items-center gap-2"
-              >
-                <Save className="w-4 h-4" />
-                {submitting ? "Updating..." : "Update Asset"}
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          {/* Form Actions */}
+          <div className="border-t border-gray-200 px-6 py-4 bg-gray-50 flex justify-end">
+            <Button
+              type="submit"
+              disabled={submitting}
+              className="px-6 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-all disabled:opacity-50 flex items-center gap-2 shadow-sm"
+            >
+              <Save className="w-4 h-4" />
+              {submitting ? "Updating..." : "Update Asset"}
+            </Button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
 
 export default EditAsset;
+
+
