@@ -808,7 +808,7 @@ const reportItems = [
     label: "Asset Tiger",
     icon: FiShield,
     to: "/report/asset-tiger/matching/reports",
-    roles: ["ADMIN"]
+    roles: ["ADMIN","MANAGER"]
   },
   {
     label: "Multiple Assignments",

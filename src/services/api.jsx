@@ -1048,24 +1048,27 @@ export const updateAssetStatusToRepair = async (
   }
 };
 
-// ================== USERS & EMPLOYEES ==================
 
-// paginated + filtered users
 export const fetchUsers = async (filters, page = 0, size = 10) => {
-  const params = {
-    employeeId: filters.employeeId || "",
-    username: filters.username || "",
-    role: filters.role || "",
-    department: filters.department || "",
-    siteId: filters.siteId || "",
-    locationId: filters.locationId || "",
-    search: filters.search || "",
-    page,
-    size,
-  };
+  const params = { page, size };
+
+  // Only add params that have real values — empty strings go to API as ?employeeId= which is wrong
+  if (filters.employeeId)  params.employeeId  = filters.employeeId;
+  if (filters.username)    params.username    = filters.username;
+  if (filters.role)        params.role        = filters.role;
+  if (filters.department)  params.department  = filters.department;
+  if (filters.siteId)      params.siteId      = filters.siteId;
+  if (filters.locationId)  params.locationId  = filters.locationId;
+  if (filters.search)      params.search      = filters.search;
+  if (filters.createdAfter)  params.createdAfter  = filters.createdAfter;
+  if (filters.createdBefore) params.createdBefore = filters.createdBefore;
+
+  // isActive: null = don't send (all users), true/false = send the boolean
+  if (filters.isActive === true || filters.isActive === false) {
+    params.isActive = filters.isActive;
+  }
 
   const res = await api.get("/users/filter", { params });
-  // ("REsponse data ",res.data);
   return res.data;
 };
 

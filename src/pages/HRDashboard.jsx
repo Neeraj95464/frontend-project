@@ -612,7 +612,7 @@ export default function HRDashboard() {
           <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Status</th>
           <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Assigned Date</th>
           <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Accepted At</th>
-          {/* <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Assigned By</th> */}
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Active</th>
           <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Actions</th>
         </tr>
       </thead>
@@ -689,9 +689,11 @@ export default function HRDashboard() {
             </td>
 
             {/* Assigned By */}
-            {/* <td className="px-2 py-1.5 text-[10px] text-gray-500 truncate max-w-[70px]" title={item.assignedBy}>
-              {item.assignedBy || "—"}
-            </td> */}
+<td className="px-2 py-1.5 text-[10px] text-gray-500 truncate max-w-[70px]" title={item.active ? "Active" : "Inactive"}>
+  <span className={`px-1 py-0.5 rounded text-[9px] font-semibold ${item.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+    {item.active ? "Active" : "Inactive"}
+  </span>
+</td>
 
             {/* Actions */}
             <td className="px-2 py-1.5">
