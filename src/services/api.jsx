@@ -2322,9 +2322,6 @@ export const unmatchedAssetService = {
 
 
 
-
-
-// export const employeeItemApi = {
 //   // Fetch all items with optional status filter
 //   getEmployeeItems: async (status = '') => {
 //     try {
@@ -2542,6 +2539,30 @@ export const employeeItemApi = {
       };
     }
   },
+
+  // Add to employeeItemApi in api.js
+// In api.js - Update acceptDressWithCustomizations
+acceptDressWithCustomizations: async (token, emailOtp, customizations) => {
+  try {
+    const response = await api.post('/employee-items/accept/dress', { 
+      token, 
+      emailOtp,
+      customizations 
+    });
+    return {
+      success: true,
+      data: response.data,
+      message: response.data?.message || 'Dress items accepted successfully'
+    };
+  } catch (error) {
+    console.error('Error accepting dress with customizations:', error);
+    return {
+      success: false,
+      message: error.response?.data?.message || error.message,
+      data: null
+    };
+  }
+},
 
   // Add to api.js
 bulkImport: async (data) => {

@@ -118,6 +118,7 @@ export default function HRDashboard() {
     try {
       const result = await employeeItemApi.filterEmployeeItems(buildFilterParams());
       if (result.success && result.data) {
+        console.log(result.data);
         const d = result.data;
         if (d.content && Array.isArray(d.content)) {
           setItems(d.content);
@@ -498,7 +499,7 @@ export default function HRDashboard() {
         )}
 
         {/* Data table */}
-        {!loading && Array.isArray(items) && items.length > 0 && (
+        {/* {!loading && Array.isArray(items) && items.length > 0 && (
           <div className="overflow-x-auto tp-scrollbar">
             <table className="w-full hr-table" style={{ minWidth: 900, borderCollapse: "collapse" }}>
               <thead className="sticky top-0 bg-gray-50 z-10 border-b border-gray-200">
@@ -527,55 +528,55 @@ export default function HRDashboard() {
                     className="hr-row border-b border-gray-50 transition-colors"
                     style={{ background: ri % 2 === 0 ? "#fff" : "#f9fbff" }}
                   >
-                    {/* ID */}
+                  
                     <td className="px-2.5 py-1.5">
                       <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-gray-100 text-gray-700">{item.id}</span>
                     </td>
 
-                    {/* Employee name */}
+                   
                     <td className="px-2.5 py-1.5 font-medium text-gray-800">
                       {item.assignedUserName || item.user?.username || <span className="text-gray-300">—</span>}
                     </td>
 
-                    {/* Employee ID */}
+                  
                     <td className="px-2.5 py-1.5 text-gray-500 font-mono">
                       {item.assignedUserEmployeeId || item.user?.employeeId || <span className="text-gray-300">—</span>}
                     </td>
 
-                    {/* Item type */}
+                    
                     <td className="px-2.5 py-1.5">
                       <span className={`px-1.5 py-0.5 rounded-full text-[10px] font-semibold ${ITEM_TYPE_BADGE[item.itemType] || "bg-gray-100 text-gray-600 border border-gray-200"}`}>
                         {item.itemType?.replace("_", " ") || "—"}
                       </span>
                     </td>
 
-                    {/* Details */}
+                    
                     <td className="px-2.5 py-1.5 text-gray-600 max-w-[160px]">
                       <span className="block truncate" title={item.dressItemsDescription}>
                         {item.dressItemsDescription || <span className="text-gray-300">—</span>}
                       </span>
                     </td>
 
-                    {/* Status */}
+                   
                     <td className="px-2.5 py-1.5">
                       <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap ${STATUS_BADGE[item.status] || "bg-gray-100 text-gray-600 border border-gray-200"}`}>
                         {STATUS_LABELS[item.status] || item.status}
                       </span>
                     </td>
 
-                    {/* Assigned date */}
+                   
                     <td className="px-2.5 py-1.5 text-gray-500 whitespace-nowrap">
                       {item.assignedDate
                         ? format(new Date(item.assignedDate), "dd/MM/yy HH:mm")
                         : <span className="text-gray-300">—</span>}
                     </td>
 
-                    {/* Assigned by */}
+                   
                     <td className="px-2.5 py-1.5 text-gray-600">
                       {item.assignedBy || <span className="text-gray-300">—</span>}
                     </td>
 
-                    {/* Actions */}
+                    
                     <td className="px-2.5 py-1.5">
                       {item.status === "PENDING_ACKNOWLEDGEMENT" && (
                         <button
@@ -592,7 +593,129 @@ export default function HRDashboard() {
               </tbody>
             </table>
           </div>
-        )}
+        )} */}
+
+
+        {/* Compact Table - More columns in one line */}
+{/* Compact Table - More columns in one line */}
+{!loading && Array.isArray(items) && items.length > 0 && (
+  <div className="overflow-x-auto tp-scrollbar">
+    <table className="w-full hr-table" style={{ minWidth: 1200, borderCollapse: "collapse" }}>
+      <thead className="sticky top-0 bg-gray-50 z-10 border-b border-gray-200">
+        <tr>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">ID</th>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Employee</th>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Emp ID</th>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Email</th>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Type</th>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Items</th>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Status</th>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Assigned Date</th>
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Accepted At</th>
+          {/* <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Assigned By</th> */}
+          <th className="px-2 py-1.5 text-left text-[9px] font-semibold text-gray-500 uppercase">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {items.map((item, ri) => (
+          <tr key={item.id} className="border-b border-gray-50" style={{ background: ri % 2 === 0 ? "#fff" : "#f9fbff" }}>
+            {/* ID */}
+            <td className="px-2 py-1.5 text-[10px] font-mono text-gray-600">{item.id}</td>
+
+            {/* Employee Name */}
+            <td className="px-2 py-1.5 text-[11px] font-medium text-gray-800 truncate max-w-[100px]" title={item.assignedUserName}>
+              {item.assignedUserName || item.user?.username || "—"}
+            </td>
+
+            {/* Employee ID */}
+            <td className="px-2 py-1.5 text-[10px] text-gray-500">{item.assignedUserEmployeeId || item.user?.employeeId || "—"}</td>
+
+            {/* Email */}
+            <td className="px-2 py-1.5 text-[10px] text-gray-500 truncate max-w-[120px]" title={item.assignedUserEmail}>
+              {item.assignedUserEmail || item.user?.email || "—"}
+            </td>
+
+            {/* Item Type */}
+            <td className="px-2 py-1.5">
+              <span className={`px-1 py-0.5 rounded text-[9px] font-semibold ${ITEM_TYPE_BADGE[item.itemType] || "bg-gray-100 text-gray-600"}`}>
+                {item.itemType === "ID_CARD" ? "ID Card" : item.itemType === "APPOINTMENT_LETTER" ? "Letter" : "Dress"}
+              </span>
+            </td>
+
+            {/* Dress Items Details */}
+            <td className="px-2 py-1.5">
+              {item.itemType === "DRESS" && item.dressItems && Object.keys(item.dressItems).length > 0 ? (
+                <div className="flex flex-wrap gap-0.5">
+                  {Object.entries(item.dressItems).slice(0, 2).map(([name, qty]) => (
+                    <span key={name} className="text-[9px] bg-pink-50 text-pink-600 px-1 py-0.5 rounded" title={name}>
+                      {qty}x {name.split(" ")[0]}
+                    </span>
+                  ))}
+                  {Object.keys(item.dressItems).length > 2 && (
+                    <span className="text-[9px] text-gray-400">+{Object.keys(item.dressItems).length - 2}</span>
+                  )}
+                </div>
+              ) : (
+                <span className="text-[9px] text-gray-300">—</span>
+              )}
+            </td>
+
+            {/* Status */}
+            <td className="px-2 py-1.5">
+              <span className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full text-[9px] font-semibold ${STATUS_BADGE[item.status] || "bg-gray-100 text-gray-600"}`}>
+                <span className={`w-1 h-1 rounded-full ${
+                  item.status === "ACKNOWLEDGED" ? "bg-emerald-500" :
+                  item.status === "PENDING_ACKNOWLEDGEMENT" ? "bg-amber-500" : 
+                  item.status === "REJECTED" ? "bg-red-500" : "bg-gray-400"
+                }`} />
+                {STATUS_LABELS[item.status] || item.status?.substring(0, 4)}
+              </span>
+            </td>
+
+            {/* Assigned Date */}
+            <td className="px-2 py-1.5 text-[10px] text-gray-500 whitespace-nowrap">
+              {item.assignedDate ? format(new Date(item.assignedDate), "dd/MM/yy HH:mm") : "—"}
+            </td>
+
+            {/* Accepted At */}
+            <td className="px-2 py-1.5 text-[10px] text-gray-500 whitespace-nowrap">
+              {item.acceptedAt ? (
+                <span className="text-emerald-600 font-medium">
+                  {format(new Date(item.acceptedAt), "dd/MM/yy HH:mm")}
+                </span>
+              ) : (
+                <span className="text-gray-300">—</span>
+              )}
+            </td>
+
+            {/* Assigned By */}
+            {/* <td className="px-2 py-1.5 text-[10px] text-gray-500 truncate max-w-[70px]" title={item.assignedBy}>
+              {item.assignedBy || "—"}
+            </td> */}
+
+            {/* Actions */}
+            <td className="px-2 py-1.5">
+              {item.status === "PENDING_ACKNOWLEDGEMENT" && (
+                <button 
+                  onClick={() => handleResend(item.id)} 
+                  className="p-1 rounded hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition"
+                  title="Resend Acknowledgment"
+                >
+                  <Send className="w-3 h-3" />
+                </button>
+              )}
+              {item.status === "ACKNOWLEDGED" && (
+                <span className="text-[9px] text-gray-400" title="Already acknowledged">
+                  ✓
+                </span>
+              )}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+)}
       </div>
 
       {/* Assign Modal */}
