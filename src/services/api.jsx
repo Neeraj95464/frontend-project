@@ -1363,12 +1363,6 @@ export const getTicketsWithFeedback = async (
   return response.data; // should be PaginatedResponse<TicketWithFeedbackDTO>
 };
 
-// export const getAssigneeFeedback = async (page = 0, size = 30) => {
-//   const res = await api.get("/user-assets/tickets/feedbacks", {
-//     params: { page, size },
-//   });
-//   return res.data;
-// };
 
 // ============== Ticket Charts ==========================================
 
