@@ -66,6 +66,7 @@ export default function HRDashboard() {
   const [loading, setLoading]           = useState(false);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [togglingItemId, setTogglingItemId] = useState(null);
   const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   const [stats, setStats] = useState({
     totalItems: 0, pendingAcceptance: 0, acknowledged: 0, dressItems: 0,
@@ -118,7 +119,7 @@ export default function HRDashboard() {
     try {
       const result = await employeeItemApi.filterEmployeeItems(buildFilterParams());
       if (result.success && result.data) {
-        console.log(result.data);
+
         const d = result.data;
         if (d.content && Array.isArray(d.content)) {
           setItems(d.content);
@@ -159,6 +160,34 @@ export default function HRDashboard() {
       }
     } catch (err) { console.error(err); }
   }, []);
+
+
+
+// Add handler for toggling active status
+const handleToggleActive = async (itemId, currentStatus) => {
+  if (!window.confirm(`Are you sure you want to ${currentStatus ? 'deactivate' : 'activate'} this item?`)) {
+    return;
+  }
+  
+  setTogglingItemId(itemId);
+  try {
+    const result = await employeeItemApi.updateActiveStatus(itemId, !currentStatus);
+    if (result.success) {
+      // Refresh the list
+      fetchItems();
+      fetchStats();
+      // Show success message (optional)
+      alert(`Item ${currentStatus ? 'deactivated' : 'activated'} successfully`);
+    } else {
+      alert(result.message || 'Failed to update status');
+    }
+  } catch (err) {
+    console.error('Error toggling active status:', err);
+    alert('Error updating status. Please try again.');
+  } finally {
+    setTogglingItemId(null);
+  }
+};
 
   useEffect(() => { fetchItems(); }, [fetchItems]);
   useEffect(() => { fetchStats(); }, [fetchStats]);
@@ -696,7 +725,7 @@ export default function HRDashboard() {
 </td>
 
             {/* Actions */}
-            <td className="px-2 py-1.5">
+            {/* <td className="px-2 py-1.5">
               {item.status === "PENDING_ACKNOWLEDGEMENT" && (
                 <button 
                   onClick={() => handleResend(item.id)} 
@@ -711,7 +740,56 @@ export default function HRDashboard() {
                   ✓
                 </span>
               )}
-            </td>
+            </td> */}
+
+            {/* Actions */}
+<td className="px-2 py-1.5">
+  <div className="flex items-center gap-1">
+    {/* Resend button for pending items */}
+    {item.status === "PENDING_ACKNOWLEDGEMENT" && (
+      <button 
+        onClick={() => handleResend(item.id)} 
+        className="p-1 rounded hover:bg-blue-50 text-gray-400 hover:text-blue-600 transition"
+        title="Resend Acknowledgment"
+      >
+        <Send className="w-3 h-3" />
+      </button>
+    )}
+    
+    {/* Active/Inactive Toggle Button */}
+    <button
+      onClick={() => handleToggleActive(item.id, item.active)}
+      disabled={togglingItemId === item.id}
+      className={`p-1 rounded transition ${
+        item.active 
+          ? 'hover:bg-green-50 text-green-600 hover:text-green-700' 
+          : 'hover:bg-red-50 text-red-600 hover:text-red-700'
+      } ${togglingItemId === item.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+      title={item.active ? 'Deactivate Item' : 'Activate Item'}
+    >
+      {togglingItemId === item.id ? (
+        <RefreshCw className="w-3 h-3 animate-spin" />
+      ) : (
+        item.active ? (
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+          </svg>
+        ) : (
+          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        )
+      )}
+    </button>
+    
+    {/* Status indicator for acknowledged items */}
+    {item.status === "ACKNOWLEDGED" && !togglingItemId && (
+      <span className="text-[9px] text-gray-400" title="Already acknowledged">
+        ✓
+      </span>
+    )}
+  </div>
+</td>
           </tr>
         ))}
       </tbody>

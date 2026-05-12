@@ -162,10 +162,56 @@ export const deleteContract = async (id) => {
 
 //  ===================  Vendors Management ===================================
 
-export const getVendors = async () => {
-  const response = await api.get("/vendors");
-  // ("res", response.data);
-  return response.data;
+// export const getVendors = async () => {
+//   const response = await api.get("/vendors");
+//   // ("res", response.data);
+//   return response.data;
+// };
+
+// api.js - Update your getVendors function
+// export const getVendors = async (page = 0, size = 10, sortBy = 'id', sortDirection = 'asc') => {
+//   try {
+//     const response = await api.get(`${API_URL}/vendors`, {
+//       params: {
+//         page,
+//         size,
+//         sortBy,
+//         sortDirection
+//       }
+//     });
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error fetching vendors:', error);
+//     throw error;
+//   }
+// };
+
+
+// api.js - Update your getVendors function with filters
+export const getVendors = async (page = 0, size = 10, sortBy = 'id', sortDirection = 'desc', company = '', search = '') => {
+  try {
+    const params = {
+      page,
+      size,
+      sortBy,
+      sortDirection
+    };
+    
+    // Add filters only if they have values
+    if (company && company.trim()) {
+      params.company = company.trim();
+    }
+    
+    if (search && search.trim()) {
+      params.search = search.trim();
+    }
+    
+    const response = await api.get(`${API_URL}/vendors`, { params });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching vendors:', error);
+    throw error;
+  }
 };
 
 export const createVendor = async (vendor) => {
@@ -2317,14 +2363,12 @@ export const unmatchedAssetService = {
 };
 
 
-
-
-//   // Fetch all items with optional status filter
+// export const employeeItemApi = {
+//   // Fetch all items with optional status filter (deprecated - use filterItems instead)
 //   getEmployeeItems: async (status = '') => {
 //     try {
 //       const url = status ? `/employee-items?status=${status}` : '/employee-items';
 //       const response = await api.get(url);
-//       // Return the full response which already has the ApiResponse structure
 //       return {
 //         success: true,
 //         data: response.data,
@@ -2340,10 +2384,129 @@ export const unmatchedAssetService = {
 //     }
 //   },
 
-//   // Get dashboard statistics
-//   getDashboardStats: async () => {
+//     updateActiveStatus: async (itemId, isActive) => {
 //     try {
-//       const response = await api.get('/employee-items/stats');
+//       const response = await api.put(`/employee-items/${itemId}/active-status?active=${isActive}`);
+//       return response.data;
+//     } catch (error) {
+//       console.error('Error updating active status:', error);
+//       throw error;
+//     }
+//   },
+  
+//   // Toggle active status (alternative method)
+//   toggleActiveStatus: async (itemId) => {
+//     try {
+//       const response = await api.put(`/employee-items/${itemId}/toggle`);
+//       return response.data;
+//     } catch (error) {
+//       console.error('Error toggling active status:', error);
+//       throw error;
+//     }
+//   },
+// }
+
+//   // Add to employeeItemApi in api.js
+// // In api.js - Update acceptDressWithCustomizations
+// acceptDressWithCustomizations: async (token, emailOtp, customizations) => {
+//   try {
+//     const response = await api.post('/employee-items/accept/dress', { 
+//       token, 
+//       emailOtp,
+//       customizations 
+//     });
+//     return {
+//       success: true,
+//       data: response.data,
+//       message: response.data?.message || 'Dress items accepted successfully'
+//     };
+//   } catch (error) {
+//     console.error('Error accepting dress with customizations:', error);
+//     return {
+//       success: false,
+//       message: error.response?.data?.message || error.message,
+//       data: null
+//     };
+//   }
+// },
+
+//   // Add to api.js
+// bulkImport: async (data) => {
+//   try {
+//     const response = await api.post('/employee-items/bulk-import', data);
+//     return {
+//       success: true,
+//       data: response.data,
+//       message: response.data?.message || 'Bulk import completed'
+//     };
+//   } catch (error) {
+//     console.error('Error in bulk import:', error);
+//     return {
+//       success: false,
+//       message: error.response?.data?.message || error.message,
+//       data: null
+//     };
+//   }
+// },
+
+
+
+// filterEmployeeItems: async (filters) => {
+//   try {
+//     const params = new URLSearchParams();
+    
+//     // Employee ID filter - IMPORTANT
+//     if (filters.employeeId && filters.employeeId.trim()) {
+//       params.append('employeeId', filters.employeeId.trim());
+//     }
+    
+//     // Other filters
+//     if (filters.itemType) params.append('itemType', filters.itemType);
+//     if (filters.status) params.append('status', filters.status);
+//     if (filters.assignedUserId) params.append('assignedUserId', filters.assignedUserId);
+//     if (filters.assignedBy) params.append('assignedBy', filters.assignedBy);
+//     if (filters.assignedAt) params.append('assignedAt', filters.assignedAt);
+//     if (filters.createdBy) params.append('createdBy', filters.createdBy);
+//     if (filters.assignedDateStart) params.append('assignedDateStart', filters.assignedDateStart);
+//     if (filters.assignedDateEnd) params.append('assignedDateEnd', filters.assignedDateEnd);
+//     if (filters.acceptedStart) params.append('acceptedStart', filters.acceptedStart);
+//     if (filters.acceptedEnd) params.append('acceptedEnd', filters.acceptedEnd);
+//     if (filters.createdStart) params.append('createdStart', filters.createdStart);
+//     if (filters.createdEnd) params.append('createdEnd', filters.createdEnd);
+//     if (filters.keyword) params.append('keyword', filters.keyword);
+//     if (filters.isActive !== undefined) params.append('isActive', filters.isActive);
+//     if (filters.page !== undefined) params.append('page', filters.page);
+//     if (filters.size !== undefined) params.append('size', filters.size);
+    
+//     const url = `/employee-items/filter?${params.toString()}`;
+
+    
+//     const response = await api.get(url);
+
+    
+//     return {
+//       success: true,
+//       data: response.data,
+//       message: response.data?.message || 'Items fetched successfully'
+//     };
+//   } catch (error) {
+//     console.error('Error filtering employee items:', error);
+//     return {
+//       success: false,
+//       message: error.response?.data?.message || error.message,
+//       data: null
+//     };
+//   }
+// },
+
+//   // Get dashboard statistics with filters
+//   getDashboardStats: async (filters = {}) => {
+//     try {
+//       const params = new URLSearchParams();
+//       if (filters.dateRange) params.append('dateRange', filters.dateRange);
+//       if (filters.department) params.append('department', filters.department);
+      
+//       const response = await api.get(`/employee-items/stats?${params.toString()}`);
 //       return {
 //         success: true,
 //         data: response.data,
@@ -2514,7 +2677,6 @@ export const unmatchedAssetService = {
 
 
 
-// src/services/api.js - Add these to your existing employeeItemApi
 
 export const employeeItemApi = {
   // Fetch all items with optional status filter (deprecated - use filterItems instead)
@@ -2537,97 +2699,115 @@ export const employeeItemApi = {
     }
   },
 
-  // Add to employeeItemApi in api.js
-// In api.js - Update acceptDressWithCustomizations
-acceptDressWithCustomizations: async (token, emailOtp, customizations) => {
-  try {
-    const response = await api.post('/employee-items/accept/dress', { 
-      token, 
-      emailOtp,
-      customizations 
-    });
-    return {
-      success: true,
-      data: response.data,
-      message: response.data?.message || 'Dress items accepted successfully'
-    };
-  } catch (error) {
-    console.error('Error accepting dress with customizations:', error);
-    return {
-      success: false,
-      message: error.response?.data?.message || error.message,
-      data: null
-    };
-  }
-},
-
-  // Add to api.js
-bulkImport: async (data) => {
-  try {
-    const response = await api.post('/employee-items/bulk-import', data);
-    return {
-      success: true,
-      data: response.data,
-      message: response.data?.message || 'Bulk import completed'
-    };
-  } catch (error) {
-    console.error('Error in bulk import:', error);
-    return {
-      success: false,
-      message: error.response?.data?.message || error.message,
-      data: null
-    };
-  }
-},
-
-
-filterEmployeeItems: async (filters) => {
-  try {
-    const params = new URLSearchParams();
-    
-    // Employee ID filter - IMPORTANT
-    if (filters.employeeId && filters.employeeId.trim()) {
-      params.append('employeeId', filters.employeeId.trim());
+  // Update active status
+  updateActiveStatus: async (itemId, isActive) => {
+    try {
+      const response = await api.put(`/employee-items/${itemId}/active-status?active=${isActive}`);
+      return response.data;
+    } catch (error) {
+      console.error('Error updating active status:', error);
+      throw error;
     }
-    
-    // Other filters
-    if (filters.itemType) params.append('itemType', filters.itemType);
-    if (filters.status) params.append('status', filters.status);
-    if (filters.assignedUserId) params.append('assignedUserId', filters.assignedUserId);
-    if (filters.assignedBy) params.append('assignedBy', filters.assignedBy);
-    if (filters.assignedAt) params.append('assignedAt', filters.assignedAt);
-    if (filters.createdBy) params.append('createdBy', filters.createdBy);
-    if (filters.assignedDateStart) params.append('assignedDateStart', filters.assignedDateStart);
-    if (filters.assignedDateEnd) params.append('assignedDateEnd', filters.assignedDateEnd);
-    if (filters.acceptedStart) params.append('acceptedStart', filters.acceptedStart);
-    if (filters.acceptedEnd) params.append('acceptedEnd', filters.acceptedEnd);
-    if (filters.createdStart) params.append('createdStart', filters.createdStart);
-    if (filters.createdEnd) params.append('createdEnd', filters.createdEnd);
-    if (filters.keyword) params.append('keyword', filters.keyword);
-    if (filters.isActive !== undefined) params.append('isActive', filters.isActive);
-    if (filters.page !== undefined) params.append('page', filters.page);
-    if (filters.size !== undefined) params.append('size', filters.size);
-    
-    const url = `/employee-items/filter?${params.toString()}`;
+  },
+  
+  // Toggle active status (alternative method)
+  toggleActiveStatus: async (itemId) => {
+    try {
+      const response = await api.put(`/employee-items/${itemId}/toggle`);
+      return response.data;
+    } catch (error) {
+      console.error('Error toggling active status:', error);
+      throw error;
+    }
+  },
 
-    
-    const response = await api.get(url);
+  // Accept dress with customizations
+  acceptDressWithCustomizations: async (token, emailOtp, customizations) => {
+    try {
+      const response = await api.post('/employee-items/accept/dress', { 
+        token, 
+        emailOtp,
+        customizations 
+      });
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Dress items accepted successfully'
+      };
+    } catch (error) {
+      console.error('Error accepting dress with customizations:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
 
-    
-    return {
-      success: true,
-      data: response.data,
-      message: response.data?.message || 'Items fetched successfully'
-    };
-  } catch (error) {
-    console.error('Error filtering employee items:', error);
-    return {
-      success: false,
-      message: error.response?.data?.message || error.message,
-      data: null
-    };
-  }
-},
+  // Bulk import
+  bulkImport: async (data) => {
+    try {
+      const response = await api.post('/employee-items/bulk-import', data);
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Bulk import completed'
+      };
+    } catch (error) {
+      console.error('Error in bulk import:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
+
+  // Filter employee items
+  filterEmployeeItems: async (filters) => {
+    try {
+      const params = new URLSearchParams();
+      
+      // Employee ID filter - IMPORTANT
+      if (filters.employeeId && filters.employeeId.trim()) {
+        params.append('employeeId', filters.employeeId.trim());
+      }
+      
+      // Other filters
+      if (filters.itemType) params.append('itemType', filters.itemType);
+      if (filters.status) params.append('status', filters.status);
+      if (filters.assignedUserId) params.append('assignedUserId', filters.assignedUserId);
+      if (filters.assignedBy) params.append('assignedBy', filters.assignedBy);
+      if (filters.assignedAt) params.append('assignedAt', filters.assignedAt);
+      if (filters.createdBy) params.append('createdBy', filters.createdBy);
+      if (filters.assignedDateStart) params.append('assignedDateStart', filters.assignedDateStart);
+      if (filters.assignedDateEnd) params.append('assignedDateEnd', filters.assignedDateEnd);
+      if (filters.acceptedStart) params.append('acceptedStart', filters.acceptedStart);
+      if (filters.acceptedEnd) params.append('acceptedEnd', filters.acceptedEnd);
+      if (filters.createdStart) params.append('createdStart', filters.createdStart);
+      if (filters.createdEnd) params.append('createdEnd', filters.createdEnd);
+      if (filters.keyword) params.append('keyword', filters.keyword);
+      if (filters.isActive !== undefined) params.append('isActive', filters.isActive);
+      if (filters.page !== undefined) params.append('page', filters.page);
+      if (filters.size !== undefined) params.append('size', filters.size);
+      
+      const url = `/employee-items/filter?${params.toString()}`;
+      const response = await api.get(url);
+      
+      return {
+        success: true,
+        data: response.data,
+        message: response.data?.message || 'Items fetched successfully'
+      };
+    } catch (error) {
+      console.error('Error filtering employee items:', error);
+      return {
+        success: false,
+        message: error.response?.data?.message || error.message,
+        data: null
+      };
+    }
+  },
 
   // Get dashboard statistics with filters
   getDashboardStats: async (filters = {}) => {
@@ -2803,6 +2983,6 @@ filterEmployeeItems: async (filters) => {
       };
     }
   }
-};
+}; // ← This closing brace closes the employeeItemApi object
 
 

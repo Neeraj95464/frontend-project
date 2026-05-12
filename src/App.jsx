@@ -242,7 +242,16 @@ const App = () => {
                       }
                     />
 
-                    <Route path="/hr/employee-items" element={<HRDashboard />} />
+                    <Route
+                      path="/hr/employee-items"
+                      element={
+                        <PrivateRoute allowedRoles={["ADMIN","HR_ADMIN"]}>
+                          <HRDashboard />
+                        </PrivateRoute>
+                      }
+                    />
+
+                    {/* <Route path="/hr/employee-items" element={} /> */}
         <Route path="/employee-items/accept/:token" element={<EmployeeAcceptance />} />
         <Route path="/employee/dashboard" element={<EmployeeDashboard />} />
 
@@ -258,7 +267,7 @@ const App = () => {
                     <Route
                       path="/contractsandlicences"
                       element={
-                        <PrivateRoute allowedRoles={["ADMIN","MANAGER"]}>
+                        <PrivateRoute allowedRoles={["ADMIN","MANAGER","HR_ADMIN"]}>
                           <SoftwareLicensePage />
                         </PrivateRoute>
                       }
@@ -298,7 +307,7 @@ const App = () => {
                     <Route
                       path="/vendor/bulk-imports"
                       element={
-                        <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                        <PrivateRoute allowedRoles={["ADMIN", "MANAGER","HR_ADMIN"]}>
                           <VendorBulkImport />
                         </PrivateRoute>
                       }
@@ -307,7 +316,7 @@ const App = () => {
                     <Route
                       path="/softwarelicense/bulk-imports"
                       element={
-                        <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                        <PrivateRoute allowedRoles={["ADMIN", "MANAGER","HR_ADMIN"]}>
                           <SoftwareLicenseBulkImport />
                         </PrivateRoute>
                       }
@@ -325,7 +334,7 @@ const App = () => {
                     <Route
                       path="/agents"
                       element={
-                        <PrivateRoute allowedRoles={["ADMIN"]}>
+                        <PrivateRoute allowedRoles={["ADMIN","HR_ADMIN"]}>
                           <Agents />
                         </PrivateRoute>
                       }
