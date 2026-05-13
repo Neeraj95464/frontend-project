@@ -236,7 +236,7 @@ const App = () => {
                     <Route
                       path="/report/asset-tiger/matching/reports"
                       element={
-                        <PrivateRoute allowedRoles={["ADMIN", "MANAGER"]}>
+                        <PrivateRoute allowedRoles={["ADMIN", "MANAGER","EXECUTIVE"]}>
                           <UnmatchedAssetsReport />
                         </PrivateRoute>
                       }
