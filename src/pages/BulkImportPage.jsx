@@ -41,8 +41,7 @@ const BulkImportPage = () => {
         status: "ACTIVE",
         siteName: "MADPL",
         locationName: "Skoda-Jubilee Hills",
-        employeeId:"MV788787",
-        assetTag:"MGIT49979"
+  
       },
       {
         employeeId: "EMP002",
