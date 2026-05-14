@@ -22,8 +22,6 @@ div[class*="ml-"] {
   margin-left: 0 !important;
 }
 
-
-
 /* Make horizontal scrollbar always visible and at the top of tables */
 .overflow-x-auto {
   overflow-x: auto;
@@ -59,11 +57,11 @@ div[class*="ml-"] {
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
   }
-  
+
   /* Add a subtle gradient to indicate scrollable content */
   .overflow-x-auto {
-    background: linear-gradient(to right, white 30%, rgba(255,255,255,0)),
-                linear-gradient(to left, white 30%, rgba(255,255,255,0));
+    background: linear-gradient(to right, white 30%, rgba(255, 255, 255, 0)),
+      linear-gradient(to left, white 30%, rgba(255, 255, 255, 0));
     background-position: left center, right center;
     background-repeat: no-repeat;
     background-size: 20px 100%, 20px 100%;
@@ -71,12 +69,13 @@ div[class*="ml-"] {
   }
 }
 
-
-
-
 @keyframes marquee {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 .animate-marquee {
@@ -87,7 +86,6 @@ div[class*="ml-"] {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 .btn {
   @apply px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-sm;
@@ -121,15 +119,17 @@ div[class*="ml-"] {
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body, #root {
+html,
+body,
+#root {
   width: 100%;
   overflow-x: hidden;
   position: relative;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -171,8 +171,8 @@ body {
 
 @media (max-width: 768px) {
   /* Better touch targets */
-  button, 
-  a, 
+  button,
+  a,
   [role="button"],
   input[type="submit"],
   input[type="button"],
@@ -181,42 +181,42 @@ body {
     min-height: 44px;
     min-width: 44px;
   }
-  
+
   /* Prevent zoom on input focus (iOS) */
-  input, 
-  select, 
+  input,
+  select,
   textarea {
     font-size: 16px !important;
   }
-  
+
   /* Better spacing */
   .p-4 {
     padding: 0.75rem !important;
   }
-  
+
   .gap-4 {
     gap: 0.75rem !important;
   }
-  
+
   /* Table responsiveness */
   .overflow-x-auto {
     -webkit-overflow-scrolling: touch;
   }
-  
+
   /* Card improvements */
   .rounded-lg {
     border-radius: 0.5rem !important;
   }
-  
+
   /* Font adjustments */
   h1 {
     font-size: 1.5rem !important;
   }
-  
+
   h2 {
     font-size: 1.25rem !important;
   }
-  
+
   h3 {
     font-size: 1.125rem !important;
   }
@@ -228,7 +228,7 @@ body {
   .p-4 {
     padding: 1rem !important;
   }
-  
+
   .gap-4 {
     gap: 1rem !important;
   }
@@ -311,7 +311,7 @@ body {
   .safe-area-top {
     padding-top: max(1rem, env(safe-area-inset-top));
   }
-  
+
   .safe-area-bottom {
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
   }
@@ -319,12 +319,7 @@ body {
 
 /* Loading state */
 .loading-shimmer {
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
-  );
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
@@ -347,7 +342,7 @@ body {
     margin: 0 !important;
     padding: 0.5rem !important;
   }
-  
+
   .Toastify__toast {
     border-radius: 0.5rem !important;
     margin-bottom: 0.5rem !important;
@@ -373,8 +368,9 @@ body {
   table {
     font-size: 12px;
   }
-  
-  th, td {
+
+  th,
+  td {
     padding: 0.5rem !important;
   }
 }
@@ -382,19 +378,21 @@ body {
 /* ========== FORM RESPONSIVENESS ========== */
 
 @media (max-width: 640px) {
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     font-size: 14px !important;
     padding: 0.5rem !important;
   }
-  
+
   label {
     font-size: 13px !important;
   }
 }
 
-
 /* Prevent horizontal scroll on mobile */
-html, body {
+html,
+body {
   overflow-x: hidden;
   width: 100%;
   position: relative;
@@ -410,4 +408,8 @@ html, body {
   width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+.force-rebuild-20260514 {
+  content: "v2";
 }
