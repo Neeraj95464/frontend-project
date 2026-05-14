@@ -69,17 +69,48 @@ export default api;
 
 // ================== AUTHENTICATION ==================
 
+// export const getUserRoles = () => {
+//   const storedUser = localStorage.getItem("user");
+//   if (!storedUser) return [];
+
+//   try {
+//     const { roles } = JSON.parse(storedUser);
+//     return roles.map((role) => role.toUpperCase()); // Ensuring uppercase consistency
+//   } catch (error) {
+//     console.error("Error parsing user roles:", error);
+//     return [];
+//   }
+// };
+
+// api.jsx
 export const getUserRoles = () => {
   const storedUser = localStorage.getItem("user");
   if (!storedUser) return [];
 
   try {
-    const { roles } = JSON.parse(storedUser);
-    return roles.map((role) => role.toUpperCase()); // Ensuring uppercase consistency
+    const user = JSON.parse(storedUser);
+    
+    // Check if roles array exists (for backward compatibility)
+    if (user.roles && Array.isArray(user.roles)) {
+      return user.roles.map((role) => role.toUpperCase());
+    }
+    
+    // If only single role exists, return as array
+    if (user.role) {
+      return [user.role.toUpperCase()];
+    }
+    
+    return [];
   } catch (error) {
     console.error("Error parsing user roles:", error);
     return [];
   }
+};
+
+export const hasRole = (role) => {
+  const roles = getUserRoles();
+
+  return roles.includes(role.toUpperCase());
 };
 
 export const registerUser = async (userData) => {
@@ -89,11 +120,11 @@ export const registerUser = async (userData) => {
   return response.data;
 };
 
-export const hasRole = (role) => {
-  const roles = getUserRoles();
-  // ("Current user roles:", roles);
-  return roles.includes(role.toUpperCase());
-};
+// export const hasRole = (role) => {
+//   const roles = getUserRoles();
+
+//   return roles.includes(role.toUpperCase());
+// };
 
 export const loginUser = async (employeeId, password) => {
   try {
@@ -580,6 +611,11 @@ export const getAssetCodes = async (assetTag) => {
 export const assignLocation = async (payload) => {
   ("payload was ",payload);
   return api.post(`user-assets/location-assignments`, payload);
+};
+
+// Add to your api.js file
+export const bulkAssignLocations = async (assignments) => {
+  return api.post(`/user-assets/bulk-assign`, assignments);
 };
 
 export const getAllAssignments = () => {
@@ -1836,12 +1872,30 @@ export const deleteLicense = async (id) => {
 // };
 
 
-export const getAssigneePerformance = async (month, year) => {
+// export const getAssigneePerformance = async (month, year) => {
+//   try {
+//     const params = {};
+
+//     if (month) params.month = month;
+//     if (year) params.year = year;
+
+//     const response = await api.get(`user-assets/assignee-performance`, { params });
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching assignee performance:", error);
+//     throw error;
+//   }
+// };
+
+
+export const getAssigneePerformance = async (month, year, departmentFilter) => {
   try {
     const params = {};
 
     if (month) params.month = month;
     if (year) params.year = year;
+    if (departmentFilter) params.departmentFilter = departmentFilter;
 
     const response = await api.get(`user-assets/assignee-performance`, { params });
 
@@ -1851,7 +1905,6 @@ export const getAssigneePerformance = async (month, year) => {
     throw error;
   }
 };
-
 
 
 // // ✅ Get Updates
